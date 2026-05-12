@@ -182,7 +182,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:36px 48px;display:flex
 .modal p{color:var(--g300);font-size:14px;line-height:1.65;margin-bottom:20px;}
 .modal-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.11);border-radius:8px;padding:12px 16px;color:var(--white);font-size:14px;font-family:var(--B);outline:none;margin-bottom:10px;}
 .modal-close{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--g500);font-size:22px;cursor:pointer;}
-@keyframes bannerIn{from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);}}
+#gdrock-banner.show ~ .help-fab,body:has(#gdrock-banner[style*='flex']) .help-fab{bottom:auto;top:80px;}@media(max-width:600px){#gdrock-banner{padding:14px;gap:10px;}#gdrock-banner .banner-btns{display:flex;width:100%;gap:8px;}#gdrock-banner .banner-btns button{flex:1;padding:12px;font-size:14px;}.help-fab{padding:10px 16px;font-size:13px;bottom:14px;right:14px;}body.banner-open .help-fab{display:none;}}@keyframes bannerIn{from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);}}
 @keyframes bannerOut{from{opacity:1;transform:translate(-50%,0);}to{opacity:0;transform:translate(-50%,20px);}}
 #gdrock-banner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 40px);max-width:660px;background:#1e2d45;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px 20px;display:none;align-items:center;gap:16px;z-index:999;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:bannerIn .5s ease both;flex-wrap:wrap;}
 #gdrock-banner.hide{animation:bannerOut .4s ease forwards;}
@@ -214,8 +214,8 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:36px 48px;display:flex
 <div id="gdrock-banner"><div class="banner-text"><strong>🍪 We use cookies</strong> for analytics only. Accept or reject below.</div><div class="banner-btns"><button class="banner-reject" onclick="dismissBanner('rejected')">Reject</button><button class="banner-accept" onclick="dismissBanner('accepted')">Accept</button></div></div>
 <script>function setCookie(n,v,d){var e=new Date();e.setTime(e.getTime()+d*864e5);document.cookie=n+'='+v+';expires='+e.toUTCString()+';path=/';}
 function getCookie(n){return document.cookie.split(';').some(c=>c.trim().startsWith(n+'='));}
-window.addEventListener('load',function(){if(!getCookie('gdrockConsent')){var b=document.getElementById('gdrock-banner');b.style.display='flex';}});
-function dismissBanner(c){setCookie('gdrockConsent',c,c==='accepted'?365:30);var b=document.getElementById('gdrock-banner');b.classList.add('hide');setTimeout(()=>b.style.display='none',400);}
+window.addEventListener('load',function(){if(!getCookie('gdrockConsent')){var b=document.getElementById('gdrock-banner');b.style.display='flex';document.body.classList.add('banner-open');}});
+function dismissBanner(c){setCookie('gdrockConsent',c,c==='accepted'?365:30);var b=document.getElementById('gdrock-banner');b.classList.add('hide');setTimeout(()=>{b.style.display='none';document.body.classList.remove('banner-open');},400);}
 var titles={free:'Get your free starter pack',core:'Get GDRock Core Pack — €29',care:'Join the Care waitlist',dfy:'Book a setup call'};
 var descs={free:'Enter your email and get the GDPR Basics guide + checklist instantly. Free forever.',core:'Enter your details and we will send you the Core Pack. One-time payment of €29. Use NEW10 for 10% off.',care:'Care is launching very soon. Join the waitlist and get 30% off launch price.',dfy:'Tell us about your setup and we will get back to you within 24 hours with a custom quote.'};
 function openModal(p){document.getElementById('modal-title').textContent=titles[p];document.getElementById('modal-desc').textContent=descs[p];document.getElementById('modal').classList.add('active');}
