@@ -407,17 +407,47 @@ function selectService(svc) {
   document.getElementById('book').scrollIntoView({behavior:'smooth'});
 }
 function submitBooking() {
-  var name = document.getElementById('bf-name').value.trim();
-  var email = document.getElementById('bf-email').value.trim();
-  var url = document.getElementById('bf-url').value.trim();
+  var name    = document.getElementById('bf-name').value.trim();
+  var email   = document.getElementById('bf-email').value.trim();
+  var url     = document.getElementById('bf-url').value.trim();
   var service = document.getElementById('bf-service').value;
-  if (!name) { alert('Please enter your name.'); return; }
+  var notes   = document.getElementById('bf-notes').value.trim();
+  if (!name)  { alert('Please enter your name.'); return; }
   if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
   if (!service) { alert('Please select a service.'); return; }
-  var subject = encodeURIComponent('GDRock DFY Enquiry — ' + service);
-  var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nWebsite: ' + url + '\nService: ' + service + '\nNotes: ' + document.getElementById('bf-notes').value);
-  window.location.href = 'mailto:office@gdrock.com?subject=' + subject + '&body=' + body;
-  document.getElementById('success-msg').style.display = 'block';
+
+  var btn = document.querySelector('.book-form .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+
+  fetch('https://cdn.gdrock.com/api/lead', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      source: 'dfy_booking',
+      name: name,
+      email: email,
+      website_url: url,
+      service: service,
+      notes: notes
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(){
+    document.getElementById('success-msg').style.display = 'block';
+    if (btn) { btn.textContent = 'Request sent ✓'; }
+    // Also open mailto as backup so they get it in email client too
+    var subj = encodeURIComponent('GDRock DFY Enquiry — ' + service);
+    var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nWebsite: ' + url + '\nService: ' + service + '\nNotes: ' + notes);
+    setTimeout(function(){ window.location.href = 'mailto:office@gdrock.com?subject=' + subj + '&body=' + body; }, 800);
+  })
+  .catch(function(){
+    // Fallback to mailto if API fails
+    var subj = encodeURIComponent('GDRock DFY Enquiry — ' + service);
+    var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\nWebsite: ' + url + '\nService: ' + service + '\nNotes: ' + notes);
+    window.location.href = 'mailto:office@gdrock.com?subject=' + subj + '&body=' + body;
+    document.getElementById('success-msg').style.display = 'block';
+    if (btn) { btn.disabled = false; btn.textContent = 'Request my technical setup →'; }
+  });
 }
 var faqs = [
   {q:'Do I need to give you access to my website?',a:'Yes — we need admin access to install the cookie banner and publish the privacy policy page. We use read/write access only for the tasks agreed, and we recommend removing our access after setup is complete. We sign an NDA on request.'},

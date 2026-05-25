@@ -480,8 +480,23 @@ function updateSummary() {
 function handleCheckout() {
   var email = document.getElementById('f-email').value.trim();
   var first = document.getElementById('f-first').value.trim();
+  var last  = document.getElementById('f-last').value.trim();
+  var url   = document.getElementById('f-url').value.trim();
   if (!first) { alert('Please enter your first name.'); return; }
   if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+  // Save lead to Supabase + send Telegram alert
+  var d = selectedPlan ? selectedPlan.dataset : {};
+  fetch('https://cdn.gdrock.com/api/lead', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      source:      'checkout',
+      name:        first + (last ? ' ' + last : ''),
+      email:       email,
+      website_url: url,
+      plan:        d.name || d.plan || ''
+    })
+  }).catch(function(){});
 
   var d = selectedPlan.dataset;
   var base = parseFloat(d.price);

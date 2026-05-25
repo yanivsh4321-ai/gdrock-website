@@ -317,10 +317,31 @@ var descs={
   agency:'White-label rights for up to 5 client stores. Everything in Pro plus DPA templates and client reports. €199/month — Core Pack included free.',
   dfy:'Tell us about your setup and we will get back to you within 24 hours with a custom quote.'
 };
-function openModal(p){document.getElementById('modal-title').textContent=titles[p];document.getElementById('modal-desc').textContent=descs[p];document.getElementById('modal').classList.add('active');}
+function openModal(p){document.getElementById('modal-title').textContent=titles[p];document.getElementById('modal-desc').textContent=descs[p];document.getElementById('modal').dataset.plan=p;document.getElementById('modal').classList.add('active');}
 function closeModal(e){if(e.target===document.getElementById('modal'))document.getElementById('modal').classList.remove('active');}
-function submitModal(){var email=document.getElementById('modal-email').value;if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}document.getElementById('modal').classList.remove('active');alert('Done! Check your inbox shortly.');}
-function submitEmail(){var email=document.getElementById('hero-email').value;if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}openModal('free');document.getElementById('modal-email').value=email;}
+function submitModal(){
+  var email=document.getElementById('modal-email').value.trim();
+  var name=document.getElementById('modal-name').value.trim();
+  var planId=document.getElementById('modal').dataset.plan||'free';
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  var source=planId==='free'?'modal_free':'modal_paid';
+  fetch('https://cdn.gdrock.com/api/lead',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({source:source,name:name,email:email,plan:planId})
+  }).catch(function(){});
+  document.getElementById('modal').classList.remove('active');
+  alert('Done! Check your inbox shortly.');
+}
+function submitEmail(){
+  var email=document.getElementById('hero-email').value.trim();
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  fetch('https://cdn.gdrock.com/api/lead',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({source:'hero',email:email})
+  }).catch(function(){});
+  openModal('free');
+  document.getElementById('modal-email').value=email;
+}
 function saveApiKey(){var key=document.getElementById('api-key-input').value.trim();if(!key||!key.startsWith('sk-')){alert('Please enter a valid OpenAI API key (starts with sk-)');return;}localStorage.setItem('gdrock_openai_key',key);document.getElementById('api-key-row').style.display='none';document.getElementById('api-notice').style.display='none';var saved=document.getElementById('api-key-saved');saved.style.display='block';setTimeout(()=>saved.style.display='none',3000);}
 window.addEventListener('load',function(){var key=localStorage.getItem('gdrock_openai_key');if(key){document.getElementById('api-key-row').style.display='none';document.getElementById('api-notice').style.display='none';}});
 var scanSteps=['Resolving domain...','Checking cookie scripts...','Detecting consent flow...','Scanning privacy pages...','Analysing trackers...','Checking data processors...','Generating report...'];
