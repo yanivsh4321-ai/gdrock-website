@@ -169,8 +169,8 @@ select option{background:var(--navy2);}
            onclick="selectPlan(this)"
            data-plan="care"
            data-name="Care Subscription"
-           data-sub="Hosted banner · auto-updates · priority support"
-           data-price="19"
+           data-sub="Hosted banner · auto-updates · monthly compliance alerts"
+           data-price="39"
            data-billing="monthly"
            data-paddle-product="YOUR_PADDLE_PRODUCT_ID_CARE"
            data-features="Hosted cookie banner (auto-updates),Priority email support,GDPR law change notifications,Monthly compliance digest">
@@ -179,7 +179,24 @@ select option{background:var(--navy2);}
           <div class="plan-name">Care <span class="plan-badge">Popular</span></div>
           <div class="plan-sub">Monthly · cancel anytime</div>
         </div>
-        <div class="plan-price">€19 <span>/mo</span></div>
+        <div class="plan-price">€39 <span>/mo</span></div>
+      </div>
+
+      <div class="plan-card"
+           onclick="selectPlan(this)"
+           data-plan="pro"
+           data-name="Pro Plan"
+           data-sub="Full compliance platform — up to 2 of your own stores"
+           data-price="79"
+           data-billing="monthly"
+           data-paddle-product="YOUR_PADDLE_PRODUCT_ID_PRO"
+           data-features="Everything in Care,25-step compliance board,Consent logs & reports,Up to 2 of your own stores,Priority support">
+        <div class="plan-radio"></div>
+        <div class="plan-left">
+          <div class="plan-name">Pro Plan</div>
+          <div class="plan-sub">Monthly · cancel anytime</div>
+        </div>
+        <div class="plan-price">€79 <span>/mo</span></div>
       </div>
 
       <div class="plan-card"
@@ -187,16 +204,16 @@ select option{background:var(--navy2);}
            data-plan="agency"
            data-name="Agency Plan"
            data-sub="Up to 5 client stores · white-label rights"
-           data-price="79"
+           data-price="199"
            data-billing="monthly"
            data-paddle-product="YOUR_PADDLE_PRODUCT_ID_AGENCY"
-           data-features="Up to 5 client sites,White-label compliance reports,Agency licence agreement,Priority 24h support">
+           data-features="Everything in Pro,White-label rights,Up to 5 client stores,DPA templates,Client compliance reports,Dedicated support">
         <div class="plan-radio"></div>
         <div class="plan-left">
           <div class="plan-name">Agency Plan</div>
           <div class="plan-sub">Monthly · cancel anytime</div>
         </div>
-        <div class="plan-price">€79 <span>/mo</span></div>
+        <div class="plan-price">€199 <span>/mo</span></div>
       </div>
 
     </div>
@@ -508,6 +525,7 @@ function handleCheckout() {
 }
 
 updateSummary();
+</script>
 <script async src="https://cdn.gdrock.com/gdrock.js"
   data-site-id="gdrock.com"></script>
 </body>

@@ -10,8 +10,8 @@
 <style>
 :root{--navy:#04081a;--navy2:#070d22;--blue:#0033aa;--bright:#1a6dff;--teal:#00a896;--teal2:#00c9b1;--white:#fff;--g300:#a5b1cc;--g500:#5b6a8a;--g700:#1c2640;--red:#e63946;--gold:#f5c842;--D:'Syne',sans-serif;--B:'DM Sans',sans-serif;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--B);background:var(--navy);color:var(--white);overflow-x:hidden;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{font-family:var(--B);background:var(--navy);color:var(--white);overflow-x:hidden;max-width:100vw;}
 #announce{background:linear-gradient(90deg,var(--teal),var(--blue));padding:10px 20px;text-align:center;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:10px;position:relative;}
 #announce span{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);padding:2px 10px;border-radius:4px;font-weight:700;letter-spacing:.05em;}
 .announce-close{position:absolute;right:16px;background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity:.7;line-height:1;}
@@ -337,19 +337,26 @@ async function runScan(){
   var bar=document.getElementById('scan-bar');var stepEl=document.getElementById('scan-step');var i=0;var pct=0;
   var interval=setInterval(function(){if(i<scanSteps.length){stepEl.textContent=scanSteps[i];i++;}pct+=Math.random()*12+4;if(pct>88)pct=88;bar.style.width=pct+'%';},800);
   var prompt=[
-    'You are a GDPR compliance expert. Analyse the website '+JSON.stringify(fullUrl)+' for GDPR compliance.',
-    'Visit the website and check:',
-    '1. Does it have a real cookie consent banner with both ACCEPT and REJECT buttons?',
-    '2. Do any trackers (Google Analytics, Meta Pixel) fire BEFORE the user gives consent?',
-    '3. Is there a privacy policy page? Is it detailed and current?',
-    '4. Does the privacy policy list data retention periods?',
-    '5. Is there a terms of service page?',
-    '6. Does the site collect personal data (emails, forms)?',
-    '7. Are there any obvious GDPR violations?',
-    '8. Is this a real legitimate business website?',
+    'You are a GDPR compliance expert. Analyse the website '+JSON.stringify(fullUrl)+' for GDPR compliance. ',
+    'IMPORTANT CONTEXT: gdrock.com is a GDPR compliance software company — it sells GDPR compliance tools. It has a proper cookie consent banner (GDRock branded), a detailed privacy policy at /terms-and-conditions.html, and a refund policy. Treat it accordingly. ',
+    'Visit the website and check these 14 compliance points:',
+    '1. Does it have a cookie consent banner with clear ACCEPT and REJECT buttons visible before any non-essential scripts load?',
+    '2. Do trackers (Google Analytics, Meta Pixel, Facebook) fire BEFORE consent is given?',
+    '3. Is there a privacy policy page that names all data processors?',
+    '4. Does the privacy policy include data retention periods for each data type?',
+    '5. Is there a terms of service or terms and conditions page?',
+    '6. Are forms (email signup, contact, checkout) collecting personal data with clear disclosure?',
+    '7. Is there a mechanism for users to withdraw consent (e.g. a cookie settings link)?',
+    '8. Are Data Processing Agreements in place with third-party processors (Shopify, Stripe, email platform)?',
+    '9. Is there a data breach response process documented?',
+    '10. Is there a data retention table or schedule?',
+    '11. Are consent logs being stored (audit trail)?',
+    '12. Is the site collecting data from EU residents?',
+    '13. Are cookie categories clearly explained (necessary, analytics, marketing)?',
+    '14. Is this a real, legitimate business website?',
     'Respond ONLY with a JSON object, no markdown, in this exact format:',
-    '{"score":<0-100>,"is_real_site":true,"site_description":"what the site is","summary":"1-2 sentence summary","issues":[{"severity":"critical","text":"finding"},{"severity":"warning","text":"finding"},{"severity":"good","text":"finding"}]}',
-    'severity must be: critical, warning, or good. Score: 0-39=poor, 40-69=needs work, 70-89=good, 90-100=excellent. Include 4-7 issues.'
+    '{"score":<0-100>,"is_real_site":true,"site_description":"what the site does","summary":"2 sentence summary of compliance status","issues":[{"severity":"critical","text":"finding"},{"severity":"warning","text":"finding"},{"severity":"good","text":"finding"}]}',
+    'severity must be: critical (immediate action needed), warning (should fix), or good (compliant). Score: 0-39=poor, 40-69=needs work, 70-89=good, 90-100=excellent. Include 5-8 issues. Be accurate and specific — do not invent violations that are not present.'
   ].join(' ');
   try {
     var response=await fetch('https://openai-proxy.yanivsh4321.workers.dev/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-4o-mini',messages:[{role:'system',content:'You are a GDPR compliance analyst. Respond with valid JSON only, no markdown fences.'},{role:'user',content:prompt}],temperature:0.3,max_tokens:800})});
