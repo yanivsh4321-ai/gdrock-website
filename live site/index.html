@@ -235,13 +235,14 @@ img,svg,canvas{max-width:100%;}
 </style>
 <style>
 /* GDROCK-MOBILE-STACK */
+  .mk-presets{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:6px!important;}
+  .mk-presets>span{aspect-ratio:1/1!important;width:auto!important;height:auto!important;min-height:0!important;border-radius:7px!important;}
+  .mk-body{display:grid!important;grid-template-columns:120px 1fr!important;}
 @media(max-width:768px){
   #customizer .reveal{display:flex!important;flex-direction:column!important;gap:26px!important;}
   #customizer .reveal>div:last-child{order:-1;}
   #customizer .reveal>div:last-child>div{max-width:100%!important;overflow:hidden;}
   .dfy-card,.free-card,.grid,.prob-intro,.app.visible{grid-template-columns:1fr!important;}
-  section [style*="grid-template-columns"]{grid-template-columns:1fr!important;}
-  section [style*="display:grid"]{gap:24px!important;}
 }
 </style></head>
 <body>
@@ -331,10 +332,10 @@ img,svg,canvas{max-width:100%;}
 </div>
 <div style="background:#0d1a36;border:1px solid rgba(255,255,255,.09);border-radius:16px;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.5);">
 <div style="height:34px;background:#07102a;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;padding:0 12px;gap:6px;"><span style="width:9px;height:9px;border-radius:50%;background:#ff5f57;"></span><span style="width:9px;height:9px;border-radius:50%;background:#febc2e;"></span><span style="width:9px;height:9px;border-radius:50%;background:#28c840;"></span><span style="flex:1;text-align:center;font-size:10px;color:#5b6a8a;font-family:monospace;">cdn.gdrock.com/customize</span></div>
-<div style="display:grid;grid-template-columns:130px 1fr;min-height:280px;">
+<div class="mk-body" style="display:grid;grid-template-columns:120px 1fr;min-height:280px;">
 <div style="border-right:1px solid rgba(255,255,255,.06);padding:14px;">
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:8px;">Presets</div>
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:14px;"><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#1a6dff,#0a1628);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#00c9b1,#04181c);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#8b5cf6,#0f0a1e);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#10b981,#041410);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f43f5e,#1a0408);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#1a1200);"></span></div>
+<div class="mk-presets" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;"><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#1a6dff,#0a1628);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#00c9b1,#04181c);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#8b5cf6,#0f0a1e);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#10b981,#041410);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f43f5e,#1a0408);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#1a1200);"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:6px;">Accent</div>
 <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;"><span style="width:24px;height:24px;border-radius:6px;background:#1a6dff;border:2px solid rgba(255,255,255,.15);"></span><span style="flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.06);"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:6px;">Radius</div>
