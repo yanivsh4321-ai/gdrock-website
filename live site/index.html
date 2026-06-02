@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{background:#030712;}body{background:#030712;}</style>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="GDRock — GDPR compliance infrastructure for EU businesses. Cookie consent banner, privacy policy templates, and done-for-you setup. Get compliant in minutes from €29.">
@@ -257,7 +259,12 @@ img,svg,canvas{max-width:100%;}
 <h2>Checks 14 compliance points in under <span class="grad-text">20 seconds</span></h2>
 <p>Enter your URL and our AI reviews cookies, consent flow, privacy pages, trackers, and data processors.</p>
 <div class="api-notice" id="api-notice">&#129302; <strong>AI-powered scanner</strong> &mdash; analyses your real website for GDPR compliance issues. Free, no sign-up required.</div>
-<div class="scan-row"><input type="text" class="scan-input" id="scan-url" placeholder="yourstore.com" onkeydown="if(event.key==='Enter')runScan()"><button class="btn-primary" onclick="runScan()" id="scan-btn">Scan my site &rarr;</button></div>
+<div style="display:flex;flex-direction:column;gap:10px;max-width:520px;margin:0 auto;text-align:left;">
+<input type="text" class="scan-input" id="scan-url" placeholder="Website URL (e.g. yourstore.com)" autocomplete="url">
+<input type="email" class="scan-input" id="scan-email" placeholder="Business email (where we send your report)" autocomplete="email">
+<label style="display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#9CA3AF;line-height:1.5;cursor:pointer;padding:2px 0;"><input type="checkbox" id="scan-consent" style="width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:#1a6dff;cursor:pointer;"><span>I agree to receive my automated data compliance report and diagnostic insights at this address.</span></label>
+<button class="btn-primary" onclick="runScan()" id="scan-btn" style="justify-content:center;width:100%;">Run free compliance scan &rarr;</button>
+</div>
 <div class="scanner-progress" id="scan-progress"><div class="scan-bar-wrap"><div class="scan-bar" id="scan-bar"></div></div><div class="scan-step" id="scan-step">Initialising scan&hellip;</div></div>
 <div class="scan-result" id="scan-result"><div class="score-num" id="score-display"></div><div class="score-lbl" id="score-label"></div><div id="fake-warn" class="fake-warn"></div><div id="site-info" class="site-info"><div class="site-info-lbl">Site identified as</div><div class="site-info-txt" id="site-info-txt"></div></div><div id="sum-box" class="sum-box"></div><div class="issues-list" id="issues-list"></div><a class="btn-primary" style="width:100%;justify-content:center;margin-bottom:9px;" href="checkout.html?plan=core">Fix automatically with GDRock &rarr;</a><p class="help-line">Core Pack fixes all critical issues in under 10 min. Questions? <a href="mailto:office@gdrock.com">office@gdrock.com</a></p></div>
 </div></div></section>
@@ -320,7 +327,7 @@ img,svg,canvas{max-width:100%;}
 </div>
 <div style="padding:18px;display:flex;align-items:flex-end;background:repeating-linear-gradient(45deg,#07102000,#07102000 10px,#ffffff04 10px,#ffffff04 20px);">
 <div style="width:100%;background:#0a1628;border:1px solid rgba(176,188,212,.18);border-radius:14px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.5);">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;"><span style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#1a6dff,#00c9b1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;font-family:'Syne',sans-serif;">GD</span><span style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#f4f6fb;">We value your privacy</span></div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;"><svg width="22" height="24" viewBox="0 0 30 34" fill="none" style="flex-shrink:0;"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" fill="rgba(0,201,177,.12)" stroke="#00c9b1" stroke-width="2.5"/><path d="M10 16.5L13.5 20L20 13" stroke="#00c9b1" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#f4f6fb;">We value your privacy</span></div>
 <div style="font-size:10px;line-height:1.5;color:#b0bcd4;margin-bottom:10px;">We use cookies to improve your experience and personalize content.</div>
 <div style="display:flex;gap:5px;"><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Reject</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Customize</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:linear-gradient(135deg,#1a6dff,#0044cc);color:#fff;">Accept all</span></div>
 </div>
@@ -359,7 +366,7 @@ import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
-const lenis=new Lenis({lerp:.08,smoothWheel:true});
+const lenis=window.__lenis=new Lenis({lerp:.08,smoothWheel:true});
 lenis.on('scroll',ScrollTrigger.update);
 gsap.ticker.add(t=>lenis.raf(t*1000));
 gsap.ticker.lagSmoothing(0);
@@ -432,15 +439,22 @@ document.querySelectorAll('.reveal,.stagger').forEach(el=>obs.observe(el));
 var STEPS=['Fetching page headers...','Checking cookie consent...','Analysing privacy policy...','Scanning for trackers...','Reviewing data processors...','Checking retention policies...','Generating compliance score...'];
 function runScan(){
   var u=document.getElementById('scan-url').value.trim();
-  if(!u)return document.getElementById('scan-url').focus();
+  var em=document.getElementById('scan-email').value.trim();
+  var consent=document.getElementById('scan-consent').checked;
+  if(!u){document.getElementById('scan-url').focus();document.getElementById('scan-url').style.borderColor='#e63946';return;}
+  if(!em||!em.includes('@')){document.getElementById('scan-email').focus();document.getElementById('scan-email').style.borderColor='#e63946';return;}
+  if(!consent){var cb=document.getElementById('scan-consent');cb.parentElement.style.color='#fca5a5';cb.focus();return;}
+  document.getElementById('scan-url').style.borderColor='';document.getElementById('scan-email').style.borderColor='';
   if(!u.match(/^https?:\/\//))u='https://'+u;
   var btn=document.getElementById('scan-btn');btn.disabled=true;btn.textContent='Scanning...';
   document.getElementById('scan-progress').style.display='block';document.getElementById('scan-result').style.display='none';document.getElementById('api-notice').style.display='none';
+  // capture lead first
+  fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'scanner',email:em,website_url:u,plan:'scan'})}).catch(function(){});
   var bar=document.getElementById('scan-bar'),stepEl=document.getElementById('scan-step'),prog=0,si=0;
   var iv=setInterval(function(){prog=Math.min(prog+(100/STEPS.length),90);bar.style.width=prog+'%';if(si<STEPS.length)stepEl.textContent=STEPS[si++];},700);
-  fetch('https://cdn.gdrock.com/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})})
-  .then(function(r){return r.json();}).then(function(data){clearInterval(iv);bar.style.width='100%';setTimeout(function(){document.getElementById('scan-progress').style.display='none';document.getElementById('scan-result').style.display='block';btn.disabled=false;btn.textContent='Scan my site';displayResult(data);},400);})
-  .catch(function(){clearInterval(iv);document.getElementById('scan-progress').style.display='none';btn.disabled=false;btn.textContent='Scan my site';alert('Scan failed. Try again or contact office@gdrock.com');});
+  fetch('https://cdn.gdrock.com/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u,email:em})})
+  .then(function(r){return r.json();}).then(function(data){clearInterval(iv);bar.style.width='100%';setTimeout(function(){document.getElementById('scan-progress').style.display='none';document.getElementById('scan-result').style.display='block';btn.disabled=false;btn.textContent='Run free compliance scan';displayResult(data);},500);})
+  .catch(function(){clearInterval(iv);document.getElementById('scan-progress').style.display='none';btn.disabled=false;btn.textContent='Run free compliance scan';alert('Scan failed. Try again or contact office@gdrock.com');});
 }
 function displayResult(data){
   var s=data.score||42,c=s>=80?'#00c9b1':s>=60?'#f5c842':'#e63946';
@@ -482,6 +496,15 @@ var faqs=[
 var fg=document.getElementById('faq-grid');
 faqs.forEach(function(f){var el=document.createElement('div');el.className='faq-item';var q=document.createElement('div');q.className='faq-q';q.textContent=f.q;q.onclick=function(){el.classList.toggle('open');};var a=document.createElement('div');a.className='faq-a';var ai=document.createElement('div');ai.className='faq-a-inner';ai.textContent=f.a;a.appendChild(ai);el.appendChild(q);el.appendChild(a);fg.appendChild(el);});
 window.addEventListener('scroll',function(){document.querySelector('nav').style.background=window.scrollY>50?'rgba(4,8,26,.98)':'rgba(4,8,26,.9)';});
+</script>
+<script>
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[href^="#"]');
+  if(!a)return;var id=a.getAttribute('href');if(id.length<2)return;
+  var t=document.querySelector(id);if(!t)return;e.preventDefault();
+  if(window.__lenis){window.__lenis.scrollTo(t,{offset:-70,duration:1.1});}
+  else{t.scrollIntoView({behavior:'smooth',block:'start'});}
+});
 </script>
 </body>
 </html>

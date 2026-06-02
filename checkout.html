@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{background:#030712;}body{background:#030712;}</style>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="GDRock checkout — choose your GDPR compliance plan. Secure payment via Paddle.">
@@ -181,6 +183,15 @@ function handleCheckout(){
   alert('Checkout ready (Paddle placeholder)\n\nPlan: '+d.name+'\nTotal: €'+d.price+(d.billing!=='one-time'?'/mo':'')+'\nEmail: '+email+'\n\nWire up Paddle.Checkout.open() to go live.');
 }
 updateSummary();
+</script>
+<script>
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[href^="#"]');
+  if(!a)return;var id=a.getAttribute('href');if(id.length<2)return;
+  var t=document.querySelector(id);if(!t)return;e.preventDefault();
+  if(window.__lenis){window.__lenis.scrollTo(t,{offset:-70,duration:1.1});}
+  else{t.scrollIntoView({behavior:'smooth',block:'start'});}
+});
 </script>
 </body>
 </html>

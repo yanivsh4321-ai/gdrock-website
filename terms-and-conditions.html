@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>html{background:#030712;}body{background:#030712;}</style>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Terms, Privacy & Refund Policy — GDRock</title>
@@ -232,5 +234,14 @@ img,svg,canvas{max-width:100%;}
 <script async src="https://cdn.gdrock.com/gdrock.js"
   data-site-id="gdrock.com"
   data-api="https://cdn.gdrock.com"></script>
+<script>
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[href^="#"]');
+  if(!a)return;var id=a.getAttribute('href');if(id.length<2)return;
+  var t=document.querySelector(id);if(!t)return;e.preventDefault();
+  if(window.__lenis){window.__lenis.scrollTo(t,{offset:-70,duration:1.1});}
+  else{t.scrollIntoView({behavior:'smooth',block:'start'});}
+});
+</script>
 </body>
 </html>
