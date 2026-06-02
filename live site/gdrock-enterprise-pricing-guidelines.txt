@@ -1,0 +1,248 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GDROCK ENTERPRISE FRAMEWORK & PRICING GUIDELINES
+Confidential · For Paddle Risk Review & Prospective Enterprise Clients
+Document Version: 2026-Q2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+SECTION 1 — COMPANY & PRODUCT OVERVIEW
+────────────────────────────────────────────────────────────────────
+
+GDRock is a B2B SaaS compliance infrastructure platform built for
+EU-regulated digital businesses. Headquartered and operated under EU
+jurisdiction, GDRock provides automated GDPR compliance tooling,
+Supabase-powered data-consent storage vaults, and custom framework
+implementation services to SaaS companies, e-commerce operators,
+and AI platforms processing personal data of EU residents.
+
+All products and services are delivered as software assets,
+pre-configured digital templates, and technical implementation
+engagements. GDRock does not provide legal advice or act as a
+data protection officer or legal representative. Customers retain
+full legal responsibility for their own compliance obligations.
+
+Merchant of Record: All transactions are processed by
+Paddle.com Market Ltd. GDRock operates as the product and
+service provider under Paddle's reseller model.
+
+Contact: office@gdrock.com
+Website: gdrock.com
+Payment processor: Paddle.com Market Ltd.
+
+
+SECTION 2 — CORE PRODUCT PORTFOLIO
+────────────────────────────────────────────────────────────────────
+
+GDRock's infrastructure platform comprises three primary
+service categories:
+
+  A. AUTOMATED EU COMPLIANCE TRACKING SCRIPTS
+     Custom-coded JavaScript and server-side scripts that monitor,
+     capture, and log consent events, cookie categorisation states,
+     and data subject interactions across web properties. Scripts
+     are deployed directly to customer infrastructure (Vercel,
+     Netlify, custom servers) and operate in real time, triggering
+     webhooks and feeding structured consent records into the
+     customer's Supabase vault.
+
+  B. SUPABASE DATA-CONSENT STORAGE VAULTS
+     Purpose-built Supabase database schemas, Row Level Security
+     (RLS) policies, and edge function pipelines that store
+     granular, timestamped consent records in compliance with
+     GDPR Article 7 accountability requirements. Each vault is
+     configured to the customer's specific data categories,
+     processing purposes, and retention schedules. Customers
+     receive full ownership and access to their vault data.
+
+  C. CUSTOM FRAMEWORK IMPLEMENTATION
+     End-to-end deployment of GDRock's compliance framework
+     tailored to the customer's technology stack. This includes
+     configuration of Data Processing Agreements, Records of
+     Processing Activities (RoPA), Legitimate Interests
+     Assessments (LIA), and multi-jurisdiction policy
+     documentation for businesses operating across multiple
+     EU member states or handling cross-border AI data flows.
+
+
+SECTION 3 — ENTERPRISE SERVICE TIERS
+────────────────────────────────────────────────────────────────────
+
+GDRock offers two structured Enterprise tiers, with all pricing
+confirmed in writing prior to engagement commencement.
+
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  TIER 1: SCALE TIER                                         │
+  │  For high-volume startups and scaling SaaS platforms        │
+  ├─────────────────────────────────────────────────────────────┤
+  │                                                             │
+  │  One-Time Setup Fee:  €2,500 – €5,000                       │
+  │  (scoped based on tech stack complexity and number of       │
+  │  data processing categories)                                │
+  │                                                             │
+  │  Recurring Monthly:   €299 / month                          │
+  │  (ongoing hosted infrastructure, monitoring, and support)   │
+  │                                                             │
+  │  Ideal for:                                                 │
+  │  · Funded startups processing EU user data at scale         │
+  │  · SaaS platforms with 1–5 active data processors          │
+  │  · Businesses requiring a structured consent audit trail    │
+  │  · Shopify Plus and WooCommerce enterprise operators        │
+  │                                                             │
+  └─────────────────────────────────────────────────────────────┘
+
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  TIER 2: CUSTOM ENTERPRISE ARCHITECTURE                     │
+  │  For international AI SaaS and cross-border data platforms  │
+  ├─────────────────────────────────────────────────────────────┤
+  │                                                             │
+  │  One-Time Setup Fee:  €5,000 – €15,000                      │
+  │  (scoped based on number of jurisdictions, AI data flow     │
+  │  complexity, and custom automation requirements)            │
+  │                                                             │
+  │  Recurring Monthly:   €999 / month                          │
+  │  (priority SLA, dedicated technical account management,     │
+  │  and continuous compliance monitoring)                      │
+  │                                                             │
+  │  Ideal for:                                                 │
+  │  · AI SaaS platforms processing training or inference data  │
+  │    involving EU residents                                   │
+  │  · Multi-jurisdiction operators (e.g. EU + UK + EEA)       │
+  │  · Platforms subject to the EU AI Act or high-risk GDPR    │
+  │    processing categories (health, financial, biometric)     │
+  │  · Agencies deploying compliance infrastructure for 5+     │
+  │    client accounts simultaneously                           │
+  │                                                             │
+  └─────────────────────────────────────────────────────────────┘
+
+
+SECTION 4 — INCLUDED ENTERPRISE SERVICES
+────────────────────────────────────────────────────────────────────
+
+All Enterprise engagements (both Scale and Custom tiers) include
+the following services, with Custom Enterprise Architecture
+receiving expanded scope as noted:
+
+
+  4.1  DEDICATED DATA-MAPPING PIPELINES
+       Custom ETL pipelines mapping the customer's personal data
+       flows from collection point to storage, processing, and
+       deletion. Delivered as documented architecture diagrams and
+       Supabase schema configurations aligned to the customer's
+       RoPA obligations.
+
+  4.2  CUSTOM SUPABASE WEBHOOKS
+       Real-time webhook integrations triggering on consent grant,
+       consent withdrawal, and data subject access requests. These
+       webhooks connect GDRock's consent vault to the customer's
+       own application layer, enabling automated compliance
+       responses without manual intervention.
+
+  4.3  PRIORITY 24/7 SLA SUPPORT
+       Dedicated technical support with guaranteed response times:
+       · Critical issues (consent system down): 2-hour response
+       · High priority (misconfiguration detected): 8-hour response
+       · Standard queries: 24-hour response
+       A named GDRock technical account manager is assigned to
+       each Enterprise client for the duration of the engagement.
+
+  4.4  LIABILITY-SHIELD DOCUMENTATION PACKAGE
+       A structured set of pre-configured legal and operational
+       documents designed to demonstrate accountability under
+       GDPR Articles 5(2) and 24. Includes:
+       · Signed Data Processing Agreements (DPAs) with all active
+         processors identified during onboarding
+       · Record of Processing Activities (RoPA) completed and
+         formatted for regulatory submission
+       · Data Breach Response Protocol template (Articles 33–34)
+       · Privacy Impact Assessment (DPIA) template for high-risk
+         processing activities
+       NOTE: These documents are pre-configured software templates.
+       They are not legal advice and do not constitute a guarantee
+       of regulatory compliance. Customers are advised to review
+       all documentation with qualified legal counsel.
+
+  4.5  AUTOMATED EU COMPLIANCE TRACKING SCRIPTS
+       Custom-coded consent tracking scripts deployed to the
+       customer's infrastructure. Scripts log every consent
+       interaction with a cryptographic timestamp, user
+       identifier hash, consent category, and consent version
+       reference — creating an immutable audit trail.
+
+  4.6  SUPABASE DATA-CONSENT STORAGE VAULT
+       A dedicated, customer-owned Supabase project configured
+       with GDRock's consent schema, RLS policies, and automated
+       retention/purge logic. The vault is hosted in an EU-region
+       Supabase instance (Frankfurt or Ireland) to satisfy GDPR
+       data residency requirements.
+
+  4.7  QUARTERLY COMPLIANCE REVIEW CALLS (Custom Tier Only)
+       Four scheduled 60-minute review calls per year with a
+       GDRock technical lead. Reviews cover: consent system
+       health, new regulatory developments affecting the
+       customer's data processing, script performance metrics,
+       and vault data integrity verification.
+
+
+SECTION 5 — PRICING SUMMARY TABLE
+────────────────────────────────────────────────────────────────────
+
+  Tier                          Setup Fee          Monthly
+  ─────────────────────────────────────────────────────────────
+  Essential (DFY)               €199               —
+  Shopify Pro (DFY)             €499               —
+  SaaS Compliance (DFY)         €999               —
+  Scale Tier (Enterprise)       €2,500–€5,000      €299/mo
+  Custom Enterprise Arch.       €5,000–€15,000     €999/mo
+  ─────────────────────────────────────────────────────────────
+
+  MAXIMUM SERVICE COST (for Paddle risk assessment purposes):
+  Single engagement maximum: €15,000 one-time + €999/month
+  No customer is invoiced above these ceiling amounts without
+  a separately executed written agreement.
+
+  All prices are exclusive of applicable VAT. VAT is calculated
+  and collected by Paddle at checkout based on the customer's
+  billing country.
+
+
+SECTION 6 — REFUND POLICY
+────────────────────────────────────────────────────────────────────
+
+GDRock provides an unconditional 14-day money-back guarantee on
+all standard digital assets and subscriptions. If a customer is
+unsatisfied for any reason, a full refund can be requested within
+14 days of purchase with no explanation required.
+
+Enterprise engagements include the same 14-day refund window from
+the payment date. Where substantial custom work has been delivered
+and accepted within that period, refund requests are assessed in
+good faith and resolved directly with the customer.
+
+All refunds are processed by Paddle.com Market Ltd. as Merchant
+of Record. Refunds typically appear within 5–10 business days.
+
+Refund requests: office@gdrock.com
+
+
+SECTION 7 — CONTACT & COMMERCIAL INFORMATION
+────────────────────────────────────────────────────────────────────
+
+  Company:      GDRock
+  Website:      gdrock.com
+  Email:        office@gdrock.com
+  Billing:      Processed by Paddle.com Market Ltd. (MoR)
+  Data hosting: EU-region (Vercel + Supabase Frankfurt/Ireland)
+  Document:     GDRock Enterprise Framework & Pricing Guidelines
+  Version:      2026-Q2
+  Status:       Submitted for Paddle merchant account review
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONFIDENTIALITY NOTICE
+This document is prepared for Paddle's risk and compliance review
+team and for prospective enterprise clients. Pricing and service
+details are subject to change. All engagements are confirmed in
+writing before work commences.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
