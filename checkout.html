@@ -152,6 +152,25 @@ img,svg,canvas{max-width:100%;}
 </div>
 </div>
 </div>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+/* ===== PADDLE CONFIG — paste your 2 values from Paddle dashboard ===== */
+var PADDLE_TOKEN = "live_XXXXXXXXXXXXXXXXXXXX";   /* Paddle > Developer Tools > Authentication > Client-side token */
+var PADDLE_PRICES = {
+  core:   "pri_XXXXXXXXXXCORE",   /* Paddle > Catalog > Products > Core Pack  > Price ID */
+  care:   "pri_XXXXXXXXXXCARE",   /* Care   price ID */
+  pro:    "pri_XXXXXXXXXXPRO",    /* Pro    price ID */
+  agency: "pri_XXXXXXXXXXAGENCY"  /* Agency price ID */
+};
+/* ==================================================================== */
+var PADDLE_READY=false;
+try{
+  if(window.Paddle && PADDLE_TOKEN.indexOf("XXXX")===-1){
+    Paddle.Initialize({ token: PADDLE_TOKEN });
+    PADDLE_READY=true;
+  }
+}catch(e){}
+</script>
 <script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
 <script>
 (function(){var p=new URLSearchParams(window.location.search).get('plan');if(p){var c=document.querySelector('.plan-card[data-plan="'+p+'"]');if(c){document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('selected');});c.classList.add('selected');}}})();
@@ -177,10 +196,12 @@ function handleCheckout(){
   if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
   var d=selectedPlan?selectedPlan.dataset:{};
   fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'checkout',name:first+(last?' '+last:''),email:email,website_url:url,plan:d.name||d.plan||''})}).catch(function(){});
-  /* PADDLE v2 — uncomment after Paddle.Setup({vendor:YOUR_VENDOR_ID}):
-  Paddle.Checkout.open({items:[{priceId:d.paddle,quantity:1}],customer:{email:email},customData:{customer_name:first+' '+last,website_url:url,vat_number:document.getElementById('f-vat').value.trim(),country:document.getElementById('f-country').value},successCallback:function(data){window.location.href='thank-you.html?order='+data.checkout.id;}});
-  return; */
-  alert('Checkout ready (Paddle placeholder)\n\nPlan: '+d.name+'\nTotal: €'+d.price+(d.billing!=='one-time'?'/mo':'')+'\nEmail: '+email+'\n\nWire up Paddle.Checkout.open() to go live.');
+  var priceId=PADDLE_PRICES[d.plan];
+  if(PADDLE_READY && priceId && priceId.indexOf('XXXX')===-1){
+    Paddle.Checkout.open({items:[{priceId:priceId,quantity:1}],customer:{email:email},customData:{customer_name:first+(last?' '+last:''),website_url:url,vat_number:document.getElementById('f-vat').value.trim(),country:document.getElementById('f-country').value},settings:{successUrl:'https://www.gdrock.com/?purchase=success'}});
+  } else {
+    alert('Payment is being activated. Email office@gdrock.com to complete your order and we will send a secure payment link within minutes.');
+  }
 }
 updateSummary();
 </script>
