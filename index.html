@@ -192,6 +192,45 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 48px;background:r
 @media(max-width:900px){.products-grid{grid-template-columns:repeat(2,1fr);}.prob-intro,.prob-grid,.dfy-card,.free-card{grid-template-columns:1fr;}#customizer>.reveal{grid-template-columns:1fr!important;}.steps{grid-template-columns:repeat(2,1fr);}.faq-grid{grid-template-columns:1fr;}.email-row{flex-direction:column;}}
 @media(max-width:600px){nav,.container,footer{padding-left:20px;padding-right:20px;}.hero-content{padding:64px 20px 0;}section{padding:60px 0;}.products-grid{grid-template-columns:1fr;}.nav-links{display:none;}.hero h1{font-size:36px;}.scan-row{flex-direction:column;}.scanner-card,.dfy-card,.free-card,.fine-inner,.contact-card{padding:24px 18px;}}
 </style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style id="gdrock-premium">
+/* ===== PREMIUM TYPOGRAPHY (Geist / Inter / Geist Mono) ===== */
+:root{--D:'Geist','Inter',-apple-system,sans-serif;--B:'Inter',-apple-system,sans-serif;--M:'Geist Mono',ui-monospace,monospace;}
+body{font-family:var(--B);letter-spacing:-.011em;}
+h1,h2,h3,h4,.sec-title,.hero h1,.scanner-card h2,.fine-inner h2,.dfy-card h2,.prod-name,.checkout-head h1,.sum-plan,.modal h2,.login-card h1,.sidebar-header h2{font-family:var(--D)!important;letter-spacing:-.04em!important;font-weight:700;}
+.hero h1{font-weight:800;}
+p,.sec-sub,.hero-sub,.prod-desc,.prob-card p,.step p,.dfy-card p,.faq-a{font-family:var(--B);letter-spacing:-.011em;}
+.prod-price,.fine-amt,.dfy-price,.plan-price,.sum-total,.score-num,.fine-tier-amount,.step-num{font-family:var(--M)!important;font-feature-settings:'tnum' 1;}
+.prod-tier,.sec-label,.panel-label,.plan-tag,.feat-badge,.ticker .tick-item,.trust-item{font-family:var(--M)!important;letter-spacing:.02em;}
+/* ===== NO HORIZONTAL OVERFLOW (down to 320px) ===== */
+html,body{max-width:100vw;overflow-x:hidden;}
+*{min-width:0;}
+img,svg,canvas{max-width:100%;}
+/* ===== ENTERPRISE GLASS CARDS ===== */
+.prod-card,.prob-card,.step,.scanner-card,.dfy-card,.free-card,.fine-inner,.contact-card,.faq-item,.panel,.service-card,.what-item{background:rgba(10,15,30,.7)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08)!important;border-radius:16px;transition:all .3s cubic-bezier(.16,1,.3,1);}
+.prod-card:hover,.prob-card:hover,.step:hover,.faq-item:hover,.service-card:hover,.panel:hover{transform:translateY(-4px);border-color:rgba(0,201,177,.45)!important;}
+.prod-card.feat{border-color:rgba(26,109,255,.4)!important;}
+/* ===== HERO DATA-GRID BACKDROP + FLOAT ===== */
+.hero{position:relative;}
+.hero::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 75% 70% at 62% 48%,#000 28%,transparent 78%);mask-image:radial-gradient(ellipse 75% 70% at 62% 48%,#000 28%,transparent 78%);}
+@keyframes gdFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+#hero-canvas{top:-20px!important;height:calc(100% + 40px)!important;animation:gdFloat 6s ease-in-out infinite;z-index:2;}
+.hero-content,.hero-grad,.scroll-hint{z-index:5;}
+/* ===== FLUID HEADINGS + MOBILE FOCUS ===== */
+.hero h1{font-size:clamp(30px,7.5vw,82px);line-height:1.02;word-break:normal;overflow-wrap:break-word;}
+.sec-title{font-size:clamp(26px,5.5vw,52px);}
+@media(max-width:768px){
+  .products-grid{grid-template-columns:1fr!important;}
+  .prob-grid,.steps,.faq-grid{grid-template-columns:1fr!important;}
+  .help-fab{display:none!important;}
+  nav .btn-nav{padding:8px 14px!important;font-size:12px!important;}
+}
+@media(max-width:420px){
+  nav{padding:0 16px!important;}
+  .container,.wrap,.hero-content{padding-left:16px!important;padding-right:16px!important;}
+  .hero-content [style*="display:flex"]{flex-wrap:wrap;}
+}
+</style>
 </head>
 <body>
 <nav><div class="nav-inner">
@@ -243,7 +282,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:44px 48px;background:r
 <div class="products-grid stagger">
 <div class="prod-card"><div class="prod-tier">Tier 0 &middot; Free</div><div class="prod-name">Starter</div><div class="prod-price">&euro;0 <span>/ always</span></div><p class="prod-desc">Scan your site + get the basics guide and checklist.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Free GDPR site scan</li><li><span class="ck">&check;</span>GDPR Basics guide (PDF)</li><li><span class="ck">&check;</span>5-step compliance checklist</li><li><span class="ck">&check;</span>GDPR fine-tier reference</li></ul><button class="prod-btn" onclick="openModal('free')">Download free &rarr;</button></div>
 <div class="prod-card feat"><div class="feat-badge">Most Popular</div><div class="prod-tier">Tier 1 &middot; One-time</div><div class="prod-name">Core Pack</div><div class="prod-price">&euro;29 <span>/ one-time</span></div><p class="prod-desc">Complete pre-configured toolkit. Copy, paste, publish in 10 minutes.</p><ul class="prod-feats"><li><span class="ck">&check;</span>White-label privacy policy</li><li><span class="ck">&check;</span>Cookie banner script</li><li><span class="ck">&check;</span>Data retention table</li><li><span class="ck">&check;</span>Breach response pack</li><li><span class="ck">&check;</span>Shopify setup guide</li><li><span class="ck">&check;</span>Lifetime updates</li></ul><a class="prod-btn pri" href="checkout.html?plan=core">Get Core Pack &rarr;</a></div>
-<div class="prod-card"><div class="prod-tier">Tier 2 &middot; Monthly</div><div class="prod-name">Care</div><div class="prod-price">&euro;39 <span>/ month</span></div><div class="prod-save">&#128737; 7-day money-back guarantee</div><p class="prod-desc">Hosted cookie banner &mdash; one script tag, forever maintained.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Core Pack</li><li><span class="ck">&check;</span>Hosted banner (1 script tag)</li><li><span class="ck">&check;</span>Auto-updates on law changes</li><li><span class="ck">&check;</span>Monthly compliance alerts</li><li><span class="ck">&check;</span>Email support</li></ul><a class="prod-btn pri" href="checkout.html?plan=care">Get Care &rarr;</a></div>
+<div class="prod-card"><div class="prod-tier">Tier 2 &middot; Monthly</div><div class="prod-name">Care</div><div class="prod-price">&euro;39 <span>/ month</span></div><div class="prod-save">&#128737; 14-day money-back guarantee</div><p class="prod-desc">Hosted cookie banner &mdash; one script tag, forever maintained.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Core Pack</li><li><span class="ck">&check;</span>Hosted banner (1 script tag)</li><li><span class="ck">&check;</span>Auto-updates on law changes</li><li><span class="ck">&check;</span>Monthly compliance alerts</li><li><span class="ck">&check;</span>Email support</li></ul><a class="prod-btn pri" href="checkout.html?plan=care">Get Care &rarr;</a></div>
 <div class="prod-card"><div class="prod-tier">Tier 3 &middot; Monthly</div><div class="prod-name">Pro</div><div class="prod-price">&euro;79 <span>/ month</span></div><p class="prod-desc">Full compliance platform for your own brands.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Care</li><li><span class="ck">&check;</span>25-step compliance board</li><li><span class="ck">&check;</span>Consent logs &amp; reports</li><li><span class="ck">&check;</span>Up to 2 stores</li><li><span class="ck">&check;</span>Priority support</li></ul><a class="prod-btn pri" href="checkout.html?plan=pro">Get Pro &rarr;</a></div>
 <div class="prod-card"><div class="prod-tier">Tier 4 &middot; Monthly</div><div class="prod-name">Agency</div><div class="prod-price">&euro;199 <span>/ month</span></div><p class="prod-desc">For agencies managing client compliance.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Pro</li><li><span class="ck">&check;</span>White-label rights</li><li><span class="ck">&check;</span>Up to 5 client stores</li><li><span class="ck">&check;</span>DPA templates</li><li><span class="ck">&check;</span>Client reports</li></ul><a class="prod-btn" href="checkout.html?plan=agency">Get Agency &rarr;</a></div>
 <div class="prod-card"><div class="prod-tier">Tier 5 &middot; High-Volume</div><div class="prod-name">Enterprise</div><div class="prod-price">&euro;499+ <span>/ month</span></div><div class="prod-save">Custom volume pricing</div><p class="prod-desc">Unlimited stores, dedicated manager, custom SLAs.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Agency</li><li><span class="ck">&check;</span>Unlimited stores &amp; domains</li><li><span class="ck">&check;</span>Dedicated onboarding manager</li><li><span class="ck">&check;</span>Custom SLAs &amp; data residency</li><li><span class="ck">&check;</span>SSO &amp; audit log exports</li></ul><a href="#contact" class="prod-btn pri" style="text-decoration:none;">Talk to Sales &rarr;</a></div>
