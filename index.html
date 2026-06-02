@@ -244,7 +244,8 @@ img,svg,canvas{max-width:100%;}
   #customizer .reveal>div:last-child>div{max-width:100%!important;overflow:hidden;}
   .dfy-card,.free-card,.grid,.prob-intro,.app.visible{grid-template-columns:1fr!important;}
 }
-</style></head>
+</style><style>/* HERO-ANTIFLASH */.hero-badge,.hero h1,.hero-sub,.hero-btns,.trust-row{opacity:0;visibility:hidden;}</style>
+</head>
 <body>
 <nav><div class="nav-inner">
 <a href="/" class="logo"><svg width="26" height="28" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#00c9b1" stroke-width="2.5" fill="rgba(0,201,177,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#00c9b1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GDRock</a>
@@ -427,11 +428,12 @@ composer.addPass(grain);composer.addPass(new OutputPass());
 const mouse={x:0,y:0,lx:0,ly:0};
 window.addEventListener('mousemove',e=>{mouse.x=(e.clientX/W()-.5)*2;mouse.y=(e.clientY/H()-.5)*2;});
 window.addEventListener('resize',()=>{camera.aspect=W()/H();camera.updateProjectionMatrix();renderer.setSize(W(),H());composer.setSize(W(),H());});
-gsap.fromTo('.hero-badge',{opacity:0,y:20},{opacity:1,y:0,duration:1,delay:.3,ease:'power3.out'});
-gsap.fromTo('.hero h1',{opacity:0,y:40},{opacity:1,y:0,duration:1.1,delay:.5,ease:'power3.out'});
-gsap.fromTo('.hero-sub',{opacity:0,y:30},{opacity:1,y:0,duration:1,delay:.75,ease:'power3.out'});
-gsap.fromTo('.hero-btns',{opacity:0,y:20},{opacity:1,y:0,duration:.9,delay:.95,ease:'power3.out'});
-gsap.fromTo('.trust-row',{opacity:0},{opacity:1,duration:.8,delay:1.15});
+
+
+
+
+
+var __heroShown=false;function revealHero(){if(__heroShown)return;__heroShown=true;gsap.fromTo('.hero-badge',{autoAlpha:0,y:20},{autoAlpha:1,y:0,duration:1,delay:.15,ease:'power3.out'});gsap.fromTo('.hero h1',{autoAlpha:0,y:40},{autoAlpha:1,y:0,duration:1.1,delay:.3,ease:'power3.out'});gsap.fromTo('.hero-sub',{autoAlpha:0,y:30},{autoAlpha:1,y:0,duration:1,delay:.5,ease:'power3.out'});gsap.fromTo('.hero-btns',{autoAlpha:0,y:20},{autoAlpha:1,y:0,duration:.9,delay:.7,ease:'power3.out'});gsap.fromTo('.trust-row',{autoAlpha:0},{autoAlpha:1,duration:.8,delay:.9});}
 const clock=new THREE.Clock();
 function animate(){
   requestAnimationFrame(animate);
@@ -448,6 +450,7 @@ function animate(){
   pts.rotation.y+=delta*.035;pts.rotation.x+=delta*.012;
   grain.uniforms.time.value=t*.8;
   composer.render(delta);
+  if(!__heroShown)revealHero();
 }
 animate();
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target);}}),{threshold:.1});
@@ -534,5 +537,6 @@ document.addEventListener('click',function(e){
   else{t.scrollIntoView({behavior:'smooth',block:'start'});}
 });
 </script>
+<script>/* HERO-FALLBACK */setTimeout(function(){document.querySelectorAll('.hero-badge,.hero h1,.hero-sub,.hero-btns,.trust-row').forEach(function(e){if(getComputedStyle(e).visibility==='hidden'){e.style.visibility='visible';e.style.opacity='1';}});},2600);</script>
 </body>
 </html>
