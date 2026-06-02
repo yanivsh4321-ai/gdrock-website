@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 30 34%27%3E%3Cpath d=%27M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z%27 fill=%27%2304081a%27 stroke=%27%2300c9b1%27 stroke-width=%272.5%27/%3E%3Cpath d=%27M10 16.5L13.5 20L20 13%27 stroke=%27%2300c9b1%27 stroke-width=%272.5%27 fill=%27none%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<title>Complete Your DFY Setup — GDRock</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500;700;800&family=Inter:wght@400;500;600&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#04081a;--bright:#1a6dff;--teal2:#00c9b1;--g300:#9CA3AF;--g500:#5b6a8a;--D:'Geist',sans-serif;--B:'Inter',sans-serif;--M:'Geist Mono',monospace;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#030712;}
+body{font-family:var(--B);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;letter-spacing:-.01em;}
+.card{background:rgba(10,15,30,.7);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:40px;max-width:480px;width:100%;}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--D);font-weight:800;font-size:19px;margin-bottom:24px;}
+.eyebrow{font-family:var(--M);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal2);margin-bottom:8px;}
+h1{font-family:var(--D);font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px;}
+.price{font-family:var(--M);font-size:34px;font-weight:500;margin:14px 0 4px;}
+.price span{font-size:13px;color:var(--g300);}
+.desc{color:var(--g300);font-size:14px;line-height:1.6;margin-bottom:20px;}
+.feats{list-style:none;display:flex;flex-direction:column;gap:8px;margin:0 0 24px;padding:18px 0;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);}
+.feats li{display:flex;gap:9px;font-size:13px;color:var(--g300);}
+.ck{color:var(--teal2);font-weight:700;flex-shrink:0;}
+.field{margin-bottom:12px;}
+label{display:block;font-size:11px;color:var(--g500);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:12px 14px;color:#fff;font-size:14px;font-family:var(--B);outline:none;transition:border-color .2s;}
+input:focus{border-color:var(--teal2);}
+.btn{width:100%;padding:15px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--bright),#0055ff);color:#fff;font-size:15px;font-weight:700;font-family:var(--D);cursor:pointer;transition:all .25s;margin-top:8px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(26,109,255,.5);}
+.guar{text-align:center;font-size:12px;color:var(--g500);margin-top:14px;}
+.bad{color:#fca5a5;font-size:13px;text-align:center;padding:40px 0;}
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="logo"><svg width="24" height="26" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#00c9b1" stroke-width="2.5" fill="rgba(0,201,177,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#00c9b1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GDRock</div>
+  <div id="content"></div>
+</div>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+var TOKEN="live_f6041bfb7a1abf79ded05c9031e";
+var PLANS={
+  basic:{name:"DFY — Basic Setup",price:"199",pid:"pri_01kt59ntp3sdxt54ap5h3vmav7",desc:"We install your cookie banner and configure your privacy policy directly on your store. Live within 48 hours.",feats:["Cookie consent banner installed","Privacy policy configured","Live in 48 hours","14-day money-back guarantee"]},
+  shopify:{name:"DFY — Shopify Full Setup",price:"499",pid:"pri_01kt59rg49v4p3x5gysgnx2b9z",desc:"Complete done-for-you Shopify GDPR setup — banner, policy, consent logging, and full compliance verification.",feats:["Full Shopify cookie & consent setup","Privacy policy + retention table","Consent logging configured","Compliance verified across store","Live in 48 hours","14-day money-back guarantee"]},
+  saas:{name:"DFY — SaaS Compliance",price:"999",pid:"pri_01kt59t6mydjracqzpwf447m2j",desc:"Full SaaS compliance deployment — banner, policy, DPAs, consent logging, and breach response setup.",feats:["Cookie banner + privacy policy","Data Processing Agreements","Consent logging + breach response","Configured for your platform","Priority delivery","14-day money-back guarantee"]}
+};
+var ready=false;try{if(window.Paddle){Paddle.Initialize({token:TOKEN});ready=true;}}catch(e){}
+var key=new URLSearchParams(location.search).get('plan');
+var P=PLANS[key];
+var c=document.getElementById('content');
+if(!P){
+  c.innerHTML='<div class="bad">Invalid link. Please use the checkout link sent to you by GDRock, or email office@gdrock.com.</div>';
+}else{
+  c.innerHTML='<div class="eyebrow">Done-For-You Setup</div>'+
+    '<h1>'+P.name+'</h1>'+
+    '<div class="price">&euro;'+P.price+' <span>/ one-time</span></div>'+
+    '<p class="desc">'+P.desc+'</p>'+
+    '<ul class="feats">'+P.feats.map(function(f){return '<li><span class="ck">&check;</span><span>'+f+'</span></li>';}).join('')+'</ul>'+
+    '<div class="field"><label>Full name</label><input id="n" placeholder="Jane Doe"></div>'+
+    '<div class="field"><label>Email</label><input id="e" type="email" placeholder="jane@store.com"></div>'+
+    '<div class="field"><label>Your website</label><input id="u" placeholder="yourstore.com"></div>'+
+    '<button class="btn" id="pay">Pay securely &mdash; &euro;'+P.price+' &rarr;</button>'+
+    '<div class="guar">&#128274; Secured by Paddle &middot; 14-day money-back guarantee</div>';
+  document.getElementById('pay').onclick=function(){
+    var e=document.getElementById('e').value.trim(),n=document.getElementById('n').value.trim(),u=document.getElementById('u').value.trim();
+    if(!n){alert('Please enter your name.');return;}
+    if(!e||!e.includes('@')){alert('Please enter a valid email.');return;}
+    fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'dfy-checkout',name:n,email:e,website_url:u,plan:P.name})}).catch(function(){});
+    if(ready){Paddle.Checkout.open({items:[{priceId:P.pid,quantity:1}],customer:{email:e},customData:{customer_name:n,website_url:u},settings:{successUrl:'https://www.gdrock.com/?purchase=success'}});}
+    else{alert('Payment is loading — please try again in a moment, or email office@gdrock.com.');}
+  };
+}
+</script>
+</body>
+</html>
