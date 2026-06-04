@@ -389,6 +389,16 @@ async function sendEmail(env, to, subject, html) {
 
 // Build + send the compliance scan report to the visitor, and notify office@gdrock.com
 async function sendScanReport(env, email, domain, result) {
+  // Primary: send via Zoho SMTP (Vercel serverless function)
+  try {
+    await fetch("https://gdrock-banner-git-main-gd-rock-s-projects.vercel.app/api/send-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to: email, domain: domain, score: result.score, summary: result.summary, issues: result.issues }),
+    });
+    return; // sent via Zoho — done
+  } catch (e) { /* fall through to ZeptoMail/Resend below */ }
+
   const score = result.score ?? "—";
   const color = score >= 80 ? "#00a896" : score >= 60 ? "#f5c842" : "#e63946";
   const issues = (result.issues || []).map(i => {
