@@ -405,10 +405,15 @@ async function sendScanReport(env, email, domain, result) {
     <div style="text-align:center;font-size:48px;font-weight:800;color:${color};margin-bottom:8px;">${score}/100</div>
     <p style="color:#9CA3AF;font-size:14px;text-align:center;line-height:1.6;margin:0 0 24px;">${result.summary || ""}</p>
     <table style="width:100%;border-collapse:collapse;">${issues}</table>
-    <div style="text-align:center;margin-top:28px;">
-      <a href="https://www.gdrock.com/checkout.html?plan=core" style="display:inline-block;background:#1a6dff;color:#fff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:10px;">Fix everything with Core Pack — €29 →</a>
+    <div style="background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.25);border-radius:12px;padding:18px;margin-top:24px;">
+      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 4px;text-align:center;">Stay compliant automatically — Care, €39/mo</p>
+      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0 0 14px;text-align:center;">GDPR rules change. Care is a hosted banner (one script tag) that <b style="color:#fff;">auto-updates when the law changes</b>, plus monthly compliance alerts and support. Fix it once, never worry again.</p>
+      <div style="text-align:center;"><a href="https://www.gdrock.com/checkout.html?plan=care" style="display:inline-block;background:#00a896;color:#fff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:10px;">Get Care — €39/mo →</a></div>
     </div>
-    <p style="color:#5b6a8a;font-size:12px;text-align:center;margin-top:24px;line-height:1.6;">Core Pack fixes all critical issues in under 10 minutes.<br>Questions? Just reply to this email.</p>
+    <div style="text-align:center;margin-top:14px;">
+      <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#9CA3AF;font-size:13px;text-decoration:underline;">Or just the DIY templates — Core Pack €29 one-time →</a>
+    </div>
+    <p style="color:#5b6a8a;font-size:12px;text-align:center;margin-top:20px;line-height:1.6;">Both include the 14-day money-back guarantee.<br>Questions? Just reply to this email.</p>
   </div>`;
 
   // 1) send report to the visitor
