@@ -269,29 +269,27 @@ export default {
       const body = await request.json().catch(() => ({}));
       const { url: rawUrl, email } = body;
       if (!rawUrl) return json({ error: "Missing url" }, 400);
-      const domain = rawUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "").trim();
+      const domain = rawUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "").trim().toLowerCase();
       const fullUrl = "https://" + domain;
-      const isGdrock = domain.includes("gdrock");
 
-      let result;
-      if (!env.ANTHROPIC_API_KEY) {
-        result = heuristicScan(domain);
-      } else {
-        const prompt = `You are a GDPR compliance expert. Analyse ${fullUrl}.${isGdrock ? " IMPORTANT: gdrock.com is a GDPR compliance SaaS. It has a proper GDRock cookie banner with Accept/Reject/Customize, privacy policy at /terms-and-conditions.html, Supabase consent logging, Paddle MoR DPA, 14-day refund policy. Score 93-97/100." : ""} Check: cookie banner with accept/reject before trackers fire, privacy policy with processors and retention periods, terms page, data forms with disclosure, consent withdrawal mechanism, DPAs, breach process, retention schedule, consent logging, EU data collection, cookie categories explained, legitimate business. Respond ONLY with JSON: {"score":<0-100>,"is_real_site":true,"site_description":"...","summary":"2 sentences","issues":[{"severity":"critical|warning|good","text":"..."}]}. Include 5-8 issues.`;
-        try {
-          const r = await fetch("https://api.anthropic.com/v1/messages", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "anthropic-version": "2023-06-01", "x-api-key": env.ANTHROPIC_API_KEY },
-            body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 800, system: "Respond with valid JSON only, no markdown.", messages: [{ role: "user", content: prompt }] }),
-          });
-          const data = await r.json();
-          const raw = data.content?.[0]?.text?.trim() || "";
-          const start = raw.indexOf("{"), end = raw.lastIndexOf("}");
-          result = start === -1 ? heuristicScan(domain) : JSON.parse(raw.slice(start, end + 1));
-        } catch (e) {
-          result = heuristicScan(domain);
-        }
+      // 1) SCRAPE the real site (clean text + links + trackers)
+      const scraped = await scrapeSite(fullUrl);
+      if (!scraped.ok || (scraped.text || "").length < 80) {
+        return json({ score: 0, is_real_site: false,
+          site_description: "Could not load this site.",
+          summary: "The site did not respond or returned no readable homepage content.",
+          legal_disclaimer: SCAN_DISCLAIMER,
+          issues: [{ severity: "warning", text: "Site could not be reached or has no readable homepage content. Check the URL and that the site is live." }] });
       }
+
+      // 2) Analyse with LLM on REAL scraped data (objective, no favoritism)
+      let result;
+      if (env.OPENAI_API_KEY || env.ANTHROPIC_API_KEY) {
+        try { result = await llmScan(env, buildScanPrompt(fullUrl, scraped)); }
+        catch (e) { result = null; }
+      }
+      if (!result || typeof result.score !== "number") result = signalScan(domain, scraped);
+      result.legal_disclaimer = result.legal_disclaimer || SCAN_DISCLAIMER;
 
       // Email the report to the visitor + notify office@gdrock.com (best-effort, never blocks the response)
       if (email && email.includes("@")) {
@@ -308,7 +306,7 @@ export default {
       const data = body?.data || {};
       const email = data.customer?.email || data.billing_details?.email || "";
       const rawSiteUrl = data.custom_data?.website_url || "";
-      const siteId = rawSiteUrl.toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "").trim();
+      const siteId = rawSiteUrl.toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "").trim().toLowerCase();
       const items = data.items || [];
       const plan = items[0]?.price?.id ? "care" : "care"; // update with real price IDs
 
@@ -450,31 +448,118 @@ async function supabasePatch(env, siteId, data) {
   }).catch(() => {});
 }
 
-function heuristicScan(domain) {
-  const isGdrock = domain.includes("gdrock");
-  if (isGdrock) return {
-    score: 95, is_real_site: true,
-    site_description: "GDRock is a GDPR compliance SaaS platform providing cookie consent banners, privacy policy templates, and compliance infrastructure for EU businesses.",
-    summary: "GDRock operates a fully compliant GDPR infrastructure with proper consent banner, detailed privacy policy, Supabase consent logging, and 14-day refund guarantee.",
-    issues: [
-      { severity: "good", text: "Cookie consent banner with Accept/Reject/Customize options correctly deployed" },
-      { severity: "good", text: "Comprehensive privacy policy covering all processors, retention periods, and GDPR rights" },
-      { severity: "good", text: "Consent logs stored in Supabase with full audit trail" },
-      { severity: "good", text: "14-day unconditional refund policy clearly stated" },
-      { severity: "good", text: "Data Processing Agreements in place with Paddle, Supabase, and Vercel" },
-      { severity: "warning", text: "Consider adding a visible cookie settings link in the footer for easy consent withdrawal" },
-    ]
-  };
-  return {
-    score: 42, is_real_site: true,
-    site_description: "Website at " + domain,
-    summary: "This site likely has several common GDPR compliance gaps. A full technical audit is recommended.",
-    issues: [
-      { severity: "critical", text: "Cookie consent may not block non-essential trackers before consent � verify GA4 and Meta Pixel consent mode" },
-      { severity: "critical", text: "Privacy policy may not include complete processor list and retention periods per data category" },
-      { severity: "warning", text: "No clear mechanism for users to withdraw consent after initial choice" },
-      { severity: "warning", text: "Data Processing Agreements with processors should be verified and documented" },
-      { severity: "good", text: "Site appears to be a legitimate operational business" },
-    ]
-  };
+const SCAN_DISCLAIMER = "This report is generated automatically by an AI text analysis tool for informational purposes only. It does not constitute legal advice, a formal compliance audit, or a guarantee of regulatory immunity. Users should consult qualified legal counsel for actual GDPR compliance verification.";
+
+// Fetch a site and extract clean visible text + privacy/terms links + trackers/CMPs
+async function scrapeSite(url) {
+  try {
+    const r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (compatible; GDRockScanner/1.0; +https://gdrock.com)" }, cf: { cacheTtl: 60 }, redirect: "follow" });
+    if (!r.ok) return { ok: false };
+    const html = (await r.text()) || "";
+    const low = html.toLowerCase();
+    const text = html
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&[a-z#0-9]+;/gi, " ")
+      .replace(/\s+/g, " ").trim().slice(0, 6000);
+    const links = new Set();
+    const re = /<a[^>]+href="([^"]+)"[^>]*>([^<]*)</gi; let m;
+    while ((m = re.exec(html)) && links.size < 20) {
+      const blob = ((m[1] || "") + " " + (m[2] || "")).toLowerCase();
+      if (/privacy|datenschutz|confidential|terms|agb|conditions|impressum|cookie|legal/.test(blob)) links.add((m[1] || "").slice(0, 140));
+    }
+    const trackers = [];
+    const tsig = { "Google Analytics/GA4": /gtag\(|googletagmanager|google-analytics/, "Meta Pixel": /fbq\(|connect\.facebook\.net/, "Hotjar": /static\.hotjar|hotjar\.com/, "Microsoft Clarity": /clarity\.ms/, "TikTok Pixel": /analytics\.tiktok|tiktok[^"]*pixel/, "Google Ads": /googleadservices|googlesyndication/ };
+    for (const [n, rx] of Object.entries(tsig)) if (rx.test(low)) trackers.push(n);
+    const cmps = [];
+    const csig = { Cookiebot: /cookiebot/, OneTrust: /onetrust|optanon/, Usercentrics: /usercentrics/, CookieYes: /cookieyes/, Iubenda: /iubenda/, Complianz: /complianz/, Borlabs: /borlabs/, Termly: /termly/, "GDRock": /gdrock\.js|data-site-id/ };
+    for (const [n, rx] of Object.entries(csig)) if (rx.test(low)) cmps.push(n);
+    return { ok: true, text, links: [...links].slice(0, 12), trackers, cmps, low };
+  } catch (e) { return { ok: false }; }
+}
+
+// Build the objective analysis prompt from REAL scraped data
+function buildScanPrompt(fullUrl, s) {
+  const discoveredLinks = s.links.length ? s.links.join(", ") : "None found";
+  const detectedCookies = ([...s.trackers, ...s.cmps.map(c => c + " (consent manager)")].join(", ")) || "None detected in page source";
+  return `You are an automated website text analyzer specializing in identifying privacy policy indicators and data tracking disclosures.
+
+Your task is to review the provided website metadata, visible page text, and cookie manifests to flag potential compliance risks. You are NOT providing legal advice or a definitive compliance audit; you are generating an informational risk report.
+
+### INPUT DATA TO ANALYZE:
+- Target URL: ${fullUrl}
+- Scraped Homepage Text: ${s.text}
+- Privacy/Terms Links Discovered: ${discoveredLinks}
+- Active Cookies/Trackers Detected: ${detectedCookies}
+
+### SCORING METHODOLOGY (0-100):
+Base your score strictly on the evidence present in the input data. Do not assume backend processes exist unless explicitly documented in the scraped text (e.g., explicit mention of consent logging or specific payment processor DPAs like Paddle or Stripe).
+- 90-100: Excellent visibility of explicit consent mechanisms, clear vendor callouts, robust retention schedules, and easily accessible policies.
+- 70-89: Basic cookie banner and policies are present, but missing specific disclosures (e.g., explicit retention periods, explicit data processor lists, or clear withdrawal steps).
+- 40-69: Major gaps, such as tracking cookies firing without an obvious banner, or missing a clear privacy policy link.
+- Below 40: Critical risk or non-functional/placeholder site.
+
+### STRICT CONSTRAINTS:
+1. Treat ALL domains completely objectively based ONLY on the provided input data. Never hardcode, artificially inflate, or favor any specific domain or SaaS platform.
+2. If the input data is empty, generic, or a placeholder, set "is_real_site" to false and stop.
+3. Do not assume or hallucinate features that are not explicitly stated in the input text.
+
+### OUTPUT FORMAT:
+Respond ONLY with a valid JSON object. No markdown, no commentary.
+{
+  "score": <number 0-100>,
+  "is_real_site": <boolean>,
+  "site_description": "objective description of the business/site based on the text.",
+  "summary": "2-sentence max overview of privacy indicators found or missing.",
+  "legal_disclaimer": "This report is generated automatically by an AI text analysis tool for informational purposes only. It does not constitute legal advice, a formal compliance audit, or a guarantee of regulatory immunity. Users should consult qualified legal counsel for actual GDPR compliance verification.",
+  "issues": [ { "severity": "critical|warning|good", "text": "Specific finding tied to the input data." } ]
+}
+Ensure "issues" contains between 5 and 8 highly specific points based directly on the provided input data.`;
+}
+
+// Call OpenAI (gpt-4o-mini, JSON mode) if keyed, else Anthropic. Returns parsed JSON.
+async function llmScan(env, prompt) {
+  if (env.OPENAI_API_KEY) {
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + env.OPENAI_API_KEY },
+      body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, max_tokens: 900, temperature: 0.2 }),
+    });
+    const d = await r.json();
+    return JSON.parse(d.choices?.[0]?.message?.content || "{}");
+  }
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "anthropic-version": "2023-06-01", "x-api-key": env.ANTHROPIC_API_KEY },
+    body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 900, system: "Respond with valid JSON only, no markdown.", messages: [{ role: "user", content: prompt }] }),
+  });
+  const d = await r.json();
+  const raw = d.content?.[0]?.text || "";
+  const a = raw.indexOf("{"), b = raw.lastIndexOf("}");
+  return JSON.parse(raw.slice(a, b + 1));
+}
+
+// Real signal-based fallback (no API key) — objective, varied, no favoritism
+function signalScan(domain, s) {
+  let score = 100; const issues = [];
+  const hasPrivacy = s.links.some(l => /privacy|datenschutz|confidential/.test(l.toLowerCase())) || /privacy policy|datenschutz/.test(s.low);
+  const hasTerms = s.links.some(l => /terms|agb|conditions|impressum/.test(l.toLowerCase())) || /\bterms\b|impressum/.test(s.low);
+  const hasCookieWords = /cookie|consent/.test(s.low);
+  const hasCMP = s.cmps.length > 0;
+  const hasTrackers = s.trackers.length > 0;
+  if (hasTrackers && !hasCMP) { score -= 35; issues.push({ severity: "critical", text: "Trackers detected (" + s.trackers.join(", ") + ") but no recognised consent manager - cookies likely fire before consent (top GDPR violation)." }); }
+  else if (hasTrackers && hasCMP) { issues.push({ severity: "good", text: "Consent manager detected (" + s.cmps.join(", ") + ") alongside trackers." }); }
+  else if (!hasTrackers) { issues.push({ severity: "good", text: "No third-party trackers detected in the homepage source." }); }
+  if (!hasPrivacy) { score -= 25; issues.push({ severity: "critical", text: "No privacy policy link found on the homepage." }); }
+  else issues.push({ severity: "good", text: "Privacy policy link is present." });
+  if (!hasCookieWords) { score -= 20; issues.push({ severity: "critical", text: "No cookie/consent banner detected in the page source." }); }
+  else if (!hasCMP) issues.push({ severity: "warning", text: "Cookie wording present but no standard consent platform detected - verify reject-before-consent actually works." });
+  if (!hasTerms) { score -= 10; issues.push({ severity: "warning", text: "No terms/legal page link found on the homepage." }); }
+  else issues.push({ severity: "good", text: "Terms/legal page link is present." });
+  issues.push({ severity: "warning", text: "Verify your privacy policy names every processor (payments, email, analytics) with retention periods per data category." });
+  score = Math.max(15, Math.min(98, score));
+  return { score, is_real_site: true, site_description: "Website at " + domain,
+    summary: "Automated signal scan of the homepage source. " + (score >= 70 ? "Core privacy indicators are present." : "Several GDPR indicators appear to be missing."),
+    legal_disclaimer: SCAN_DISCLAIMER, issues: issues.slice(0, 8) };
 }
