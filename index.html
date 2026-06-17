@@ -7,6 +7,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="GDRock — GDPR compliance infrastructure for EU businesses. Cookie consent banner, privacy policy templates, and done-for-you setup. Get compliant in minutes from €29.">
 <link rel="canonical" href="https://www.gdrock.com">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GDRock — Calculate your GDPR fine risk in 10 seconds">
+<meta property="og:description" content="Free GDPR fine estimator + AI compliance scanner. See your real exposure, then fix it from €29.">
+<meta property="og:image" content="https://www.gdrock.com/assets/risk-bg.png">
+<meta property="og:url" content="https://www.gdrock.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GDRock — Calculate your GDPR fine risk in 10 seconds">
+<meta name="twitter:description" content="Free GDPR fine estimator + AI compliance scanner. See your exposure, then fix it from €29.">
+<meta name="twitter:image" content="https://www.gdrock.com/assets/risk-bg.png">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2304081a' stroke='%2300c9b1' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%2300c9b1' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <title>GDRock — GDPR Compliance for EU Businesses</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -245,20 +254,290 @@ img,svg,canvas{max-width:100%;}
   .dfy-card,.free-card,.grid,.prob-intro,.app.visible{grid-template-columns:1fr!important;}
 }
 </style><style>/* HERO-ANTIFLASH */.hero-badge,.hero h1,.hero-sub,.hero-btns,.trust-row{opacity:0;visibility:hidden;}</style>
+<style id="gdrock-redesign">
+/* ============================================================
+   GDROCK REDESIGN — single-accent, de-slopped, premium-restraint
+   Override layer. Touches no HTML structure or JS.
+   ============================================================ */
+:root{
+  --acc:#11c5ad;            /* the ONE accent — teal, slightly desaturated */
+  --acc-bright:#2fe0c8;
+  --acc-ink:#03110f;        /* dark text that sits on the accent */
+  --ink:#070d20;            /* off-black surface, tinted to the navy hue */
+  --line:rgba(148,170,205,.12);
+  --line-hi:rgba(17,197,173,.40);
+}
+/* ---- 1. KILL THE BLUE→TEAL "AI GRADIENT" : one accent, everywhere ---- */
+.grad-text{
+  -webkit-text-fill-color:var(--acc-bright);
+  background:none;color:var(--acc-bright);
+}
+.btn-primary,.prod-btn.pri,.btn-nav{
+  background:var(--acc)!important;color:var(--acc-ink)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 8px 24px -10px rgba(17,197,173,.6);
+  border:none!important;
+}
+.btn-primary:hover,.prod-btn.pri:hover,.btn-nav:hover{
+  background:var(--acc-bright)!important;transform:translateY(-2px);
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 16px 36px -12px rgba(17,197,173,.75);
+}
+.btn-primary:active,.prod-btn.pri:active,.btn-nav:active,.prod-btn:active,.btn-outline:active{
+  transform:translateY(0) scale(.985);
+}
+.step-num{
+  background:rgba(17,197,173,.08)!important;border-color:var(--line-hi)!important;color:var(--acc-bright)!important;
+}
+/* scanner progress bar + sundry gradients → single accent */
+.scan-bar{background:var(--acc)!important;}
+.prod-card::before{background:linear-gradient(90deg,transparent,var(--acc),transparent)!important;}
+/* ---- 2. BADGES : less candy-pill, more product-label ---- */
+.hero-badge{
+  background:rgba(17,197,173,.07);border:1px solid rgba(17,197,173,.22);
+  border-radius:8px;color:var(--acc-bright);
+}
+.feat-badge{
+  background:var(--acc);color:var(--acc-ink);border-radius:7px;
+  font-weight:700;letter-spacing:.06em;
+}
+.bdot{background:var(--acc);box-shadow:0 0 0 4px rgba(17,197,173,.14);}
+/* ---- 3. SURFACES : refined cards, tinted shadows, real hover, spotlight ---- */
+.prod-card,.prob-card,.step,.scanner-card,.dfy-card,.free-card,.fine-inner,.contact-card,.faq-item{
+  position:relative;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012))!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 48px -28px rgba(0,8,26,.9);
+}
+.prod-card:hover,.prob-card:hover,.step:hover,.faq-item:hover{
+  border-color:var(--line-hi)!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -26px rgba(0,8,26,1), 0 0 0 1px rgba(17,197,173,.10);
+}
+/* cursor-tracked spotlight border (21st.dev-style restraint) */
+.prod-card::after,.prob-card::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  opacity:0;transition:opacity .3s;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(17,197,173,.10),transparent 45%);
+}
+.prod-card:hover::after,.prob-card:hover::after{opacity:1;}
+/* featured pricing tier: emphasis via accent, not a blue wash */
+.prod-card.feat{
+  background:linear-gradient(180deg,rgba(17,197,173,.06),rgba(255,255,255,.012))!important;
+  border-color:var(--line-hi)!important;
+  box-shadow:0 0 0 1px rgba(17,197,173,.18), 0 30px 70px -30px rgba(17,197,173,.4);
+}
+/* ---- 4. ACCESSIBILITY : visible focus for keyboard users ---- */
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,.prod-btn:focus-visible{
+  outline:2px solid var(--acc-bright);outline-offset:2px;border-radius:8px;
+}
+/* ---- 5. TEXTURE : break the digital flatness (subtle film grain) ---- */
+html::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:3;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* ---- 6. LAYOUT : mobile-safe viewport + breathing room ---- */
+.hero{min-height:100dvh;height:auto;padding:96px 0 64px;}
+section{padding:96px 0 104px;}      /* optical: slightly more bottom */
+.prod-feats{min-height:0;}
+/* tidy the teal accent on misc accents that were blue */
+.dfy-buls li::before,.ck,.trust-icon,.faq-q::after,.site-info-lbl,.tick-dot{color:var(--acc-bright)!important;}
+.sec-label,.sec-label::before,.dfy-eye,.prod-tier{color:var(--acc-bright)!important;}
+.sec-label::before{background:var(--acc-bright)!important;}
+/* ---- 7. ICONS : real line-icons, one consistent stroke (no emoji) ---- */
+.prob-icon{color:var(--acc-bright);display:flex;height:34px;width:34px;align-items:center;justify-content:center;margin-bottom:16px;border-radius:9px;background:rgba(17,197,173,.08);border:1px solid rgba(17,197,173,.16);}
+.prob-icon svg{width:19px;height:19px;}
+.doc-icon{background:rgba(17,197,173,.1)!important;color:var(--acc-bright);}
+.doc-icon svg{width:18px;height:18px;}
+.free-tag svg{width:14px;height:14px;color:var(--acc-bright);vertical-align:-2px;margin-right:2px;}
+</style>
+<style id="gdrock-estimator">
+/* ============================================================
+   GDPR FINE ESTIMATOR — the interactive hook. Two-pole color
+   semantics: teal = safe/compliant, amber→red = risk/fine.
+   ============================================================ */
+:root{--risk-amber:#f6b73c;--risk:#ef4444;--risk-deep:#b91c1c;--safe:var(--acc-bright);}
+.est-sec{position:relative;overflow:hidden;}
+.est-bg{position:absolute;inset:0;z-index:0;background-position:center;background-size:cover;opacity:.16;
+  -webkit-mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,#000,transparent 80%);
+  mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,#000,transparent 80%);}
+.est-wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:stretch;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:24px;padding:40px;
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 40px 90px -50px rgba(0,8,26,1);}
+.est-head .sec-label{color:var(--risk-amber)!important;}
+.est-head .sec-label::before{background:var(--risk-amber)!important;}
+.est-title{font-family:var(--D);font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:10px 0 8px;}
+.est-sub{color:var(--g300);font-size:14px;line-height:1.6;margin-bottom:26px;max-width:42ch;}
+.est-field{margin-bottom:22px;}
+.est-flabel{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--g500);font-family:var(--M);margin-bottom:10px;}
+.est-fval{font-family:var(--M);font-size:15px;color:#fff;letter-spacing:0;text-transform:none;}
+.est-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;outline:none;cursor:pointer;
+  background:linear-gradient(90deg,var(--safe),var(--risk-amber) 60%,var(--risk));}
+.est-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--navy);box-shadow:0 4px 14px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.3);cursor:grab;transition:transform .15s;}
+.est-slider::-webkit-slider-thumb:active{transform:scale(1.15);cursor:grabbing;}
+.est-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--navy);cursor:grab;}
+.est-chips{display:flex;flex-wrap:wrap;gap:9px;}
+.est-chip{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;user-select:none;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--g300);transition:all .2s cubic-bezier(.16,1,.3,1);}
+.est-chip:hover{border-color:rgba(255,255,255,.25);color:#fff;}
+.est-chip .est-tick{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--g500);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.est-chip.on{background:var(--risk-bg,rgba(239,68,68,.1));border-color:rgba(239,68,68,.45);color:#fff;}
+.est-chip.on .est-tick{background:var(--risk);border-color:var(--risk);}
+.est-chip.on .est-tick svg{opacity:1;}
+.est-chip .est-tick svg{width:11px;height:11px;opacity:0;color:#fff;}
+/* result side */
+.est-result{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(ellipse 90% 70% at 50% 0%,rgba(239,68,68,.08),transparent 70%),rgba(7,10,24,.5);
+  border:1px solid rgba(239,68,68,.18);border-radius:18px;padding:30px 24px;}
+.gauge{position:relative;width:200px;height:118px;margin-bottom:6px;}
+.gauge svg{width:100%;height:100%;overflow:visible;}
+.gauge-track{fill:none;stroke:rgba(255,255,255,.08);stroke-width:13;stroke-linecap:round;}
+.gauge-fill{fill:none;stroke:url(#gaugeGrad);stroke-width:13;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.16,1,.3,1);}
+.gauge-score{position:absolute;bottom:2px;left:0;right:0;}
+.gauge-num{font-family:var(--M);font-size:40px;font-weight:700;line-height:1;letter-spacing:-.02em;}
+.gauge-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--g500);margin-top:4px;}
+.est-riskword{font-family:var(--D);font-size:20px;font-weight:800;letter-spacing:-.01em;margin:10px 0 2px;}
+.est-exposure-lbl{font-size:12px;color:var(--g500);text-transform:uppercase;letter-spacing:.1em;margin-top:18px;}
+.est-exposure{font-family:var(--M);font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.02em;color:#fff;line-height:1.05;margin-top:2px;}
+.est-maxline{font-size:12px;color:var(--g500);margin-top:12px;line-height:1.5;max-width:34ch;}
+.est-cta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px;width:100%;}
+.est-cta .btn-primary,.est-cta .btn-outline{flex:1;justify-content:center;min-width:140px;}
+.est-disclaimer{font-size:10.5px;color:#5b6a8a;margin-top:16px;line-height:1.5;max-width:40ch;}
+@media(max-width:860px){.est-wrap{grid-template-columns:1fr;gap:28px;padding:26px 20px;}}
+/* count-up helper */
+.countup{font-variant-numeric:tabular-nums;}
+</style>
+<style id="gdrock-v3">
+/* ============================================================
+   GDROCK V3 — premium monochrome rebuild. Near-black + a single
+   emerald accent, huge editorial type, heavy whitespace, restraint.
+   Re-skins everything; touches no functional JS.
+   ============================================================ */
+:root{
+  --bg:#08090c;--bg2:#0d0f14;--ink:#f4f6fa;--ink2:#9aa2b2;--ink3:#5c6373;
+  --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);
+  --acc:#2bd98e;--acc2:#16b274;--acc-ink:#04140d;
+  /* remap legacy tokens so old rules inherit the new system */
+  --navy:#08090c;--blue:#2bd98e;--bright:#2bd98e;--teal:#2bd98e;--teal2:#2bd98e;
+  --g300:#9aa2b2;--g500:#5c6373;--acc-bright:#34e39a;
+  --D:'Geist','Inter',-apple-system,sans-serif;--B:'Inter','Geist',sans-serif;--M:'Geist Mono',ui-monospace,monospace;
+}
+html,body{background:var(--bg)!important;}
+body{color:var(--ink)!important;font-family:var(--B);letter-spacing:-.012em;-webkit-font-smoothing:antialiased;}
+/* ---- TYPE: huge, confident, tight ---- */
+.hero h1{font-family:var(--D)!important;font-size:clamp(44px,8.8vw,128px)!important;font-weight:800!important;letter-spacing:-.045em!important;line-height:.94!important;max-width:16ch;}
+.hero h1 .grad-text{color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important;background:none!important;}
+.sec-title,.est-title,.scanner-card h2,.fine-inner h2,.dfy-card h2,.free-card .sec-title{
+  font-family:var(--D)!important;font-size:clamp(30px,5vw,68px)!important;letter-spacing:-.04em!important;line-height:1.02!important;font-weight:800!important;}
+.hero-sub,.sec-sub{font-size:clamp(16px,1.5vw,20px)!important;color:var(--ink2)!important;line-height:1.6!important;max-width:50ch;}
+.sec-label,.dfy-eye,.prod-tier,.est-head .sec-label{color:var(--acc)!important;font-family:var(--M)!important;letter-spacing:.14em!important;font-size:11px!important;}
+.sec-label::before,.est-head .sec-label::before{background:var(--acc)!important;}
+.grad-text{color:var(--acc)!important;-webkit-text-fill-color:var(--acc)!important;background:none!important;}
+/* ---- SPACE: let it breathe ---- */
+section{padding:clamp(76px,12vh,168px) 0!important;}
+.container{max-width:1160px!important;}
+/* ---- BUTTONS: clean pills (Apple/premium) ---- */
+.btn-primary,.prod-btn.pri{background:var(--ink)!important;color:#08090c!important;border:none!important;border-radius:100px!important;
+  font-family:var(--D)!important;font-weight:600!important;padding:15px 30px!important;box-shadow:none!important;transition:transform .25s,box-shadow .25s,background .25s!important;}
+.btn-primary:hover,.prod-btn.pri:hover{background:#fff!important;transform:translateY(-2px)!important;box-shadow:0 14px 40px -14px rgba(255,255,255,.3)!important;}
+.btn-nav{background:var(--ink)!important;color:#08090c!important;border-radius:100px!important;font-family:var(--D)!important;}
+.btn-nav:hover{background:#fff!important;}
+.btn-outline{border-radius:100px!important;border:1px solid var(--line2)!important;color:var(--ink)!important;font-weight:500!important;padding:15px 28px!important;background:transparent!important;}
+.btn-outline:hover{background:rgba(255,255,255,.05)!important;border-color:var(--ink2)!important;}
+.prod-btn{border-radius:100px!important;}
+/* a few key conversion CTAs get the emerald accent */
+.est-cta .btn-primary,.fine-inner .btn-primary,.prod-card.feat .prod-btn.pri{background:var(--acc)!important;color:var(--acc-ink)!important;}
+.est-cta .btn-primary:hover,.fine-inner .btn-primary:hover,.prod-card.feat .prod-btn.pri:hover{background:var(--acc-bright)!important;box-shadow:0 14px 40px -14px rgba(43,217,142,.5)!important;}
+/* ---- SURFACES: near-flat, hairline, generous ---- */
+.prod-card,.prob-card,.step,.scanner-card,.dfy-card,.free-card,.fine-inner,.contact-card,.faq-item,.est-wrap,.est-result,.api-notice{
+  background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.01))!important;
+  border:1px solid var(--line)!important;border-radius:20px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 40px 80px -50px rgba(0,0,0,1)!important;}
+.prod-card:hover,.prob-card:hover,.step:hover,.faq-item:hover{border-color:var(--line2)!important;transform:translateY(-4px)!important;}
+.prod-card.feat{border-color:rgba(43,217,142,.4)!important;background:linear-gradient(180deg,rgba(43,217,142,.06),rgba(255,255,255,.01))!important;box-shadow:0 0 0 1px rgba(43,217,142,.18),0 40px 80px -45px rgba(43,217,142,.35)!important;}
+.prod-card::after,.prob-card::after{background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(43,217,142,.1),transparent 45%)!important;}
+.ck,.trust-icon,.dfy-buls li::before,.doc-icon,.prob-icon,.free-tag svg,.faq-q::after{color:var(--acc)!important;}
+.prob-icon{background:rgba(43,217,142,.08)!important;border-color:rgba(43,217,142,.18)!important;}
+.feat-badge{background:var(--acc)!important;color:var(--acc-ink)!important;}
+.hero-badge{background:rgba(43,217,142,.08)!important;border:1px solid rgba(43,217,142,.22)!important;color:var(--acc)!important;border-radius:100px!important;font-family:var(--M)!important;}
+.bdot{background:var(--acc)!important;}
+/* ---- NAV: minimal, refined ---- */
+nav{background:rgba(8,9,12,.6)!important;border-bottom:1px solid var(--line)!important;height:68px!important;}
+.nav-links a{color:var(--ink2)!important;font-size:14px!important;}
+.nav-links a:hover{color:var(--ink)!important;}
+.logo,.foot-logo{font-family:var(--D)!important;font-weight:600!important;letter-spacing:-.02em!important;}
+/* ---- TICKER + dividers: monochrome ---- */
+.ticker{background:rgba(255,255,255,.02)!important;border-color:var(--line)!important;}
+.tick-dot{color:var(--acc)!important;}
+.how,#dfy,#scanner,#contact,.fine-sec,#customizer{background:transparent!important;}
+/* ---- HERO: centered, Apple-style, product visual ---- */
+.hero{min-height:100dvh!important;height:auto!important;text-align:center;padding:120px 0 80px!important;}
+.hero::before{display:none!important;}
+#hero-canvas{display:none!important;}
+.hero-grad{background:radial-gradient(ellipse 60% 50% at 50% 38%,rgba(43,217,142,.10),transparent 70%)!important;}
+.hero-content{display:flex!important;flex-direction:column;align-items:center;padding-top:0!important;}
+.hero h1{margin:18px auto 20px!important;}
+.hero-sub{margin:0 auto 34px!important;text-align:center;}
+.hero-btns{justify-content:center!important;}
+.trust-row{justify-content:center!important;}
+.hero-visual{margin:54px auto 0;max-width:760px;width:100%;}
+.hero-visual img{width:100%;height:auto;border-radius:22px;display:block;filter:drop-shadow(0 50px 90px rgba(0,0,0,.7));animation:heroFloat 7s ease-in-out infinite;}
+@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.scanner-card,.est-wrap{backdrop-filter:none!important;}
+/* scanner inputs */
+.scan-input,.email-inp,.modal-inp{border-radius:12px!important;background:rgba(255,255,255,.05)!important;border:1px solid var(--line)!important;}
+.scan-input:focus,.email-inp:focus,.modal-inp:focus{border-color:var(--acc)!important;}
+.modal{background:#0c0e13!important;border:1px solid var(--line2)!important;border-radius:22px!important;}
+footer{background:transparent!important;border-top:1px solid var(--line)!important;}
+.help-fab{background:var(--acc)!important;color:var(--acc-ink)!important;border-radius:100px!important;}
+@media(max-width:600px){.hero{padding:96px 0 60px!important;}.hero-visual{margin-top:36px;}}
+/* ---- product dashboard mockup (CSS/SVG — Linear/Stripe style, no AI) ---- */
+.app-mock{max-width:1040px;margin:56px auto 0;border-radius:18px;overflow:hidden;border:1px solid var(--line2);
+  background:linear-gradient(180deg,#0e1016,#0a0b0f);box-shadow:0 50px 120px -50px rgba(0,0,0,1),0 0 0 1px rgba(255,255,255,.03);}
+.app-bar{display:flex;align-items:center;gap:7px;padding:0 16px;height:42px;background:#0c0d12;border-bottom:1px solid var(--line);}
+.app-dot{width:11px;height:11px;border-radius:50%;background:#2a2d36;}
+.app-dot:nth-child(1){background:#ff5f57;}.app-dot:nth-child(2){background:#febc2e;}.app-dot:nth-child(3){background:#28c840;}
+.app-url{margin-left:14px;font-family:var(--M);font-size:12px;color:var(--ink3);}
+.app-body{display:grid;grid-template-columns:200px 1fr;min-height:380px;}
+.app-side{border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:4px;}
+.app-side .brand{display:flex;align-items:center;gap:8px;font-family:var(--D);font-weight:600;font-size:15px;margin-bottom:16px;}
+.app-side .brand svg{color:var(--acc);}
+.nav-i{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;font-size:13px;color:var(--ink2);}
+.nav-i.on{background:rgba(43,217,142,.1);color:var(--ink);}
+.nav-i .nd{width:7px;height:7px;border-radius:2px;background:currentColor;opacity:.6;}
+.app-main{padding:22px 24px;display:flex;flex-direction:column;gap:18px;}
+.app-top{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;}
+.ring-wrap{position:relative;width:108px;height:108px;flex-shrink:0;}
+.ring-wrap .lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-wrap .n{font-family:var(--M);font-size:26px;font-weight:600;color:var(--acc);}
+.ring-wrap .t{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:2px;}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.tile{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:13px 14px;}
+.tile .tv{font-family:var(--M);font-size:20px;font-weight:600;}
+.tile .tk{font-size:11px;color:var(--ink3);margin-top:3px;}
+.log{border:1px solid var(--line);border-radius:13px;overflow:hidden;}
+.log-h{display:grid;grid-template-columns:1.4fr 1fr auto;gap:10px;padding:10px 16px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);background:rgba(255,255,255,.02);border-bottom:1px solid var(--line);font-family:var(--M);}
+.log-r{display:grid;grid-template-columns:1.4fr 1fr auto;gap:10px;padding:11px 16px;font-size:12.5px;align-items:center;border-bottom:1px solid var(--line);}
+.log-r:last-child{border-bottom:0;}
+.log-r .tm{font-family:var(--M);color:var(--ink2);}
+.pill{justify-self:end;font-size:11px;font-family:var(--M);padding:3px 10px;border-radius:100px;}
+.pill.ok{color:var(--acc);background:rgba(43,217,142,.1);border:1px solid rgba(43,217,142,.25);}
+.pill.no{color:#ff8a8f;background:rgba(255,90,95,.1);border:1px solid rgba(255,90,95,.25);}
+@media(max-width:680px){.app-body{grid-template-columns:1fr;}.app-side{flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);}.app-top{grid-template-columns:1fr;}.tiles{grid-template-columns:1fr 1fr;}.log-h,.log-r{grid-template-columns:1.4fr auto;}.log-h span:nth-child(2),.log-r .ev{display:none;}}
+</style>
 </head>
 <body>
 <nav><div class="nav-inner">
 <a href="/" class="logo"><svg width="26" height="28" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#00c9b1" stroke-width="2.5" fill="rgba(0,201,177,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#00c9b1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GDRock</a>
-<ul class="nav-links"><li><a href="#scanner">Free Scan</a></li><li><a href="#products">Pricing</a></li><li><a href="#dfy">Done-For-You</a></li><li><a href="#faq">FAQ</a></li></ul>
+<ul class="nav-links"><li><a href="#estimator">Fine Risk</a></li><li><a href="#scanner">Free Scan</a></li><li><a href="#products">Pricing</a></li><li><a href="#dfy">Done-For-You</a></li><li><a href="#faq">FAQ</a></li></ul>
 <div style="display:flex;align-items:center;gap:12px;"><a href="#contact" style="color:#a5b1cc;font-size:14px;text-decoration:none;">Contact</a><a href="#products" class="btn-nav">View Plans &rarr;</a></div>
 </div></nav>
 <section class="hero"><canvas id="hero-canvas"></canvas><div class="hero-grad"></div>
 <div class="hero-content">
-<div class="hero-badge"><div class="bdot"></div>GDPR Compliance &middot; Made Simple</div>
-<h1>Your store is <span class="grad-text">one fine away</span><br>from disaster.</h1>
-<p class="hero-sub">Drop-in cookie banner, AI compliance scanner, privacy policies and consent logs &mdash; for Shopify, WooCommerce, Webflow &amp; SaaS.</p>
-<div class="hero-btns"><a href="#scanner" class="btn-primary">Scan my site free &rarr;</a><a href="checkout.html?plan=core" class="btn-outline">Core Pack &mdash; &euro;29</a></div>
+<div class="hero-badge"><div class="bdot"></div>GDPR compliance infrastructure</div>
+<h1>One fine away<br>from disaster.</h1>
+<p class="hero-sub">The complete GDPR layer for modern stores &mdash; cookie consent, privacy policies, consent logs and an AI compliance scanner. Live in minutes.</p>
+<div class="hero-btns"><a href="#estimator" class="btn-primary">Check my risk &rarr;</a><a href="#scanner" class="btn-outline">Scan my site free</a></div>
 <div class="trust-row"><div class="trust-item"><span class="trust-icon">&check;</span>14-day money-back</div><div class="trust-item"><span class="trust-icon">&check;</span>EU data hosting</div><div class="trust-item"><span class="trust-icon">&check;</span>Payments by Paddle</div><div class="trust-item"><span class="trust-icon">&check;</span>No card for scan</div></div>
+<div class="hero-visual"><img src="assets/hero-shield.png" alt="GDRock — your store, protected" loading="eager"></div>
 </div>
 <div class="scroll-hint"><div class="scroll-line"></div><div class="scroll-txt">Scroll</div></div>
 </section>
@@ -266,11 +545,50 @@ img,svg,canvas{max-width:100%;}
 <span class="tick-item"><span class="tick-dot">&diams;</span>&euro;4.5 billion in GDPR fines since 2018</span><span class="tick-item"><span class="tick-dot">&diams;</span>Average fine for small businesses: &euro;12k&ndash;&euro;45k</span><span class="tick-item"><span class="tick-dot">&diams;</span>72 hours to notify regulators of a breach</span><span class="tick-item"><span class="tick-dot">&diams;</span>60% of EU stores are non-compliant</span><span class="tick-item"><span class="tick-dot">&diams;</span>Get compliant in under 10 minutes</span>
 <span class="tick-item"><span class="tick-dot">&diams;</span>&euro;4.5 billion in GDPR fines since 2018</span><span class="tick-item"><span class="tick-dot">&diams;</span>Average fine for small businesses: &euro;12k&ndash;&euro;45k</span><span class="tick-item"><span class="tick-dot">&diams;</span>72 hours to notify regulators of a breach</span><span class="tick-item"><span class="tick-dot">&diams;</span>60% of EU stores are non-compliant</span><span class="tick-item"><span class="tick-dot">&diams;</span>Get compliant in under 10 minutes</span>
 </div></div>
+<section class="est-sec" id="estimator"><div class="est-bg" id="est-bg" style="background-image:url('assets/risk-bg.webp');"></div><div class="container"><div class="est-wrap reveal">
+<div class="est-head">
+<div class="sec-label">Free tool &middot; 10-second risk check</div>
+<h2 class="est-title">How much could a GDPR fine <span style="color:var(--risk-amber);">cost you</span>?</h2>
+<p class="est-sub">Move the slider and tick what applies to your store. We estimate your real exposure under GDPR &mdash; live.</p>
+<div class="est-field">
+<div class="est-flabel"><span>Your annual revenue</span><span class="est-fval" id="rev-val">&euro;500,000</span></div>
+<input type="range" class="est-slider" id="rev-slider" min="0" max="100" value="42" aria-label="Annual revenue">
+</div>
+<div class="est-field">
+<div class="est-flabel" style="margin-bottom:12px;"><span>What's true for your store?</span></div>
+<div class="est-chips" id="est-chips">
+<span class="est-chip on" data-w="18"><span class="est-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>I use cookies / analytics</span>
+<span class="est-chip on" data-w="16"><span class="est-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>I collect emails / customer data</span>
+<span class="est-chip on" data-w="14"><span class="est-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>I sell to EU customers</span>
+<span class="est-chip on" data-w="22"><span class="est-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>No real cookie-consent banner</span>
+<span class="est-chip on" data-w="18"><span class="est-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>No / outdated privacy policy</span>
+<span class="est-chip" data-w="12"><span class="est-tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></span>Never had a compliance check</span>
+</div>
+</div>
+</div>
+<div class="est-result">
+<div class="gauge">
+<svg viewBox="0 0 200 118"><defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00c9b1"/><stop offset="0.55" stop-color="#f6b73c"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs>
+<path class="gauge-track" d="M16 110 A 84 84 0 0 1 184 110"/>
+<path class="gauge-fill" id="gauge-fill" d="M16 110 A 84 84 0 0 1 184 110"/></svg>
+<div class="gauge-score"><div class="gauge-num countup" id="risk-num" style="color:var(--risk);">0</div><div class="gauge-lbl">Risk score</div></div>
+</div>
+<div class="est-riskword" id="risk-word" style="color:var(--risk);">Calculating&hellip;</div>
+<div class="est-exposure-lbl">Likely fine if audited</div>
+<div class="est-exposure countup" id="exposure">&euro;0</div>
+<div class="est-maxline">Statutory maximum: <strong style="color:#fff;" id="stat-max">&euro;20M</strong> &mdash; up to &euro;20M or 4% of annual turnover, whichever is higher.</div>
+<div class="est-cta">
+<a href="#scanner" class="btn-primary">Scan my site free &rarr;</a>
+<a href="checkout.html?plan=core" class="btn-outline">Fix it &mdash; &euro;29</a>
+</div>
+<p class="est-disclaimer">Awareness estimate based on GDPR Art. 83, your inputs and published enforcement patterns &mdash; not legal advice or a guarantee.</p>
+</div>
+</div></div></section>
 <section style="background:linear-gradient(180deg,transparent,rgba(0,51,170,.06),transparent);" id="scanner"><div class="container"><div class="scanner-card reveal">
 <div class="sec-label" style="justify-content:center;">Free tool &middot; AI-powered</div>
 <h2>Checks 14 compliance points in under <span class="grad-text">20 seconds</span></h2>
 <p>Enter your URL and our AI reviews cookies, consent flow, privacy pages, trackers, and data processors.</p>
-<div class="api-notice" id="api-notice">&#129302; <strong>AI-powered scanner</strong> &mdash; analyses your real website for GDPR compliance issues. Free, no sign-up required.</div>
+<div class="api-notice" id="api-notice"><strong>AI-powered scanner</strong> &mdash; analyses your real website for GDPR compliance issues. Free, no sign-up required.</div>
 <div id="scan-form-wrap" style="display:flex;flex-direction:column;gap:10px;max-width:520px;margin:0 auto;text-align:left;">
 <input type="text" class="scan-input" id="scan-url" placeholder="Website URL (e.g. yourstore.com)" autocomplete="url">
 <input type="email" class="scan-input" id="scan-email" placeholder="Business email (where we send your report)" autocomplete="email">
@@ -281,19 +599,19 @@ img,svg,canvas{max-width:100%;}
 <div class="scan-success" id="scan-success" style="display:none;text-align:center;padding:18px 4px;">
 <div style="width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:rgba(0,201,177,.12);border:1px solid rgba(0,201,177,.35);display:flex;align-items:center;justify-content:center;">
 <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#00c9b1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-<h3 style="font-family:var(--D);font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px;">Scan Complete!</h3>
-<p style="color:#9CA3AF;font-size:15px;line-height:1.65;max-width:440px;margin:0 auto 18px;">We have dispatched your <strong style="color:#fff;">Interactive Compliance Score</strong> and your <strong style="color:#fff;">Free Banner Download Pack</strong> directly to your inbox. Check your email now to view your risk vectors and deploy your setup.</p>
-<div style="display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#00c9b1;background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.2);border-radius:8px;padding:9px 16px;"><span>&#9993;</span> Check your inbox &mdash; including spam/promotions</div><p style="font-size:11px;color:#5b6a8a;line-height:1.6;max-width:440px;margin:16px auto 0;">This scan is automated and for informational purposes only — not legal advice, a formal audit, or a compliance guarantee. GDRock provides software tools and templates, not legal services.</p>
+<h3 style="font-family:var(--D);font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px;">Scan complete</h3>
+<p style="color:#9CA3AF;font-size:15px;line-height:1.65;max-width:440px;margin:0 auto 18px;">We've sent your <strong style="color:#fff;">compliance score</strong> and <strong style="color:#fff;">free banner pack</strong> to your inbox. Open it to see your compliance gaps and get set up.</p>
+<div style="display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#00c9b1;background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.2);border-radius:8px;padding:9px 16px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Check your inbox &mdash; including spam/promotions</div><p style="font-size:11px;color:#5b6a8a;line-height:1.6;max-width:440px;margin:16px auto 0;">This scan is automated and for informational purposes only — not legal advice, a formal audit, or a compliance guarantee. GDRock provides software tools and templates, not legal services.</p>
 </div>
 <div class="scan-result" id="scan-result"><div class="score-num" id="score-display"></div><div class="score-lbl" id="score-label"></div><div id="fake-warn" class="fake-warn"></div><div id="site-info" class="site-info"><div class="site-info-lbl">Site identified as</div><div class="site-info-txt" id="site-info-txt"></div></div><div id="sum-box" class="sum-box"></div><div class="issues-list" id="issues-list"></div><a class="btn-primary" style="width:100%;justify-content:center;margin-bottom:9px;" href="checkout.html?plan=core">Fix automatically with GDRock &rarr;</a><p class="help-line">Core Pack fixes all critical issues in under 10 min. Questions? <a href="mailto:office@gdrock.com">office@gdrock.com</a></p></div>
 </div></div></section>
 <section id="problem"><div class="container">
 <div class="prob-intro"><div class="reveal"><div class="sec-label">The problem</div><h2 class="sec-title">Most online stores are <span class="grad-text">non-compliant</span> right now.</h2></div><div class="reveal"><p class="sec-sub">GDPR has been enforced since 2018. Regulators are actively fining businesses of all sizes &mdash; and the mistakes are almost always the same four things.</p></div></div>
 <div class="prob-grid stagger">
-<div class="prob-card"><span class="prob-icon">&#127850;</span><h3>No proper cookie banner</h3><p>A notification bar is not enough. GDPR requires a real accept/reject choice before any non-essential cookies load.</p></div>
-<div class="prob-card"><span class="prob-icon">&#128196;</span><h3>Outdated privacy policy</h3><p>Copy-pasted policies don't cut it. Your policy must name your actual processors, retention periods, and lawful bases.</p></div>
-<div class="prob-card"><span class="prob-icon">&#9201;</span><h3>No breach response plan</h3><p>GDPR requires you to notify regulators within 72 hours of a data breach. Most businesses have no plan.</p></div>
-<div class="prob-card"><span class="prob-icon">&#128451;</span><h3>No data retention schedule</h3><p>You can't keep customer data forever. GDPR requires defined retention periods for every data type.</p></div>
+<div class="prob-card"><span class="prob-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 14.5h18"/><path d="M7 17.5h4"/><circle cx="15.5" cy="17.5" r="1"/></svg></span><h3>No proper cookie banner</h3><p>A notification bar is not enough. GDPR requires a real accept/reject choice before any non-essential cookies load.</p></div>
+<div class="prob-card"><span class="prob-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 16.5h4"/></svg></span><h3>Outdated privacy policy</h3><p>Copy-pasted policies don't cut it. Your policy must name your actual processors, retention periods, and lawful bases.</p></div>
+<div class="prob-card"><span class="prob-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M12 9v4"/><path d="M12 16h.01"/></svg></span><h3>No breach response plan</h3><p>GDPR requires you to notify regulators within 72 hours of a data breach. Most businesses have no plan.</p></div>
+<div class="prob-card"><span class="prob-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg></span><h3>No data retention schedule</h3><p>You can't keep customer data forever. GDPR requires defined retention periods for every data type.</p></div>
 </div></div></section>
 <section class="how" id="how"><div class="container">
 <div style="text-align:center;" class="reveal"><div class="sec-label" style="justify-content:center;">How it works</div><h2 class="sec-title">Compliant in 4 steps.</h2></div>
@@ -303,19 +621,57 @@ img,svg,canvas{max-width:100%;}
 <div class="step"><div class="step-num">3</div><h3>Paste &amp; publish</h3><p>Cookie script in your header. Privacy policy as a page. Done in 10 minutes.</p></div>
 <div class="step"><div class="step-num">4</div><h3>Stay covered</h3><p>Care subscribers get automatic updates when EU law changes.</p></div>
 </div></div></section>
+<section id="platform"><div class="container">
+<div style="text-align:center;" class="reveal"><div class="sec-label" style="justify-content:center;">The platform</div><h2 class="sec-title">Your compliance,<br>in one place.</h2><p class="sec-sub" style="text-align:center;margin:14px auto 0;max-width:48ch;">Consent logs, live banner status and policy versions &mdash; tracked automatically and always audit-ready.</p></div>
+<div class="app-mock reveal">
+<div class="app-bar"><span class="app-dot"></span><span class="app-dot"></span><span class="app-dot"></span><span class="app-url">app.gdrock.com/consent</span></div>
+<div class="app-body">
+<div class="app-side">
+<div class="brand"><svg width="18" height="20" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(43,217,142,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
+<div class="nav-i on"><span class="nd"></span>Overview</div>
+<div class="nav-i"><span class="nd"></span>Consent logs</div>
+<div class="nav-i"><span class="nd"></span>Cookie banner</div>
+<div class="nav-i"><span class="nd"></span>Privacy policy</div>
+<div class="nav-i"><span class="nd"></span>Data requests</div>
+<div class="nav-i"><span class="nd"></span>Settings</div>
+</div>
+<div class="app-main">
+<div class="app-top">
+<div class="ring-wrap">
+<svg viewBox="0 0 108 108"><circle cx="54" cy="54" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/><circle cx="54" cy="54" r="48" fill="none" stroke="#2bd98e" stroke-width="9" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="9" transform="rotate(-90 54 54)"/></svg>
+<div class="lbl"><span class="n">97</span><span class="t">Compliant</span></div>
+</div>
+<div class="tiles">
+<div class="tile"><div class="tv">12,840</div><div class="tk">Consents logged</div></div>
+<div class="tile"><div class="tv">3,201</div><div class="tk">Trackers blocked pre-consent</div></div>
+<div class="tile"><div class="tv">2 min</div><div class="tk">Since last sync</div></div>
+</div>
+</div>
+<div class="log">
+<div class="log-h"><span>Time</span><span>Event</span><span>Status</span></div>
+<div class="log-r"><span class="tm">14:52:07</span><span class="ev">Consent &middot; reject non-essential</span><span class="pill ok">logged</span></div>
+<div class="log-r"><span class="tm">14:51:40</span><span class="ev">Banner served &middot; EU visitor</span><span class="pill ok">ok</span></div>
+<div class="log-r"><span class="tm">14:50:12</span><span class="ev">Pre-consent tracker</span><span class="pill no">blocked</span></div>
+<div class="log-r"><span class="tm">14:49:55</span><span class="ev">Consent &middot; accept all</span><span class="pill ok">logged</span></div>
+<div class="log-r"><span class="tm">14:48:31</span><span class="ev">Privacy policy v4 published</span><span class="pill ok">synced</span></div>
+</div>
+</div>
+</div>
+</div>
+</div></section>
 <section id="products"><div class="container">
 <div style="text-align:center;" class="reveal"><div class="sec-label" style="justify-content:center;">Pricing</div><h2 class="sec-title">Pick your level.</h2><p class="sec-sub" style="text-align:center;max-width:420px;margin:0 auto 44px;">Start free. Upgrade whenever you're ready &mdash; cancel anytime.</p></div>
 <div class="products-grid stagger">
 <div class="prod-card"><div class="prod-tier">Tier 0 &middot; Free</div><div class="prod-name">Starter</div><div class="prod-price">&euro;0 <span>/ always</span></div><p class="prod-desc">Scan your site + get the basics guide and checklist.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Free GDPR site scan</li><li><span class="ck">&check;</span>GDPR Basics guide (PDF)</li><li><span class="ck">&check;</span>5-step compliance checklist</li><li><span class="ck">&check;</span>GDPR fine-tier reference</li></ul><button class="prod-btn" onclick="openModal('free')">Download free &rarr;</button></div>
 <div class="prod-card feat"><div class="feat-badge">Most Popular</div><div class="prod-tier">Tier 1 &middot; One-time</div><div class="prod-name">Core Pack</div><div class="prod-price">&euro;29 <span>/ one-time</span></div><p class="prod-desc">Complete pre-configured toolkit. Copy, paste, publish in 10 minutes.</p><ul class="prod-feats"><li><span class="ck">&check;</span>White-label privacy policy</li><li><span class="ck">&check;</span>Cookie banner script</li><li><span class="ck">&check;</span>Data retention table</li><li><span class="ck">&check;</span>Breach response pack</li><li><span class="ck">&check;</span>Shopify setup guide</li><li><span class="ck">&check;</span>Lifetime updates</li></ul><a class="prod-btn pri" href="checkout.html?plan=core">Get Core Pack &rarr;</a></div>
-<div class="prod-card"><div class="prod-tier">Tier 2 &middot; Monthly</div><div class="prod-name">Care</div><div class="prod-price">&euro;39 <span>/ month</span></div><div class="prod-save">&#128737; 14-day money-back guarantee</div><p class="prod-desc">Hosted cookie banner &mdash; one script tag, forever maintained.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Core Pack</li><li><span class="ck">&check;</span>Hosted banner (1 script tag)</li><li><span class="ck">&check;</span>Auto-updates on law changes</li><li><span class="ck">&check;</span>Monthly compliance alerts</li><li><span class="ck">&check;</span>Email support</li></ul><a class="prod-btn pri" href="checkout.html?plan=care">Get Care &rarr;</a></div>
+<div class="prod-card"><div class="prod-tier">Tier 2 &middot; Monthly</div><div class="prod-name">Care</div><div class="prod-price">&euro;39 <span>/ month</span></div><div class="prod-save"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px;"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9.5 12l2 2 3.5-3.5"/></svg>14-day money-back guarantee</div><p class="prod-desc">Hosted cookie banner &mdash; one script tag, forever maintained.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Core Pack</li><li><span class="ck">&check;</span>Hosted banner (1 script tag)</li><li><span class="ck">&check;</span>Auto-updates on law changes</li><li><span class="ck">&check;</span>Monthly compliance alerts</li><li><span class="ck">&check;</span>Email support</li></ul><a class="prod-btn pri" href="checkout.html?plan=care">Get Care &rarr;</a></div>
 <div class="prod-card"><div class="prod-tier">Tier 3 &middot; Monthly</div><div class="prod-name">Pro</div><div class="prod-price">&euro;79 <span>/ month</span></div><p class="prod-desc">Full compliance platform for your own brands.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Care</li><li><span class="ck">&check;</span>25-step compliance board</li><li><span class="ck">&check;</span>Consent logs &amp; reports</li><li><span class="ck">&check;</span>Up to 2 stores</li><li><span class="ck">&check;</span>Priority support</li></ul><a class="prod-btn pri" href="checkout.html?plan=pro">Get Pro &rarr;</a></div>
 <div class="prod-card"><div class="prod-tier">Tier 4 &middot; Monthly</div><div class="prod-name">Agency</div><div class="prod-price">&euro;199 <span>/ month</span></div><p class="prod-desc">For agencies managing client compliance.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Pro</li><li><span class="ck">&check;</span>White-label rights</li><li><span class="ck">&check;</span>Up to 5 client stores</li><li><span class="ck">&check;</span>DPA templates</li><li><span class="ck">&check;</span>Client reports</li></ul><a class="prod-btn" href="checkout.html?plan=agency">Get Agency &rarr;</a></div>
 <div class="prod-card"><div class="prod-tier">Tier 5 &middot; High-Volume</div><div class="prod-name">Enterprise</div><div class="prod-price">&euro;499+ <span>/ month</span></div><div class="prod-save">Custom volume pricing</div><p class="prod-desc">Unlimited stores, dedicated manager, custom SLAs.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Agency</li><li><span class="ck">&check;</span>Unlimited stores &amp; domains</li><li><span class="ck">&check;</span>Dedicated onboarding manager</li><li><span class="ck">&check;</span>Custom SLAs &amp; data residency</li><li><span class="ck">&check;</span>SSO &amp; audit log exports</li></ul><a href="#contact" class="prod-btn pri" style="text-decoration:none;">Talk to Sales &rarr;</a></div>
 </div></div></section>
 <section id="dfy" style="background:linear-gradient(180deg,transparent,rgba(0,51,170,.05),transparent);"><div class="container"><div class="dfy-card reveal">
-<div><div class="dfy-eye"><span class="bdot"></span>Done-For-You &middot; Skip the setup</div><h2>We'll deploy &amp; configure <span class="grad-text">everything for you.</span></h2><p>Don't want to touch code? Our engineers install GDRock directly on your store &mdash; cookie banner, privacy policy, consent logs, the lot.</p><ul class="dfy-buls"><li>Hands-off setup &mdash; you don't open a single file</li><li>Live in 48 hours, fully GDPR-ready</li><li>Tested across Shopify, WooCommerce, custom stacks</li><li>14-day fix-anything guarantee</li></ul><div class="dfy-cta"><a href="dfy.html" class="btn-primary">Get Done-For-You Setup &rarr;</a><span class="dfy-guar">&#128737; 14-day guarantee</span></div></div>
-<div class="dfy-rows"><div class="dfy-row"><div><div class="dfy-name">Basic Setup</div><div class="dfy-desc">Cookie banner + policy configured</div></div><div class="dfy-price">&euro;199</div></div><div class="dfy-row hl"><div><div class="dfy-name">Shopify Full Setup &#11088;</div><div class="dfy-desc">Most popular &mdash; full Shopify setup</div></div><div class="dfy-price">&euro;499</div></div><div class="dfy-row"><div><div class="dfy-name">SaaS Compliance</div><div class="dfy-desc">Full SaaS deployment</div></div><div class="dfy-price">&euro;999</div></div><div class="dfy-row"><div><div class="dfy-name">Agency Onboarding</div><div class="dfy-desc">Deploy across all client stores</div></div><div class="dfy-price">Custom</div></div></div>
+<div><div class="dfy-eye"><span class="bdot"></span>Done-For-You &middot; Skip the setup</div><h2>We'll deploy &amp; configure <span class="grad-text">everything for you.</span></h2><p>Don't want to touch code? Our engineers install GDRock directly on your store &mdash; cookie banner, privacy policy, consent logs, the lot.</p><ul class="dfy-buls"><li>Hands-off setup &mdash; you don't open a single file</li><li>Live in 48 hours, fully GDPR-ready</li><li>Tested across Shopify, WooCommerce, custom stacks</li><li>14-day fix-anything guarantee</li></ul><div class="dfy-cta"><a href="dfy.html" class="btn-primary">Get Done-For-You Setup &rarr;</a><span class="dfy-guar"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px;"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9.5 12l2 2 3.5-3.5"/></svg>14-day guarantee</span></div></div>
+<div class="dfy-rows"><div class="dfy-row"><div><div class="dfy-name">Basic Setup</div><div class="dfy-desc">Cookie banner + policy configured</div></div><div class="dfy-price">&euro;199</div></div><div class="dfy-row hl"><div><div class="dfy-name">Shopify Full Setup</div><div class="dfy-desc">Most popular &mdash; full Shopify setup</div></div><div class="dfy-price">&euro;499</div></div><div class="dfy-row"><div><div class="dfy-name">SaaS Compliance</div><div class="dfy-desc">Full SaaS deployment</div></div><div class="dfy-price">&euro;999</div></div><div class="dfy-row"><div><div class="dfy-name">Agency Onboarding</div><div class="dfy-desc">Deploy across all client stores</div></div><div class="dfy-price">Custom</div></div></div>
 </div></div></section>
 <section id="customizer" style="background:linear-gradient(180deg,transparent,rgba(0,201,177,.04),transparent);"><div class="container"><div class="reveal" style="display:grid;grid-template-columns:1fr 1.15fr;gap:48px;align-items:center;">
 <div>
@@ -338,25 +694,25 @@ img,svg,canvas{max-width:100%;}
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:8px;">Presets</div>
 <div class="mk-presets" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;"><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#1a6dff,#0a1628);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#00c9b1,#04181c);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#8b5cf6,#0f0a1e);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#10b981,#041410);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f43f5e,#1a0408);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#1a1200);"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:6px;">Accent</div>
-<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;"><span style="width:24px;height:24px;border-radius:6px;background:#1a6dff;border:2px solid rgba(255,255,255,.15);"></span><span style="flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.06);"></span></div>
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;"><span style="width:24px;height:24px;border-radius:6px;background:#2bd98e;border:2px solid rgba(255,255,255,.15);"></span><span style="flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.06);"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:6px;">Radius</div>
-<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-bottom:5px;position:relative;"><span style="position:absolute;left:55%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#1a6dff;"></span></div>
+<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-bottom:5px;position:relative;"><span style="position:absolute;left:55%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#2bd98e;"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin:12px 0 6px;">Logo size</div>
-<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);position:relative;"><span style="position:absolute;left:40%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#00c9b1;"></span></div>
+<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);position:relative;"><span style="position:absolute;left:40%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#2bd98e;"></span></div>
 </div>
 <div style="padding:18px;display:flex;align-items:flex-end;background:repeating-linear-gradient(45deg,#07102000,#07102000 10px,#ffffff04 10px,#ffffff04 20px);">
 <div style="width:100%;background:#0a1628;border:1px solid rgba(176,188,212,.18);border-radius:14px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.5);">
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;"><svg width="22" height="24" viewBox="0 0 30 34" fill="none" style="flex-shrink:0;"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" fill="rgba(0,201,177,.12)" stroke="#00c9b1" stroke-width="2.5"/><path d="M10 16.5L13.5 20L20 13" stroke="#00c9b1" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#f4f6fb;">We value your privacy</span></div>
 <div style="font-size:10px;line-height:1.5;color:#b0bcd4;margin-bottom:10px;">We use cookies to improve your experience and personalize content.</div>
-<div style="display:flex;gap:5px;"><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Reject</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Customize</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:linear-gradient(135deg,#1a6dff,#0044cc);color:#fff;">Accept all</span></div>
+<div style="display:flex;gap:5px;"><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Reject</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Customize</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:linear-gradient(135deg,#2bd98e,#16b274);color:#04140d;">Accept all</span></div>
 </div>
 </div>
 </div>
 </div>
 </div></div></section>
 <section id="free"><div class="container"><div class="free-card reveal">
-<div><div class="sec-label">Free download</div><h2 class="sec-title">Start protected.<br>No credit card.</h2><p class="sec-sub" style="margin-bottom:22px;">Get the GDRock Starter pack instantly &mdash; free forever.</p><div class="free-tags"><div class="free-tag">&#128216; GDPR Basics PDF</div><div class="free-tag">&check; Compliance checklist</div><div class="free-tag">&#128202; Fine-tier reference</div></div><div class="email-row"><input type="email" class="email-inp" placeholder="your@email.com" id="hero-email"><button class="btn-primary" onclick="submitEmail()">Get free pack &rarr;</button></div><p style="font-size:11px;color:#5b6a8a;margin-top:9px;">No spam. Unsubscribe anytime.</p></div>
-<div class="free-docs"><div class="doc-item"><div class="doc-icon">&#128216;</div>GDPR Basics Guide (PDF)</div><div class="doc-item"><div class="doc-icon">&check;</div>5-Step Checklist</div><div class="doc-item"><div class="doc-icon">&#9888;</div>GDPR Fine-Tier Reference</div><div class="doc-item" style="opacity:.38;"><div class="doc-icon" style="background:rgba(0,51,153,.4);">&#128274;</div>Core Pack (unlock &rarr;)</div></div>
+<div><div class="sec-label">Free download</div><h2 class="sec-title">Start protected.<br>No credit card.</h2><p class="sec-sub" style="margin-bottom:22px;">Get the GDRock Starter pack instantly &mdash; free forever.</p><div class="free-tags"><div class="free-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>GDPR Basics PDF</div><div class="free-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Compliance checklist</div><div class="free-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Fine-tier reference</div></div><div class="email-row"><input type="email" class="email-inp" placeholder="your@email.com" id="hero-email"><button class="btn-primary" onclick="submitEmail()">Get free pack &rarr;</button></div><p style="font-size:11px;color:#5b6a8a;margin-top:9px;">No spam. Unsubscribe anytime.</p></div>
+<div class="free-docs"><div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></div>GDPR Basics Guide (PDF)</div><div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>5-Step Checklist</div><div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>GDPR Fine-Tier Reference</div><div class="doc-item" style="opacity:.45;"><div class="doc-icon" style="background:rgba(148,170,205,.12);color:#94aacd;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>Core Pack (unlock &rarr;)</div></div>
 </div></div></section>
 <section class="fine-sec"><div class="container"><div class="fine-inner reveal">
 <h2>The fine isn't worth the risk.</h2><p>GDPR regulators have issued over <strong style="color:#e63946;">&euro;4.5 billion</strong> in fines since 2018. Small businesses are not exempt.</p><p style="margin-top:9px;"><strong style="color:#fff;">Average fine for stores under &euro;1M revenue:</strong> &euro;12,000&ndash;&euro;45,000</p>
@@ -370,17 +726,10 @@ img,svg,canvas{max-width:100%;}
 </div></div></section>
 <section id="faq"><div class="container"><div class="sec-label reveal">FAQ</div><h2 class="sec-title reveal">Questions, answered.</h2><div class="faq-grid" id="faq-grid"></div></div></section>
 <footer><div class="foot-inner"><div class="foot-logo"><svg width="22" height="24" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#00c9b1" stroke-width="2.5" fill="rgba(0,201,177,.1)" stroke-linejoin="round"/></svg>GDRock</div><div class="foot-links"><a href="terms-and-conditions.html">Terms</a><a href="terms-and-conditions.html#privacy">Privacy</a><a href="terms-and-conditions.html#refund">Refund</a><a href="dfy.html">Done-For-You</a><a href="mailto:office@gdrock.com">Contact</a></div><p class="foot-copy">&copy; 2026 GDRock. All rights reserved. &middot; Payments by Paddle.com Market Ltd.</p></div></footer>
-<button class="help-fab" onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})">&#128172; Help</button>
+<button class="help-fab" onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.8-5.9A8.5 8.5 0 1 1 21 11.5z"/></svg>Help</button>
 <div class="modal-ov" id="modal" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="modal-x" onclick="closeModal()">&times;</button><h2>Get your free starter pack</h2><p>Enter your email and we'll send the GDPR Basics guide, compliance checklist, and fine-tier reference instantly.</p><input type="email" class="modal-inp" id="modal-email" placeholder="your@email.com"><button class="btn-primary" style="width:100%;justify-content:center;" onclick="submitModal()">Send me the pack &rarr;</button><div class="modal-msg" id="modal-msg"></div></div></div>
 <script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
 <script type="module">
-import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
@@ -389,70 +738,21 @@ const lenis=window.__lenis=new Lenis({lerp:.08,smoothWheel:true});
 lenis.on('scroll',ScrollTrigger.update);
 gsap.ticker.add(t=>lenis.raf(t*1000));
 gsap.ticker.lagSmoothing(0);
-const canvas=document.getElementById('hero-canvas'),hero=canvas.parentElement;
-const W=()=>hero.offsetWidth,H=()=>hero.offsetHeight;
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-renderer.setSize(W(),H());
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.2;
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(55,W()/H(),.1,100);
-camera.position.set(0,0,6);
-const pmrem=new THREE.PMREMGenerator(renderer);
-scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
-const dl=new THREE.DirectionalLight(0x6699ff,3);dl.position.set(5,10,5);scene.add(dl);
-scene.add(new THREE.AmbientLight(0x001122,.6));
-const ptA=new THREE.PointLight(0x00c9b1,4,15);ptA.position.set(-5,3,2);scene.add(ptA);
-const ptB=new THREE.PointLight(0x1a6dff,3,12);ptB.position.set(5,-3,1);scene.add(ptB);
-const mainMesh=new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1),new THREE.MeshPhysicalMaterial({color:0x002288,metalness:.85,roughness:.1,transmission:.25,thickness:2,envMapIntensity:2,clearcoat:1,clearcoatRoughness:.08,iridescence:.5,iridescenceIOR:1.4}));
-mainMesh.position.set(3,.3,-1.5);scene.add(mainMesh);
-const wire=new THREE.Mesh(new THREE.IcosahedronGeometry(1.26,1),new THREE.MeshBasicMaterial({color:0x00c9b1,wireframe:true,transparent:true,opacity:.14}));
-wire.position.copy(mainMesh.position);scene.add(wire);
-const ring=new THREE.Mesh(new THREE.TorusGeometry(1.8,.04,16,100),new THREE.MeshPhysicalMaterial({color:0x1a6dff,metalness:1,roughness:.05,envMapIntensity:3}));
-ring.position.copy(mainMesh.position);ring.rotation.x=Math.PI/2.5;scene.add(ring);
-const nodes=[new THREE.OctahedronGeometry(.18),new THREE.TetrahedronGeometry(.15),new THREE.OctahedronGeometry(.12)].map((g,i)=>{const m=new THREE.Mesh(g,new THREE.MeshPhysicalMaterial({color:i===1?0x00c9b1:0x1a6dff,metalness:.9,roughness:.1,emissive:i===1?0x00c9b1:0x1a6dff,emissiveIntensity:.3,envMapIntensity:2}));scene.add(m);return m;});
-const orb=new THREE.Mesh(new THREE.SphereGeometry(.6,32,32),new THREE.MeshPhysicalMaterial({color:0x00c9b1,metalness:.5,roughness:.1,transmission:.6,thickness:1.5,envMapIntensity:2.5,clearcoat:1}));
-orb.position.set(-3.5,1.2,-2);scene.add(orb);
-const pN=window.innerWidth<768?600:1400,pP=new Float32Array(pN*3),pC=new Float32Array(pN*3);
-for(let i=0;i<pN;i++){const r=5+Math.random()*9,t=Math.random()*Math.PI*2,p=Math.acos(2*Math.random()-1);pP[i*3]=r*Math.sin(p)*Math.cos(t);pP[i*3+1]=r*Math.sin(p)*Math.sin(t);pP[i*3+2]=r*Math.cos(p)-4;const c=Math.random()>.6?new THREE.Color(0x00c9b1):new THREE.Color(0x1a6dff);pC[i*3]=c.r;pC[i*3+1]=c.g;pC[i*3+2]=c.b;}
-const pGeo=new THREE.BufferGeometry();pGeo.setAttribute('position',new THREE.BufferAttribute(pP,3));pGeo.setAttribute('color',new THREE.BufferAttribute(pC,3));
-const pts=new THREE.Points(pGeo,new THREE.PointsMaterial({size:.022,vertexColors:true,transparent:true,opacity:.65}));scene.add(pts);
-const composer=new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene,camera));
-composer.addPass(new UnrealBloomPass(new THREE.Vector2(W(),H()),.55,.35,.80));
-composer.addPass(new ShaderPass({uniforms:{tDiffuse:{value:null},offset:{value:.8},darkness:{value:.45}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'uniform sampler2D tDiffuse;uniform float offset,darkness;varying vec2 vUv;void main(){vec4 t=texture2D(tDiffuse,vUv);vec2 u=(vUv-.5)*2.;float v=1.-dot(u*offset,u*offset);gl_FragColor=vec4(t.rgb*mix(1.-darkness,1.,v),t.a);}'}));
-const grain=new ShaderPass({uniforms:{tDiffuse:{value:null},time:{value:0},intensity:{value:.04}},vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'precision mediump float;uniform sampler2D tDiffuse;uniform float time,intensity;varying vec2 vUv;float rand(vec2 c){return fract(sin(dot(c,vec2(12.9898,78.233)))*43758.5453);}void main(){vec4 col=texture2D(tDiffuse,vUv);float n=rand(vUv+time)*intensity-intensity*.5;gl_FragColor=vec4(col.rgb+n,col.a);}'});
-composer.addPass(grain);composer.addPass(new OutputPass());
-const mouse={x:0,y:0,lx:0,ly:0};
-window.addEventListener('mousemove',e=>{mouse.x=(e.clientX/W()-.5)*2;mouse.y=(e.clientY/H()-.5)*2;});
-window.addEventListener('resize',()=>{camera.aspect=W()/H();camera.updateProjectionMatrix();renderer.setSize(W(),H());composer.setSize(W(),H());});
+/* WebGL hero removed in v3 — premium-minimal direction (lighter, cleaner). */
 
 
 
 
 
-var __heroShown=false;function revealHero(){if(__heroShown)return;__heroShown=true;gsap.fromTo('.hero-badge',{autoAlpha:0,y:20},{autoAlpha:1,y:0,duration:1,delay:.15,ease:'power3.out'});gsap.fromTo('.hero h1',{autoAlpha:0,y:40},{autoAlpha:1,y:0,duration:1.1,delay:.3,ease:'power3.out'});gsap.fromTo('.hero-sub',{autoAlpha:0,y:30},{autoAlpha:1,y:0,duration:1,delay:.5,ease:'power3.out'});gsap.fromTo('.hero-btns',{autoAlpha:0,y:20},{autoAlpha:1,y:0,duration:.9,delay:.7,ease:'power3.out'});gsap.fromTo('.trust-row',{autoAlpha:0},{autoAlpha:1,duration:.8,delay:.9});}
-const clock=new THREE.Clock();
-function animate(){
-  requestAnimationFrame(animate);
-  const delta=clock.getDelta(),t=clock.getElapsedTime(),ease=1-Math.pow(1-.055,delta*60);
-  mouse.lx+=(mouse.x-mouse.lx)*ease;mouse.ly+=(mouse.y-mouse.ly)*ease;
-  camera.position.x+=(mouse.lx*.35-camera.position.x)*ease;
-  camera.position.y+=(-mouse.ly*.2-camera.position.y)*ease;
-  camera.lookAt(0,0,0);
-  mainMesh.rotation.y+=delta*.28;mainMesh.rotation.x=Math.sin(t*.4)*.12;
-  wire.rotation.y=mainMesh.rotation.y;wire.rotation.x=mainMesh.rotation.x;
-  ring.rotation.z+=delta*.18;
-  nodes.forEach((n,i)=>{const a=t*(.5+i*.15)+(i*Math.PI*2/3);n.position.set(mainMesh.position.x+Math.cos(a)*2.4,mainMesh.position.y+Math.sin(a*.7)*.8,mainMesh.position.z+Math.sin(a)*1.4);n.rotation.x+=delta*(.8+i*.3);n.rotation.y+=delta*(.6+i*.2);});
-  orb.position.y=1.2+Math.sin(t*.55)*.35;orb.rotation.y+=delta*.25;
-  pts.rotation.y+=delta*.035;pts.rotation.x+=delta*.012;
-  grain.uniforms.time.value=t*.8;
-  composer.render(delta);
-  if(!__heroShown)revealHero();
+function revealHero(){
+  gsap.fromTo('.hero-badge',{autoAlpha:0,y:20},{autoAlpha:1,y:0,duration:1,delay:.1,ease:'power3.out'});
+  gsap.fromTo('.hero h1',{autoAlpha:0,y:44},{autoAlpha:1,y:0,duration:1.15,delay:.2,ease:'power3.out'});
+  gsap.fromTo('.hero-sub',{autoAlpha:0,y:30},{autoAlpha:1,y:0,duration:1,delay:.42,ease:'power3.out'});
+  gsap.fromTo('.hero-btns',{autoAlpha:0,y:20},{autoAlpha:1,y:0,duration:.9,delay:.6,ease:'power3.out'});
+  gsap.fromTo('.trust-row',{autoAlpha:0},{autoAlpha:1,duration:.8,delay:.78});
+  gsap.fromTo('.hero-visual',{autoAlpha:0,y:60,scale:.95},{autoAlpha:1,y:0,scale:1,duration:1.4,delay:.5,ease:'power3.out'});
 }
-animate();
+revealHero();
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target);}}),{threshold:.1});
 document.querySelectorAll('.reveal,.stagger').forEach(el=>obs.observe(el));
 </script>
@@ -503,14 +803,14 @@ function submitModal(){
   var e=document.getElementById('modal-email').value.trim(),msg=document.getElementById('modal-msg');
   if(!e||!e.includes('@')){msg.textContent='Please enter a valid email.';msg.className='modal-msg err';return;}
   fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:document.getElementById('modal').dataset.plan==='free'?'modal_free':'modal_paid',plan:document.getElementById('modal').dataset.plan})})
-  .then(function(){msg.textContent='Sent! Check your inbox.';msg.className='modal-msg ok';setTimeout(closeModal,2000);})
-  .catch(function(){msg.textContent='Got it!';msg.className='modal-msg ok';setTimeout(closeModal,2000);});
+  .then(function(){msg.textContent='Sent. Check your inbox.';msg.className='modal-msg ok';setTimeout(closeModal,2000);})
+  .catch(function(){msg.textContent='Saved. Check your inbox.';msg.className='modal-msg ok';setTimeout(closeModal,2000);});
 }
 function submitEmail(){
   var e=document.getElementById('hero-email').value.trim();
   if(!e||!e.includes('@'))return document.getElementById('hero-email').focus();
   fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:'hero',plan:'free'})})
-  .then(function(){alert('Check your inbox!');}).catch(function(){alert('Got it!');});
+  .finally(function(){var r=document.getElementById('hero-email').closest('.email-row');if(r)r.innerHTML='<div style="padding:12px 14px;border-radius:9px;background:rgba(17,197,173,.08);border:1px solid rgba(17,197,173,.25);color:#2fe0c8;font-size:14px;width:100%;">Sent. Check your inbox for your free pack.</div>';});
 }
 var faqs=[
 {q:'What exactly is in Core Pack?',a:'A white-label privacy policy template, cookie banner script, data retention table, breach response pack, and a Shopify setup guide - all pre-configured for EU compliance.'},
@@ -538,5 +838,47 @@ document.addEventListener('click',function(e){
 });
 </script>
 <script>/* HERO-FALLBACK */setTimeout(function(){document.querySelectorAll('.hero-badge,.hero h1,.hero-sub,.hero-btns,.trust-row').forEach(function(e){if(getComputedStyle(e).visibility==='hidden'){e.style.visibility='visible';e.style.opacity='1';}});},2600);</script>
+<script>/* cursor spotlight on cards (premium hover, no deps) */(function(){document.querySelectorAll('.prod-card,.prob-card').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');});});})();</script>
+<script>/* ===== GDPR Fine Estimator ===== */(function(){
+  var slider=document.getElementById('rev-slider');
+  if(!slider)return;
+  var revVal=document.getElementById('rev-val'),chips=[].slice.call(document.querySelectorAll('#est-chips .est-chip'));
+  var gaugeFill=document.getElementById('gauge-fill'),riskNum=document.getElementById('risk-num'),riskWord=document.getElementById('risk-word');
+  var exposureEl=document.getElementById('exposure'),statMax=document.getElementById('stat-max');
+  var L=Math.PI*84; gaugeFill.style.strokeDasharray=L;
+
+  function revenue(){return Math.round(10000*Math.pow(1000,slider.value/100));}
+  function money(n){if(n>=1e6)return '€'+(n/1e6).toFixed(n>=1e7?0:1).replace(/\.0$/,'')+'M';if(n>=1e3)return '€'+Math.round(n/1e3)+'k';return '€'+Math.round(n);}
+  function level(s){if(s<30)return{w:'Low risk',c:'#00c9b1'};if(s<55)return{w:'Moderate risk',c:'#f6b73c'};if(s<78)return{w:'High risk',c:'#fb923c'};return{w:'Severe risk',c:'#ef4444'};}
+
+  // smooth count-up between values
+  function animateNum(el,from,to,fmt){var t0=performance.now(),d=650,done=false;function fin(){if(done)return;done=true;el.textContent=fmt(to);}function step(now){if(done)return;var p=Math.min((now-t0)/d,1),e=1-Math.pow(1-p,3),v=from+(to-from)*e;el.textContent=fmt(v);if(p<1)requestAnimationFrame(step);else done=true;}requestAnimationFrame(step);setTimeout(fin,d+60);/* safety: guarantee final value even when rAF is throttled (hidden tab) */}
+  var lastScore=0,lastExp=0;
+
+  function compute(){
+    var rev=revenue();
+    revVal.textContent=money(rev);
+    var sumW=chips.reduce(function(a,c){return a+(c.classList.contains('on')?+c.dataset.w:0);},0);
+    var score=Math.max(5,Math.min(99,Math.round(sumW*0.82+(slider.value/100)*12)));
+    var lv=level(score);
+    // exposure range (honest: small biz floor + 4% turnover scaling, capped at statutory max)
+    var statutory=Math.max(20000000,rev*0.04);
+    var base=Math.max(rev*0.04,60000);
+    var high=Math.min(base*(score/100),statutory);
+    var low=Math.max(high*0.28,8000);
+    // gauge + colors
+    gaugeFill.style.strokeDashoffset=L*(1-score/100);
+    riskNum.style.color=lv.c;riskWord.style.color=lv.c;riskWord.textContent=lv.w;
+    statMax.textContent=money(statutory);
+    animateNum(riskNum,lastScore,score,function(v){return Math.round(v);});
+    animateNum(exposureEl,lastExp,high,function(v){return money(low)+' – '+money(v);});
+    lastScore=score;lastExp=high;
+  }
+  slider.addEventListener('input',compute);
+  chips.forEach(function(c){c.addEventListener('click',function(){c.classList.toggle('on');compute();});});
+  // run once when scrolled into view (so the count-up animates on reveal)
+  var ran=false;new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!ran){ran=true;compute();}});},{threshold:.25}).observe(document.getElementById('estimator'));
+  compute();
+})();</script>
 </body>
 </html>
