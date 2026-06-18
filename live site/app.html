@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GDRock — Compliance Console</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2304140d' stroke='%232bd98e' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%232bd98e' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08090c;--bg2:#0d0f14;--panel:rgba(255,255,255,.025);--panel2:rgba(255,255,255,.045);
+  --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);--acc:#2bd98e;--acc2:#16b274;--acc-ink:#04140d;
+  --ink:#f4f6fa;--ink2:#9aa2b2;--ink3:#5c6373;--bad:#ff6b70;--warn:#f6b73c;
+  --D:'Geist',system-ui,sans-serif;--M:'Geist Mono',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0;min-width:0}
+html,body{max-width:100vw;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;line-height:1.5;
+  background-image:radial-gradient(ellipse 70% 50% at 80% -10%,rgba(43,217,142,.06),transparent 60%);min-height:100vh;}
+.mono{font-family:var(--M)}
+.app{display:grid;grid-template-columns:236px 1fr;min-height:100vh;}
+/* sidebar */
+.side{border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:3px;position:sticky;top:0;height:100vh;}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;letter-spacing:-.02em;padding:4px 8px 18px;}
+.brand svg{color:var(--acc)}
+.nav-i{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;font-size:13.5px;color:var(--ink2);cursor:pointer;border:1px solid transparent;transition:all .15s;}
+.nav-i:hover{color:var(--ink);background:rgba(255,255,255,.03)}
+.nav-i.on{background:rgba(43,217,142,.1);color:var(--ink);border-color:rgba(43,217,142,.2)}
+.nav-i svg{width:16px;height:16px;flex-shrink:0;opacity:.85}
+.side-foot{margin-top:auto;padding:12px 10px;border-top:1px solid var(--line);font-size:11px;color:var(--ink3);font-family:var(--M)}
+.side-foot .ok{color:var(--acc)}
+/* main */
+.main{padding:26px 30px 60px;max-width:1100px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.h1{font-size:26px;font-weight:700;letter-spacing:-.03em}
+.sub{color:var(--ink2);font-size:13px;margin-top:3px}
+.site-pick{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 12px}
+.site-pick b{color:var(--ink);font-family:var(--M)}
+.view{display:none}.view.on{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* cards */
+.row{display:grid;gap:14px}
+.r-top{grid-template-columns:auto 1fr;align-items:center;margin-bottom:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;}
+.ring{position:relative;width:128px;height:128px;flex-shrink:0}
+.ring .lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .n{font-family:var(--M);font-size:30px;font-weight:600;color:var(--acc)}
+.ring .t{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+.tile .tv{font-family:var(--M);font-size:22px;font-weight:600}
+.tile .tk{font-size:11.5px;color:var(--ink3);margin-top:4px}
+.sec-h{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-family:var(--M);margin:26px 0 12px}
+/* table */
+.tbl{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tr{display:grid;gap:12px;padding:12px 16px;font-size:13px;align-items:center;border-bottom:1px solid var(--line)}
+.tr:last-child{border-bottom:0}
+.tbl .head{background:rgba(255,255,255,.02);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-family:var(--M)}
+.t-consent{grid-template-columns:130px 1fr 120px 90px}
+.t-dsr{grid-template-columns:1fr 130px 110px 100px}
+.tm{font-family:var(--M);color:var(--ink2)}
+.pill{justify-self:start;font-size:11px;font-family:var(--M);padding:3px 10px;border-radius:100px;white-space:nowrap}
+.pill.ok{color:var(--acc);background:rgba(43,217,142,.1);border:1px solid rgba(43,217,142,.25)}
+.pill.no{color:var(--bad);background:rgba(255,107,112,.1);border:1px solid rgba(255,107,112,.25)}
+.pill.w{color:var(--warn);background:rgba(246,183,60,.1);border:1px solid rgba(246,183,60,.25)}
+/* banner preview */
+.bn{max-width:440px;background:#0c0e13;border:1px solid var(--line2);border-radius:14px;padding:16px;box-shadow:0 24px 50px -30px #000}
+.bn h4{font-size:14px;margin-bottom:6px}.bn p{font-size:12px;color:var(--ink2);margin-bottom:12px}
+.bn-btns{display:flex;gap:7px}.bn-btns span{flex:1;text-align:center;padding:8px;border-radius:9px;font-size:11px;font-weight:600}
+.bn-btns .g{background:rgba(255,255,255,.08);color:var(--ink2)}.bn-btns .p{background:var(--acc);color:var(--acc-ink)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.toggle-row:last-child{border-bottom:0}
+.sw{width:38px;height:22px;border-radius:100px;background:var(--acc);position:relative;flex-shrink:0}
+.sw.off{background:rgba(255,255,255,.12)}
+.sw::after{content:'';position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.sw.off::after{right:auto;left:2px}
+.code{font-family:var(--M);font-size:12px;background:#0b0d12;border:1px solid var(--line);border-radius:10px;padding:14px;color:var(--ink2);overflow-x:auto;white-space:pre;line-height:1.6}
+.doc{font-size:13.5px;color:var(--ink2);line-height:1.7;max-width:62ch}
+.doc h3{color:var(--ink);font-size:15px;margin:18px 0 6px}
+.btn{display:inline-flex;align-items:center;gap:7px;background:var(--acc);color:var(--acc-ink);border:none;border-radius:100px;padding:10px 18px;font-family:var(--D);font-weight:600;font-size:13px;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink)}
+.banner-top{background:rgba(43,217,142,.07);border:1px solid rgba(43,217,142,.2);color:var(--acc);font-size:12px;border-radius:10px;padding:9px 14px;margin-bottom:18px;font-family:var(--M)}
+@media(max-width:760px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line)}.side-foot{display:none}.r-top{grid-template-columns:1fr}.tiles{grid-template-columns:1fr 1fr}.t-consent,.t-dsr{grid-template-columns:120px 1fr 90px}.t-consent .src,.t-dsr .em{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><svg width="20" height="22" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(43,217,142,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
+    <div class="nav-i on" data-v="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</div>
+    <div class="nav-i" data-v="logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Consent logs</div>
+    <div class="nav-i" data-v="banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15h18"/></svg>Cookie banner</div>
+    <div class="nav-i" data-v="policy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Privacy policy</div>
+    <div class="nav-i" data-v="dsr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Data requests</div>
+    <div class="nav-i" data-v="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Settings</div>
+    <div class="side-foot">Banner <span class="ok">● live</span><br>Synced 2 min ago</div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <div><div class="h1" id="view-title">Overview</div><div class="sub" id="view-sub">Your compliance at a glance</div></div>
+      <div class="site-pick">Site: <b id="site-id">gdrock.com</b></div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <section class="view on" id="overview">
+      <div class="banner-top" id="live-note">Showing live data where connected · demo values otherwise.</div>
+      <div class="row r-top">
+        <div class="ring">
+          <svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle cx="64" cy="64" r="56" fill="none" stroke="#2bd98e" stroke-width="10" stroke-linecap="round" stroke-dasharray="351.8" stroke-dashoffset="11" transform="rotate(-90 64 64)"/></svg>
+          <div class="lbl"><span class="n">97</span><span class="t">Compliant</span></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="tv">12,840</div><div class="tk">Consents logged</div></div>
+          <div class="tile"><div class="tv">3,201</div><div class="tk">Trackers blocked pre-consent</div></div>
+          <div class="tile"><div class="tv">2 min</div><div class="tk">Since last sync</div></div>
+        </div>
+      </div>
+      <div class="sec-h">Recent activity</div>
+      <div class="tbl" id="ov-log"></div>
+    </section>
+
+    <!-- CONSENT LOGS -->
+    <section class="view" id="logs">
+      <div class="tbl" id="full-log"></div>
+    </section>
+
+    <!-- COOKIE BANNER -->
+    <section class="view" id="banner">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;" class="bn-grid">
+        <div>
+          <div class="sec-h" style="margin-top:0">Live preview</div>
+          <div class="bn">
+            <h4>We value your privacy</h4>
+            <p>We use cookies to improve your experience and analyse traffic. You choose what loads.</p>
+            <div class="bn-btns"><span class="g">Reject</span><span class="g">Customize</span><span class="p">Accept all</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="sec-h" style="margin-top:0">Behaviour</div>
+          <div class="card">
+            <div class="toggle-row">Block non-essential before consent <span class="sw"></span></div>
+            <div class="toggle-row">Log every consent with timestamp <span class="sw"></span></div>
+            <div class="toggle-row">Granular categories <span class="sw"></span></div>
+            <div class="toggle-row">Auto-update on EU law changes <span class="sw"></span></div>
+            <div class="toggle-row">Respect Global Privacy Control <span class="sw off"></span></div>
+          </div>
+          <div style="margin-top:14px"><a class="btn ghost" href="https://cdn.gdrock.com/customize" target="_blank" rel="noopener">Open visual customizer →</a></div>
+        </div>
+      </div>
+      <div class="sec-h">Install (one tag in &lt;head&gt;)</div>
+      <div class="code">&lt;script async src="https://cdn.gdrock.com/gdrock.js"
+        data-site-id="gdrock.com"&gt;&lt;/script&gt;</div>
+    </section>
+
+    <!-- PRIVACY POLICY -->
+    <section class="view" id="policy">
+      <div class="card"><div class="doc">
+        <h3 style="margin-top:0">Privacy Policy — v4 <span style="color:var(--acc);font-family:var(--M);font-size:12px">· published</span></h3>
+        <p>This policy explains what personal data we collect, why, the lawful basis, how long we keep it, and the rights of data subjects under the GDPR.</p>
+        <h3>Data we process</h3>
+        <p>Contact details, order data, and usage analytics — each tied to a named processor and retention period in your data map.</p>
+        <h3>Your rights</h3>
+        <p>Access, rectification, erasure, restriction, portability and objection. Requests are handled in the Data requests tab within 30 days.</p>
+        <div style="margin-top:18px"><button class="btn" onclick="alert('In the live app this regenerates your policy with your processors + retention table.')">Regenerate policy</button></div>
+      </div></div>
+    </section>
+
+    <!-- DATA REQUESTS (DSR) -->
+    <section class="view" id="dsr">
+      <div class="tbl" id="dsr-tbl"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section class="view" id="settings">
+      <div class="card" style="max-width:560px">
+        <div class="toggle-row" style="border-bottom:1px solid var(--line)"><div><div>Site domain</div><div style="font-size:12px;color:var(--ink3)">Where the banner is installed</div></div><b class="mono" id="set-site">gdrock.com</b></div>
+        <div class="toggle-row"><div><div>Plan</div><div style="font-size:12px;color:var(--ink3)">Care — hosted banner + auto-updates</div></div><span class="pill ok">active</span></div>
+        <div class="toggle-row"><div><div>Data region</div><div style="font-size:12px;color:var(--ink3)">Where consent logs are stored</div></div><b class="mono">EU (Frankfurt)</b></div>
+        <div class="toggle-row" style="border-bottom:0"><div><div>API key</div><div style="font-size:12px;color:var(--ink3)">For server-side consent logging</div></div><b class="mono">gdr_live_••••3a9f</b></div>
+      </div>
+      <p style="color:var(--ink3);font-size:12px;margin-top:16px;max-width:560px">Connect a real site by appending <span class="mono">?site=yourdomain.com</span> to this URL — the console will pull live consent data from cdn.gdrock.com when the read API is enabled.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const TITLES={overview:['Overview','Your compliance at a glance'],logs:['Consent logs','Every consent event, timestamped'],banner:['Cookie banner','Preview, behaviour and install'],policy:['Privacy policy','Your live, versioned policy'],dsr:['Data requests','Subject access & erasure requests'],settings:['Settings','Site, plan and data region']};
+// site from ?site=
+const site=new URLSearchParams(location.search).get('site')||'gdrock.com';
+$('#site-id').textContent=site;$('#set-site').textContent=site;
+// demo data (live fetch hook below)
+const LOG=[
+ ['14:52:07','Consent · reject non-essential','Banner','ok'],
+ ['14:51:40','Banner served · EU visitor','Banner','ok'],
+ ['14:50:12','Pre-consent tracker (Meta Pixel)','Blocker','no'],
+ ['14:49:55','Consent · accept all','Banner','ok'],
+ ['14:48:31','Privacy policy v4 published','Policy','ok'],
+ ['14:47:02','Pre-consent tracker (GA4)','Blocker','no'],
+ ['14:45:19','Consent · granular (analytics only)','Banner','ok'],
+ ['14:43:50','Consent record exported','API','ok'],
+];
+const DSR=[
+ ['anna.k@email.com','Access request','2026-06-17','done'],
+ ['m.lopez@email.com','Erasure (right to be forgotten)','2026-06-17','progress'],
+ ['j.becker@email.com','Data portability','2026-06-16','done'],
+ ['s.rossi@email.com','Erasure','2026-06-15','done'],
+];
+function pill(s){return s==='ok'||s==='done'?'<span class="pill ok">'+s+'</span>':s==='no'?'<span class="pill no">blocked</span>':'<span class="pill w">'+(s==='progress'?'in progress':s)+'</span>';}
+function renderConsent(el,rows,head){el.innerHTML='<div class="tr head t-consent"><span>Time</span><span>Event</span><span class="src">Source</span><span>Status</span></div>'+rows.map(r=>`<div class="tr t-consent"><span class="tm">${r[0]}</span><span>${r[1]}</span><span class="src" style="color:var(--ink3)">${r[2]}</span>${pill(r[3])}</div>`).join('');}
+renderConsent($('#ov-log'),LOG.slice(0,5));
+renderConsent($('#full-log'),LOG);
+$('#dsr-tbl').innerHTML='<div class="tr head t-dsr"><span>Requester</span><span>Type</span><span>Received</span><span>Status</span></div>'+DSR.map(r=>`<div class="tr t-dsr"><span class="em mono" style="color:var(--ink2)">${r[0]}</span><span>${r[1]}</span><span class="tm">${r[2]}</span>${pill(r[3])}</div>`).join('');
+// nav
+$$('.nav-i').forEach(n=>n.onclick=()=>{
+  $$('.nav-i').forEach(x=>x.classList.remove('on'));n.classList.add('on');
+  const v=n.dataset.v;$$('.view').forEach(x=>x.classList.remove('on'));$('#'+v).classList.add('on');
+  $('#view-title').textContent=TITLES[v][0];$('#view-sub').textContent=TITLES[v][1];
+});
+// live fetch hook — pulls real consent logs when the read API is live
+(async function(){try{
+  const r=await fetch('https://cdn.gdrock.com/api/consent-logs?site_id='+encodeURIComponent(site),{headers:{'accept':'application/json'}});
+  if(!r.ok)return;const d=await r.json();
+  if(Array.isArray(d)&&d.length){const rows=d.slice(0,20).map(x=>[new Date(x.created_at).toLocaleTimeString(),x.accepted?'Consent · accept':'Consent · reject',x.source||'Banner',x.accepted?'ok':'ok']);renderConsent($('#ov-log'),rows.slice(0,5));renderConsent($('#full-log'),rows);$('#live-note').textContent='● Live data from cdn.gdrock.com';}
+}catch(e){}})();
+</script>
+</body>
+</html>

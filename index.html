@@ -522,6 +522,27 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 .pill.ok{color:var(--acc);background:rgba(43,217,142,.1);border:1px solid rgba(43,217,142,.25);}
 .pill.no{color:#ff8a8f;background:rgba(255,90,95,.1);border:1px solid rgba(255,90,95,.25);}
 @media(max-width:680px){.app-body{grid-template-columns:1fr;}.app-side{flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);}.app-top{grid-template-columns:1fr;}.tiles{grid-template-columns:1fr 1fr;}.log-h,.log-r{grid-template-columns:1.4fr auto;}.log-h span:nth-child(2),.log-r .ev{display:none;}}
+/* ---- animated hero scene (background-inside-a-background, moving) ---- */
+.hero-stage{position:relative;width:min(660px,88vw);aspect-ratio:16/11;margin:8px auto 0;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+.hero-stage>*{position:absolute;}
+.stage-grid{inset:-10% -10% 0 -10%;background-image:linear-gradient(rgba(43,217,142,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(43,217,142,.10) 1px,transparent 1px);background-size:36px 36px;transform:perspective(620px) rotateX(60deg) translateY(18%) scale(1.5) translate3d(var(--px,0px),0,0);-webkit-mask-image:radial-gradient(ellipse 55% 60% at 50% 62%,#000,transparent 72%);mask-image:radial-gradient(ellipse 55% 60% at 50% 62%,#000,transparent 72%);opacity:.8;}
+.stage-glow{width:62%;height:62%;border-radius:50%;background:radial-gradient(circle,rgba(43,217,142,.4),transparent 64%);filter:blur(34px);animation:glowPulse 5s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.2);opacity:1}}
+.orbit{border-radius:50%;}
+.orbit.o1{width:74%;height:74%;border:1px solid rgba(43,217,142,.18);animation:spin 22s linear infinite;}
+.orbit.o2{width:56%;height:56%;border:1px dashed rgba(255,255,255,.1);animation:spin 15s linear infinite reverse;}
+.orbit.o3{width:96%;height:96%;border:1px solid rgba(43,217,142,.1);animation:spin 40s linear infinite;}
+.orbit::before{content:'';position:absolute;top:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--acc);box-shadow:0 0 14px var(--acc);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.hero-stage .hero-shield{position:relative;width:52%!important;height:auto!important;border-radius:0!important;z-index:3;filter:drop-shadow(0 34px 64px rgba(0,0,0,.65))!important;animation:heroFloat 6s ease-in-out infinite!important;transform:translate3d(calc(var(--px,0px)*-1.6),calc(var(--py,0px)*-1.6),0);}
+.hero-stage video.hero-shield{width:62%!important;border-radius:0!important;-webkit-mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 52%,transparent 86%);mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 52%,transparent 86%);}
+.spark{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);opacity:.7;z-index:2;}
+.spark.sp1{top:18%;left:24%;animation:drift 7s ease-in-out infinite;}
+.spark.sp2{top:30%;right:20%;left:auto;animation:drift 9s ease-in-out infinite .8s;}
+.spark.sp3{bottom:26%;left:30%;width:4px;height:4px;animation:drift 8s ease-in-out infinite 1.4s;}
+.spark.sp4{bottom:20%;right:26%;left:auto;width:6px;height:6px;animation:drift 11s ease-in-out infinite .4s;}
+@keyframes drift{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-16px);opacity:.9}}
+@media(max-width:600px){.hero-stage{width:96vw;aspect-ratio:1/1;}}
 </style>
 </head>
 <body>
@@ -537,7 +558,13 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <p class="hero-sub">The complete GDPR layer for modern stores &mdash; cookie consent, privacy policies, consent logs and an AI compliance scanner. Live in minutes.</p>
 <div class="hero-btns"><a href="#estimator" class="btn-primary">Check my risk &rarr;</a><a href="#scanner" class="btn-outline">Scan my site free</a></div>
 <div class="trust-row"><div class="trust-item"><span class="trust-icon">&check;</span>14-day money-back</div><div class="trust-item"><span class="trust-icon">&check;</span>EU data hosting</div><div class="trust-item"><span class="trust-icon">&check;</span>Payments by Paddle</div><div class="trust-item"><span class="trust-icon">&check;</span>No card for scan</div></div>
-<div class="hero-visual"><img src="assets/hero-shield.png" alt="GDRock — your store, protected" loading="eager"></div>
+<div class="hero-visual"><div class="hero-stage" id="hero-stage">
+<div class="stage-grid"></div>
+<div class="orbit o3"></div><div class="orbit o1"></div><div class="orbit o2"></div>
+<div class="stage-glow"></div>
+<video class="hero-shield" autoplay muted loop playsinline poster="assets/hero-shield.png" aria-label="GDRock — your store, protected"><source src="assets/hero.mp4" type="video/mp4"></video>
+<i class="spark sp1"></i><i class="spark sp2"></i><i class="spark sp3"></i><i class="spark sp4"></i>
+</div></div>
 </div>
 <div class="scroll-hint"><div class="scroll-line"></div><div class="scroll-txt">Scroll</div></div>
 </section>
@@ -839,6 +866,7 @@ document.addEventListener('click',function(e){
 </script>
 <script>/* HERO-FALLBACK */setTimeout(function(){document.querySelectorAll('.hero-badge,.hero h1,.hero-sub,.hero-btns,.trust-row').forEach(function(e){if(getComputedStyle(e).visibility==='hidden'){e.style.visibility='visible';e.style.opacity='1';}});},2600);</script>
 <script>/* cursor spotlight on cards (premium hover, no deps) */(function(){document.querySelectorAll('.prod-card,.prob-card').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');});});})();</script>
+<script>/* hero parallax — event-driven, no rAF loop */(function(){var s=document.getElementById('hero-stage'),hero=document.querySelector('.hero');if(!s||!hero)return;hero.addEventListener('pointermove',function(e){var r=hero.getBoundingClientRect();s.style.setProperty('--px',(((e.clientX-r.left)/r.width-.5)*16).toFixed(1)+'px');s.style.setProperty('--py',(((e.clientY-r.top)/r.height-.5)*16).toFixed(1)+'px');});})();</script>
 <script>/* ===== GDPR Fine Estimator ===== */(function(){
   var slider=document.getElementById('rev-slider');
   if(!slider)return;
