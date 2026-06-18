@@ -536,10 +536,38 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 @keyframes spin{to{transform:rotate(360deg);}}
 .hero-stage .hero-shield{position:relative;width:52%!important;height:auto!important;border-radius:0!important;z-index:3;filter:drop-shadow(0 34px 64px rgba(0,0,0,.65))!important;transform:none;}
 .hero-visual{perspective:1100px;}
-.hero-shot{max-width:1080px;margin:38px auto 0;width:100%;position:relative;}
-.hero-shot img{width:100%;height:auto;display:block;border-radius:0!important;filter:none!important;animation:none!important;
-  -webkit-mask-image:radial-gradient(ellipse 88% 86% at 50% 46%,#000 58%,transparent 90%);mask-image:radial-gradient(ellipse 88% 86% at 50% 46%,#000 58%,transparent 90%);}
-.hero-shot::after{content:'';position:absolute;left:50%;bottom:4%;transform:translateX(-50%);width:48%;height:46px;background:radial-gradient(ellipse,rgba(59,130,246,.5),transparent 72%);filter:blur(24px);z-index:-1;}
+.hero-laptop{max-width:780px;margin:30px auto 0;width:100%;position:relative;}
+.lt-glow{position:absolute;left:50%;top:38%;transform:translateX(-50%);width:74%;height:62%;background:radial-gradient(ellipse,rgba(59,130,246,.42),transparent 70%);filter:blur(52px);z-index:-1;}
+.lt-lid{background:linear-gradient(180deg,#1c2030,#13161f);border-radius:14px 14px 5px 5px;padding:9px;box-shadow:0 40px 90px -34px rgba(0,0,0,.95),inset 0 0 0 1px rgba(255,255,255,.07);}
+.lt-screen{background:#070a12;border-radius:7px;overflow:hidden;aspect-ratio:16/10;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.05);}
+.lt-bar{display:flex;align-items:center;gap:5px;padding:0 11px;height:27px;background:#0c0f17;border-bottom:1px solid var(--line);flex-shrink:0;}
+.lt-bar span{width:7px;height:7px;border-radius:50%;background:#2a2d36;}
+.lt-bar b{margin-left:10px;font-family:var(--M);font-size:10px;color:var(--ink3);font-weight:400;}
+.lt-app{display:grid;grid-template-columns:124px 1fr;flex:1;min-height:0;}
+.lt-side{border-right:1px solid var(--line);padding:11px 9px;display:flex;flex-direction:column;gap:2px;}
+.lt-logo{display:flex;align-items:center;gap:6px;font-family:var(--D);font-weight:600;font-size:12px;margin-bottom:9px;}
+.lt-logo svg{color:var(--acc);width:14px;height:15px;flex-shrink:0;}
+.lt-nav{font-size:10.5px;color:var(--ink2);padding:5px 8px;border-radius:6px;}
+.lt-nav.on{background:rgba(59,130,246,.13);color:var(--ink);}
+.lt-main{padding:13px 15px;display:flex;flex-direction:column;gap:10px;min-width:0;}
+.lt-top{display:flex;align-items:center;gap:14px;}
+.lt-ring{position:relative;width:62px;height:62px;flex-shrink:0;}
+.lt-ring .n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--M);font-size:17px;font-weight:600;color:var(--acc);}
+.lt-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;}
+.lt-tile{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:8px;padding:8px 10px;}
+.lt-tile b{font-family:var(--M);font-size:14px;display:block;}
+.lt-tile span{font-size:9px;color:var(--ink3);}
+.lt-log{border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.lt-lr{display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:10px;color:var(--ink2);border-bottom:1px solid var(--line);}
+.lt-lr:last-child{border-bottom:0;}
+.lt-lr i{font-family:var(--M);color:var(--ink3);font-style:normal;}
+.lt-lr em{margin-left:auto;font-style:normal;font-family:var(--M);font-size:9px;padding:2px 8px;border-radius:100px;}
+.lt-lr em.ok{color:var(--acc);background:rgba(59,130,246,.13);}
+.lt-lr em.no{color:#ff6b70;background:rgba(255,107,112,.13);}
+.lt-base{height:13px;width:112%;margin-left:-6%;background:linear-gradient(180deg,#262a36,#0d1016);border-radius:0 0 13px 13px;position:relative;box-shadow:0 26px 46px -22px rgba(0,0,0,.85);}
+.lt-base::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:13%;height:4px;background:#090b11;border-radius:0 0 6px 6px;}
+.hero-laptop::after{content:'';position:absolute;left:-10%;right:-10%;bottom:-34px;height:90px;background:linear-gradient(to bottom,transparent,#08090c);pointer-events:none;}
+@media(max-width:600px){.hero-laptop{max-width:96vw;}.lt-app{grid-template-columns:1fr;}.lt-side{flex-direction:row;flex-wrap:wrap;gap:4px;border-right:0;border-bottom:1px solid var(--line);}.lt-logo{width:100%;}.lt-nav{font-size:9px;padding:3px 6px;}}
 @keyframes shieldScroll{0%{transform:translateY(0) scale(.985)}50%{transform:translateY(-6px) scale(1.03)}100%{transform:translateY(8px) scale(.95)}}
 @media(prefers-reduced-motion:no-preference){
   @supports (animation-timeline:scroll()){#hero-stage{animation:shieldScroll linear both;animation-timeline:scroll(root);animation-range:0 80vh;}}
@@ -568,8 +596,29 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <p class="hero-sub">The complete GDPR layer for modern stores &mdash; cookie consent, privacy policies, consent logs and an AI compliance scanner. Live in minutes.</p>
 <div class="hero-btns"><a href="#estimator" class="btn-primary">Check my risk &rarr;</a><a href="#scanner" class="btn-outline">Scan my site free</a></div>
 <div class="trust-row"><div class="trust-item"><span class="trust-icon">&check;</span>14-day money-back</div><div class="trust-item"><span class="trust-icon">&check;</span>EU data hosting</div><div class="trust-item"><span class="trust-icon">&check;</span>Payments by Paddle</div><div class="trust-item"><span class="trust-icon">&check;</span>No card for scan</div></div>
-<div class="hero-visual"><div class="hero-shot" id="hero-stage">
-<img src="assets/hero-commerce.png" alt="An online store protected by GDRock" loading="eager">
+<div class="hero-visual"><div class="hero-laptop" id="hero-stage">
+<div class="lt-glow"></div>
+<div class="lt-lid"><div class="lt-screen">
+<div class="lt-bar"><span></span><span></span><span></span><b>app.gdrock.com/consent</b></div>
+<div class="lt-app">
+<div class="lt-side">
+<div class="lt-logo"><svg viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(59,130,246,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
+<span class="lt-nav on">Overview</span><span class="lt-nav">Consent logs</span><span class="lt-nav">Cookie banner</span><span class="lt-nav">Privacy policy</span><span class="lt-nav">Settings</span>
+</div>
+<div class="lt-main">
+<div class="lt-top">
+<div class="lt-ring"><svg viewBox="0 0 62 62"><circle cx="31" cy="31" r="26" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="5"/><circle cx="31" cy="31" r="26" fill="none" stroke="#3b82f6" stroke-width="5" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="5" transform="rotate(-90 31 31)"/></svg><span class="n">97</span></div>
+<div class="lt-tiles"><div class="lt-tile"><b>12,840</b><span>Consents logged</span></div><div class="lt-tile"><b>3,201</b><span>Trackers blocked</span></div></div>
+</div>
+<div class="lt-log">
+<div class="lt-lr"><i>14:52</i> Consent · reject non-essential <em class="ok">logged</em></div>
+<div class="lt-lr"><i>14:50</i> Pre-consent tracker (GA4) <em class="no">blocked</em></div>
+<div class="lt-lr"><i>14:48</i> Privacy policy v4 published <em class="ok">synced</em></div>
+</div>
+</div>
+</div>
+</div></div>
+<div class="lt-base"></div>
 </div></div>
 </div>
 <div class="scroll-hint"><div class="scroll-line"></div><div class="scroll-txt">Scroll</div></div>
