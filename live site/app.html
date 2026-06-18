@@ -9,13 +9,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#08090c;--bg2:#0d0f14;--panel:rgba(255,255,255,.025);--panel2:rgba(255,255,255,.045);
-  --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);--acc:#2bd98e;--acc2:#16b274;--acc-ink:#04140d;
+  --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);--acc:#3b82f6;--acc2:#2563eb;--acc-ink:#ffffff;
   --ink:#f4f6fa;--ink2:#9aa2b2;--ink3:#5c6373;--bad:#ff6b70;--warn:#f6b73c;
   --D:'Geist',system-ui,sans-serif;--M:'Geist Mono',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0;min-width:0}
 html,body{max-width:100vw;overflow-x:hidden}
 body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;line-height:1.5;
-  background-image:radial-gradient(ellipse 70% 50% at 80% -10%,rgba(43,217,142,.06),transparent 60%);min-height:100vh;}
+  background-image:radial-gradient(ellipse 70% 50% at 80% -10%,rgba(59,130,246,.06),transparent 60%);min-height:100vh;}
 .mono{font-family:var(--M)}
 .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh;}
 /* sidebar */
@@ -24,7 +24,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
 .brand svg{color:var(--acc)}
 .nav-i{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;font-size:13.5px;color:var(--ink2);cursor:pointer;border:1px solid transparent;transition:all .15s;}
 .nav-i:hover{color:var(--ink);background:rgba(255,255,255,.03)}
-.nav-i.on{background:rgba(43,217,142,.1);color:var(--ink);border-color:rgba(43,217,142,.2)}
+.nav-i.on{background:rgba(59,130,246,.1);color:var(--ink);border-color:rgba(59,130,246,.2)}
 .nav-i svg{width:16px;height:16px;flex-shrink:0;opacity:.85}
 .side-foot{margin-top:auto;padding:12px 10px;border-top:1px solid var(--line);font-size:11px;color:var(--ink3);font-family:var(--M)}
 .side-foot .ok{color:var(--acc)}
@@ -59,7 +59,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
 .t-dsr{grid-template-columns:1fr 130px 110px 100px}
 .tm{font-family:var(--M);color:var(--ink2)}
 .pill{justify-self:start;font-size:11px;font-family:var(--M);padding:3px 10px;border-radius:100px;white-space:nowrap}
-.pill.ok{color:var(--acc);background:rgba(43,217,142,.1);border:1px solid rgba(43,217,142,.25)}
+.pill.ok{color:var(--acc);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25)}
 .pill.no{color:var(--bad);background:rgba(255,107,112,.1);border:1px solid rgba(255,107,112,.25)}
 .pill.w{color:var(--warn);background:rgba(246,183,60,.1);border:1px solid rgba(246,183,60,.25)}
 /* banner preview */
@@ -78,14 +78,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
 .doc h3{color:var(--ink);font-size:15px;margin:18px 0 6px}
 .btn{display:inline-flex;align-items:center;gap:7px;background:var(--acc);color:var(--acc-ink);border:none;border-radius:100px;padding:10px 18px;font-family:var(--D);font-weight:600;font-size:13px;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink)}
-.banner-top{background:rgba(43,217,142,.07);border:1px solid rgba(43,217,142,.2);color:var(--acc);font-size:12px;border-radius:10px;padding:9px 14px;margin-bottom:18px;font-family:var(--M)}
+.banner-top{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);color:var(--acc);font-size:12px;border-radius:10px;padding:9px 14px;margin-bottom:18px;font-family:var(--M)}
 @media(max-width:760px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line)}.side-foot{display:none}.r-top{grid-template-columns:1fr}.tiles{grid-template-columns:1fr 1fr}.t-consent,.t-dsr{grid-template-columns:120px 1fr 90px}.t-consent .src,.t-dsr .em{display:none}}
 </style>
 </head>
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><svg width="20" height="22" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(43,217,142,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
+    <div class="brand"><svg width="20" height="22" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(59,130,246,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
     <div class="nav-i on" data-v="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</div>
     <div class="nav-i" data-v="logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Consent logs</div>
     <div class="nav-i" data-v="banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15h18"/></svg>Cookie banner</div>
@@ -98,7 +98,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
   <main class="main">
     <div class="top">
       <div><div class="h1" id="view-title">Overview</div><div class="sub" id="view-sub">Your compliance at a glance</div></div>
-      <div class="site-pick">Site: <b id="site-id">gdrock.com</b></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div class="site-pick">Site: <b id="site-id">gdrock.com</b></div>
+        <button class="btn" id="dl-pdf"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:7px;vertical-align:-2px"><path d="M12 3v12M7 11l5 4 5-4M5 21h14"/></svg>Download summary</button>
+      </div>
     </div>
 
     <!-- OVERVIEW -->
@@ -106,7 +109,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
       <div class="banner-top" id="live-note">Showing live data where connected · demo values otherwise.</div>
       <div class="row r-top">
         <div class="ring">
-          <svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle cx="64" cy="64" r="56" fill="none" stroke="#2bd98e" stroke-width="10" stroke-linecap="round" stroke-dasharray="351.8" stroke-dashoffset="11" transform="rotate(-90 64 64)"/></svg>
+          <svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle cx="64" cy="64" r="56" fill="none" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" stroke-dasharray="351.8" stroke-dashoffset="11" transform="rotate(-90 64 64)"/></svg>
           <div class="lbl"><span class="n">97</span><span class="t">Compliant</span></div>
         </div>
         <div class="tiles">
@@ -223,6 +226,41 @@ $$('.nav-i').forEach(n=>n.onclick=()=>{
   if(!r.ok)return;const d=await r.json();
   if(Array.isArray(d)&&d.length){const rows=d.slice(0,20).map(x=>[new Date(x.created_at).toLocaleTimeString(),x.accepted?'Consent · accept':'Consent · reject',x.source||'Banner',x.accepted?'ok':'ok']);renderConsent($('#ov-log'),rows.slice(0,5));renderConsent($('#full-log'),rows);$('#live-note').textContent='● Live data from cdn.gdrock.com';}
 }catch(e){}})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* Download compliance summary as a branded dark/blue PDF */
+(function(){
+  var btn=document.getElementById('dl-pdf');if(!btn)return;
+  btn.addEventListener('click',function(){
+    if(!(window.jspdf&&window.jspdf.jsPDF)){alert('PDF library still loading — try again in a second.');return;}
+    var doc=new window.jspdf.jsPDF({unit:'pt',format:'a4'});
+    var W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
+    var siteName=(document.getElementById('site-id')||{}).textContent||'gdrock.com';
+    var score=((document.querySelector('.ring .n')||{}).textContent||'97').trim();
+    var tv=[].map.call(document.querySelectorAll('.tile .tv'),function(t){return t.textContent.trim();});
+    var consents=tv[0]||'12,840',trackers=tv[1]||'3,201',sync=tv[2]||'2 min';
+    doc.setFillColor(8,9,12);doc.rect(0,0,W,H,'F');
+    doc.setFillColor(13,15,20);doc.rect(0,0,W,92,'F');
+    doc.setTextColor(59,130,246);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('GDROCK',40,42);
+    doc.setTextColor(244,246,250);doc.setFontSize(21);doc.text('Compliance Summary',40,70);
+    doc.setTextColor(154,162,178);doc.setFont('helvetica','normal');doc.setFontSize(10);
+    doc.text(siteName+'   ·   '+new Date().toLocaleString(),40,86);
+    doc.setTextColor(59,130,246);doc.setFont('helvetica','bold');doc.setFontSize(60);doc.text(String(score),40,180);
+    doc.setTextColor(154,162,178);doc.setFont('helvetica','normal');doc.setFontSize(11);doc.text('Compliance score  / 100',40,202);
+    var rows=[['Consents logged',consents],['Trackers blocked pre-consent',trackers],['Cookie banner','Live'],['Privacy policy','v4 (published)'],['Data region','EU (Frankfurt)'],['Last sync',sync+' ago']];
+    var y=250;doc.setFontSize(12);
+    rows.forEach(function(r){
+      doc.setTextColor(154,162,178);doc.text(r[0],40,y);
+      doc.setTextColor(244,246,250);doc.text(String(r[1]),W-40,y,{align:'right'});
+      doc.setDrawColor(36,40,50);doc.setLineWidth(0.5);doc.line(40,y+11,W-40,y+11);
+      y+=36;
+    });
+    doc.setTextColor(92,99,115);doc.setFontSize(9);
+    doc.text('Generated by GDRock — gdrock.com  ·  Informational summary, not legal advice.',40,H-40);
+    doc.save('gdrock-compliance-summary-'+siteName.replace(/[^a-z0-9.]/gi,'-')+'.pdf');
+  });
+})();
 </script>
 </body>
 </html>

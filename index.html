@@ -22,7 +22,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.170.0/examples/jsm/","gsap":"https://esm.sh/gsap@3.12.5","gsap/ScrollTrigger":"https://esm.sh/gsap@3.12.5/ScrollTrigger","lenis":"https://unpkg.com/lenis@1.1.0/dist/lenis.mjs"}}</script>
 <style>
-:root{--navy:#04081a;--blue:#0033aa;--bright:#1a6dff;--teal:#00a896;--teal2:#00c9b1;--white:#fff;--g300:#a5b1cc;--g500:#5b6a8a;--red:#e63946;--gold:#f5c842;--D:'Syne',sans-serif;--B:'DM Sans',sans-serif;}
+:root{--navy:#04081a;--blue:#0033aa;--bright:#1a6dff;--teal:#00a896;--teal2:#3b82f6;--white:#fff;--g300:#a5b1cc;--g500:#5b6a8a;--red:#e63946;--gold:#f5c842;--D:'Syne',sans-serif;--B:'DM Sans',sans-serif;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--B);background:var(--navy);color:var(--white);overflow-x:hidden;}
 nav{display:flex;align-items:center;padding:0 48px;height:64px;background:rgba(4,8,26,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.07);position:fixed;top:0;left:0;right:0;z-index:200;transition:background .3s;}
@@ -260,12 +260,12 @@ img,svg,canvas{max-width:100%;}
    Override layer. Touches no HTML structure or JS.
    ============================================================ */
 :root{
-  --acc:#11c5ad;            /* the ONE accent — teal, slightly desaturated */
-  --acc-bright:#2fe0c8;
+  --acc:#3b82f6;            /* the ONE accent — teal, slightly desaturated */
+  --acc-bright:#60a5fa;
   --acc-ink:#03110f;        /* dark text that sits on the accent */
   --ink:#070d20;            /* off-black surface, tinted to the navy hue */
   --line:rgba(148,170,205,.12);
-  --line-hi:rgba(17,197,173,.40);
+  --line-hi:rgba(59,130,246,.40);
 }
 /* ---- 1. KILL THE BLUE→TEAL "AI GRADIENT" : one accent, everywhere ---- */
 .grad-text{
@@ -274,32 +274,32 @@ img,svg,canvas{max-width:100%;}
 }
 .btn-primary,.prod-btn.pri,.btn-nav{
   background:var(--acc)!important;color:var(--acc-ink)!important;
-  box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 8px 24px -10px rgba(17,197,173,.6);
+  box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 8px 24px -10px rgba(59,130,246,.6);
   border:none!important;
 }
 .btn-primary:hover,.prod-btn.pri:hover,.btn-nav:hover{
   background:var(--acc-bright)!important;transform:translateY(-2px);
-  box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 16px 36px -12px rgba(17,197,173,.75);
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 16px 36px -12px rgba(59,130,246,.75);
 }
 .btn-primary:active,.prod-btn.pri:active,.btn-nav:active,.prod-btn:active,.btn-outline:active{
   transform:translateY(0) scale(.985);
 }
 .step-num{
-  background:rgba(17,197,173,.08)!important;border-color:var(--line-hi)!important;color:var(--acc-bright)!important;
+  background:rgba(59,130,246,.08)!important;border-color:var(--line-hi)!important;color:var(--acc-bright)!important;
 }
 /* scanner progress bar + sundry gradients → single accent */
 .scan-bar{background:var(--acc)!important;}
 .prod-card::before{background:linear-gradient(90deg,transparent,var(--acc),transparent)!important;}
 /* ---- 2. BADGES : less candy-pill, more product-label ---- */
 .hero-badge{
-  background:rgba(17,197,173,.07);border:1px solid rgba(17,197,173,.22);
+  background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.22);
   border-radius:8px;color:var(--acc-bright);
 }
 .feat-badge{
   background:var(--acc);color:var(--acc-ink);border-radius:7px;
   font-weight:700;letter-spacing:.06em;
 }
-.bdot{background:var(--acc);box-shadow:0 0 0 4px rgba(17,197,173,.14);}
+.bdot{background:var(--acc);box-shadow:0 0 0 4px rgba(59,130,246,.14);}
 /* ---- 3. SURFACES : refined cards, tinted shadows, real hover, spotlight ---- */
 .prod-card,.prob-card,.step,.scanner-card,.dfy-card,.free-card,.fine-inner,.contact-card,.faq-item{
   position:relative;
@@ -309,20 +309,20 @@ img,svg,canvas{max-width:100%;}
 }
 .prod-card:hover,.prob-card:hover,.step:hover,.faq-item:hover{
   border-color:var(--line-hi)!important;
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -26px rgba(0,8,26,1), 0 0 0 1px rgba(17,197,173,.10);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -26px rgba(0,8,26,1), 0 0 0 1px rgba(59,130,246,.10);
 }
 /* cursor-tracked spotlight border (21st.dev-style restraint) */
 .prod-card::after,.prob-card::after{
   content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
   opacity:0;transition:opacity .3s;
-  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(17,197,173,.10),transparent 45%);
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(59,130,246,.10),transparent 45%);
 }
 .prod-card:hover::after,.prob-card:hover::after{opacity:1;}
 /* featured pricing tier: emphasis via accent, not a blue wash */
 .prod-card.feat{
-  background:linear-gradient(180deg,rgba(17,197,173,.06),rgba(255,255,255,.012))!important;
+  background:linear-gradient(180deg,rgba(59,130,246,.06),rgba(255,255,255,.012))!important;
   border-color:var(--line-hi)!important;
-  box-shadow:0 0 0 1px rgba(17,197,173,.18), 0 30px 70px -30px rgba(17,197,173,.4);
+  box-shadow:0 0 0 1px rgba(59,130,246,.18), 0 30px 70px -30px rgba(59,130,246,.4);
 }
 /* ---- 4. ACCESSIBILITY : visible focus for keyboard users ---- */
 a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,.prod-btn:focus-visible{
@@ -342,9 +342,9 @@ section{padding:96px 0 104px;}      /* optical: slightly more bottom */
 .sec-label,.sec-label::before,.dfy-eye,.prod-tier{color:var(--acc-bright)!important;}
 .sec-label::before{background:var(--acc-bright)!important;}
 /* ---- 7. ICONS : real line-icons, one consistent stroke (no emoji) ---- */
-.prob-icon{color:var(--acc-bright);display:flex;height:34px;width:34px;align-items:center;justify-content:center;margin-bottom:16px;border-radius:9px;background:rgba(17,197,173,.08);border:1px solid rgba(17,197,173,.16);}
+.prob-icon{color:var(--acc-bright);display:flex;height:34px;width:34px;align-items:center;justify-content:center;margin-bottom:16px;border-radius:9px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.16);}
 .prob-icon svg{width:19px;height:19px;}
-.doc-icon{background:rgba(17,197,173,.1)!important;color:var(--acc-bright);}
+.doc-icon{background:rgba(59,130,246,.1)!important;color:var(--acc-bright);}
 .doc-icon svg{width:18px;height:18px;}
 .free-tag svg{width:14px;height:14px;color:var(--acc-bright);vertical-align:-2px;margin-right:2px;}
 </style>
@@ -414,10 +414,10 @@ section{padding:96px 0 104px;}      /* optical: slightly more bottom */
 :root{
   --bg:#08090c;--bg2:#0d0f14;--ink:#f4f6fa;--ink2:#9aa2b2;--ink3:#5c6373;
   --line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.16);
-  --acc:#2bd98e;--acc2:#16b274;--acc-ink:#04140d;
+  --acc:#3b82f6;--acc2:#2563eb;--acc-ink:#ffffff;
   /* remap legacy tokens so old rules inherit the new system */
-  --navy:#08090c;--blue:#2bd98e;--bright:#2bd98e;--teal:#2bd98e;--teal2:#2bd98e;
-  --g300:#9aa2b2;--g500:#5c6373;--acc-bright:#34e39a;
+  --navy:#08090c;--blue:#3b82f6;--bright:#3b82f6;--teal:#3b82f6;--teal2:#3b82f6;
+  --g300:#9aa2b2;--g500:#5c6373;--acc-bright:#60a5fa;
   --D:'Geist','Inter',-apple-system,sans-serif;--B:'Inter','Geist',sans-serif;--M:'Geist Mono',ui-monospace,monospace;
 }
 html,body{background:var(--bg)!important;}
@@ -445,19 +445,19 @@ section{padding:clamp(76px,12vh,168px) 0!important;}
 .prod-btn{border-radius:100px!important;}
 /* a few key conversion CTAs get the emerald accent */
 .est-cta .btn-primary,.fine-inner .btn-primary,.prod-card.feat .prod-btn.pri{background:var(--acc)!important;color:var(--acc-ink)!important;}
-.est-cta .btn-primary:hover,.fine-inner .btn-primary:hover,.prod-card.feat .prod-btn.pri:hover{background:var(--acc-bright)!important;box-shadow:0 14px 40px -14px rgba(43,217,142,.5)!important;}
+.est-cta .btn-primary:hover,.fine-inner .btn-primary:hover,.prod-card.feat .prod-btn.pri:hover{background:var(--acc-bright)!important;box-shadow:0 14px 40px -14px rgba(59,130,246,.5)!important;}
 /* ---- SURFACES: near-flat, hairline, generous ---- */
 .prod-card,.prob-card,.step,.scanner-card,.dfy-card,.free-card,.fine-inner,.contact-card,.faq-item,.est-wrap,.est-result,.api-notice{
   background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.01))!important;
   border:1px solid var(--line)!important;border-radius:20px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
   box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 40px 80px -50px rgba(0,0,0,1)!important;}
 .prod-card:hover,.prob-card:hover,.step:hover,.faq-item:hover{border-color:var(--line2)!important;transform:translateY(-4px)!important;}
-.prod-card.feat{border-color:rgba(43,217,142,.4)!important;background:linear-gradient(180deg,rgba(43,217,142,.06),rgba(255,255,255,.01))!important;box-shadow:0 0 0 1px rgba(43,217,142,.18),0 40px 80px -45px rgba(43,217,142,.35)!important;}
-.prod-card::after,.prob-card::after{background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(43,217,142,.1),transparent 45%)!important;}
+.prod-card.feat{border-color:rgba(59,130,246,.4)!important;background:linear-gradient(180deg,rgba(59,130,246,.06),rgba(255,255,255,.01))!important;box-shadow:0 0 0 1px rgba(59,130,246,.18),0 40px 80px -45px rgba(59,130,246,.35)!important;}
+.prod-card::after,.prob-card::after{background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(59,130,246,.1),transparent 45%)!important;}
 .ck,.trust-icon,.dfy-buls li::before,.doc-icon,.prob-icon,.free-tag svg,.faq-q::after{color:var(--acc)!important;}
-.prob-icon{background:rgba(43,217,142,.08)!important;border-color:rgba(43,217,142,.18)!important;}
+.prob-icon{background:rgba(59,130,246,.08)!important;border-color:rgba(59,130,246,.18)!important;}
 .feat-badge{background:var(--acc)!important;color:var(--acc-ink)!important;}
-.hero-badge{background:rgba(43,217,142,.08)!important;border:1px solid rgba(43,217,142,.22)!important;color:var(--acc)!important;border-radius:100px!important;font-family:var(--M)!important;}
+.hero-badge{background:rgba(59,130,246,.08)!important;border:1px solid rgba(59,130,246,.22)!important;color:var(--acc)!important;border-radius:100px!important;font-family:var(--M)!important;}
 .bdot{background:var(--acc)!important;}
 /* ---- NAV: minimal, refined ---- */
 nav{background:rgba(8,9,12,.6)!important;border-bottom:1px solid var(--line)!important;height:68px!important;}
@@ -472,7 +472,7 @@ nav{background:rgba(8,9,12,.6)!important;border-bottom:1px solid var(--line)!imp
 .hero{min-height:100dvh!important;height:auto!important;text-align:center;padding:120px 0 80px!important;}
 .hero::before{display:none!important;}
 #hero-canvas{display:none!important;}
-.hero-grad{background:radial-gradient(ellipse 60% 50% at 50% 38%,rgba(43,217,142,.10),transparent 70%)!important;}
+.hero-grad{background:radial-gradient(ellipse 60% 50% at 50% 38%,rgba(59,130,246,.10),transparent 70%)!important;}
 .hero-content{display:flex!important;flex-direction:column;align-items:center;padding-top:0!important;}
 .hero h1{margin:18px auto 20px!important;}
 .hero-sub{margin:0 auto 34px!important;text-align:center;}
@@ -501,7 +501,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 .app-side .brand{display:flex;align-items:center;gap:8px;font-family:var(--D);font-weight:600;font-size:15px;margin-bottom:16px;}
 .app-side .brand svg{color:var(--acc);}
 .nav-i{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;font-size:13px;color:var(--ink2);}
-.nav-i.on{background:rgba(43,217,142,.1);color:var(--ink);}
+.nav-i.on{background:rgba(59,130,246,.1);color:var(--ink);}
 .nav-i .nd{width:7px;height:7px;border-radius:2px;background:currentColor;opacity:.6;}
 .app-main{padding:22px 24px;display:flex;flex-direction:column;gap:18px;}
 .app-top{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;}
@@ -519,22 +519,30 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 .log-r:last-child{border-bottom:0;}
 .log-r .tm{font-family:var(--M);color:var(--ink2);}
 .pill{justify-self:end;font-size:11px;font-family:var(--M);padding:3px 10px;border-radius:100px;}
-.pill.ok{color:var(--acc);background:rgba(43,217,142,.1);border:1px solid rgba(43,217,142,.25);}
+.pill.ok{color:var(--acc);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);}
 .pill.no{color:#ff8a8f;background:rgba(255,90,95,.1);border:1px solid rgba(255,90,95,.25);}
 @media(max-width:680px){.app-body{grid-template-columns:1fr;}.app-side{flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);}.app-top{grid-template-columns:1fr;}.tiles{grid-template-columns:1fr 1fr;}.log-h,.log-r{grid-template-columns:1.4fr auto;}.log-h span:nth-child(2),.log-r .ev{display:none;}}
 /* ---- animated hero scene (background-inside-a-background, moving) ---- */
 .hero-stage{position:relative;width:min(660px,88vw);aspect-ratio:16/11;margin:8px auto 0;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
 .hero-stage>*{position:absolute;}
-.stage-grid{inset:-10% -10% 0 -10%;background-image:linear-gradient(rgba(43,217,142,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(43,217,142,.10) 1px,transparent 1px);background-size:36px 36px;transform:perspective(620px) rotateX(60deg) translateY(18%) scale(1.5) translate3d(var(--px,0px),0,0);-webkit-mask-image:radial-gradient(ellipse 55% 60% at 50% 62%,#000,transparent 72%);mask-image:radial-gradient(ellipse 55% 60% at 50% 62%,#000,transparent 72%);opacity:.8;}
-.stage-glow{width:62%;height:62%;border-radius:50%;background:radial-gradient(circle,rgba(43,217,142,.4),transparent 64%);filter:blur(34px);animation:glowPulse 5s ease-in-out infinite;}
+.stage-grid{inset:-10% -10% 0 -10%;background-image:linear-gradient(rgba(59,130,246,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.10) 1px,transparent 1px);background-size:36px 36px;transform:perspective(620px) rotateX(60deg) translateY(18%) scale(1.5) translate3d(var(--px,0px),0,0);-webkit-mask-image:radial-gradient(ellipse 55% 60% at 50% 62%,#000,transparent 72%);mask-image:radial-gradient(ellipse 55% 60% at 50% 62%,#000,transparent 72%);opacity:.8;}
+.stage-glow{width:62%;height:62%;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.4),transparent 64%);filter:blur(34px);animation:glowPulse 5s ease-in-out infinite;}
 @keyframes glowPulse{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.2);opacity:1}}
 .orbit{border-radius:50%;}
-.orbit.o1{width:74%;height:74%;border:1px solid rgba(43,217,142,.18);animation:spin 22s linear infinite;}
+.orbit.o1{width:74%;height:74%;border:1px solid rgba(59,130,246,.18);animation:spin 22s linear infinite;}
 .orbit.o2{width:56%;height:56%;border:1px dashed rgba(255,255,255,.1);animation:spin 15s linear infinite reverse;}
-.orbit.o3{width:96%;height:96%;border:1px solid rgba(43,217,142,.1);animation:spin 40s linear infinite;}
+.orbit.o3{width:96%;height:96%;border:1px solid rgba(59,130,246,.1);animation:spin 40s linear infinite;}
 .orbit::before{content:'';position:absolute;top:-4px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--acc);box-shadow:0 0 14px var(--acc);}
 @keyframes spin{to{transform:rotate(360deg);}}
-.hero-stage .hero-shield{position:relative;width:52%!important;height:auto!important;border-radius:0!important;z-index:3;filter:drop-shadow(0 34px 64px rgba(0,0,0,.65))!important;animation:heroFloat 6s ease-in-out infinite!important;transform:translate3d(calc(var(--px,0px)*-1.6),calc(var(--py,0px)*-1.6),0);}
+.hero-stage .hero-shield{position:relative;width:52%!important;height:auto!important;border-radius:0!important;z-index:3;filter:drop-shadow(0 34px 64px rgba(0,0,0,.65))!important;transform:none;}
+.hero-visual{perspective:1100px;}
+@keyframes shieldSpin{0%{transform:rotateY(0) translateY(0)}50%{transform:rotateY(180deg) translateY(-12px)}100%{transform:rotateY(360deg) translateY(0)}}
+@keyframes shieldScroll{0%{transform:translateY(0) scale(.96)}45%{transform:translateY(-8px) scale(1.07)}100%{transform:translateY(10px) scale(.9)}}
+@media(prefers-reduced-motion:no-preference){
+  .hero-stage .hero-shield{animation:shieldSpin 26s linear infinite;}
+  @supports (animation-timeline:scroll()){.hero-stage{animation:shieldScroll linear both;animation-timeline:scroll(root);animation-range:0 80vh;}}
+}
+@media(prefers-reduced-motion:reduce){.hero-stage .hero-shield,.orbit,.stage-glow,.spark{animation:none!important;}}
 .hero-stage video.hero-shield{width:62%!important;border-radius:0!important;-webkit-mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 52%,transparent 86%);mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 52%,transparent 86%);}
 .spark{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);opacity:.7;z-index:2;}
 .spark.sp1{top:18%;left:24%;animation:drift 7s ease-in-out infinite;}
@@ -547,7 +555,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 </head>
 <body>
 <nav><div class="nav-inner">
-<a href="/" class="logo"><svg width="26" height="28" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#00c9b1" stroke-width="2.5" fill="rgba(0,201,177,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#00c9b1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GDRock</a>
+<a href="/" class="logo"><svg width="26" height="28" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(0,201,177,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GDRock</a>
 <ul class="nav-links"><li><a href="#estimator">Fine Risk</a></li><li><a href="#scanner">Free Scan</a></li><li><a href="#products">Pricing</a></li><li><a href="#dfy">Done-For-You</a></li><li><a href="#faq">FAQ</a></li></ul>
 <div style="display:flex;align-items:center;gap:12px;"><a href="#contact" style="color:#a5b1cc;font-size:14px;text-decoration:none;">Contact</a><a href="#products" class="btn-nav">View Plans &rarr;</a></div>
 </div></nav>
@@ -562,7 +570,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="stage-grid"></div>
 <div class="orbit o3"></div><div class="orbit o1"></div><div class="orbit o2"></div>
 <div class="stage-glow"></div>
-<video class="hero-shield" autoplay muted loop playsinline poster="assets/hero-shield.png" aria-label="GDRock — your store, protected"><source src="assets/hero.mp4" type="video/mp4"></video>
+<img src="assets/hero-shield.png" class="hero-shield" alt="GDRock — your store, protected" loading="eager">
 <i class="spark sp1"></i><i class="spark sp2"></i><i class="spark sp3"></i><i class="spark sp4"></i>
 </div></div>
 </div>
@@ -595,7 +603,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 </div>
 <div class="est-result">
 <div class="gauge">
-<svg viewBox="0 0 200 118"><defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00c9b1"/><stop offset="0.55" stop-color="#f6b73c"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs>
+<svg viewBox="0 0 200 118"><defs><linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3b82f6"/><stop offset="0.55" stop-color="#f6b73c"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs>
 <path class="gauge-track" d="M16 110 A 84 84 0 0 1 184 110"/>
 <path class="gauge-fill" id="gauge-fill" d="M16 110 A 84 84 0 0 1 184 110"/></svg>
 <div class="gauge-score"><div class="gauge-num countup" id="risk-num" style="color:var(--risk);">0</div><div class="gauge-lbl">Risk score</div></div>
@@ -625,10 +633,10 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="scanner-progress" id="scan-progress"><div class="scan-bar-wrap"><div class="scan-bar" id="scan-bar"></div></div><div class="scan-step" id="scan-step">Initialising scan&hellip;</div></div>
 <div class="scan-success" id="scan-success" style="display:none;text-align:center;padding:18px 4px;">
 <div style="width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:rgba(0,201,177,.12);border:1px solid rgba(0,201,177,.35);display:flex;align-items:center;justify-content:center;">
-<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#00c9b1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 <h3 style="font-family:var(--D);font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:12px;">Scan complete</h3>
 <p style="color:#9CA3AF;font-size:15px;line-height:1.65;max-width:440px;margin:0 auto 18px;">We've sent your <strong style="color:#fff;">compliance score</strong> and <strong style="color:#fff;">free banner pack</strong> to your inbox. Open it to see your compliance gaps and get set up.</p>
-<div style="display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#00c9b1;background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.2);border-radius:8px;padding:9px 16px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Check your inbox &mdash; including spam/promotions</div><p style="font-size:11px;color:#5b6a8a;line-height:1.6;max-width:440px;margin:16px auto 0;">This scan is automated and for informational purposes only — not legal advice, a formal audit, or a compliance guarantee. GDRock provides software tools and templates, not legal services.</p>
+<div style="display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#3b82f6;background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.2);border-radius:8px;padding:9px 16px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Check your inbox &mdash; including spam/promotions</div><p style="font-size:11px;color:#5b6a8a;line-height:1.6;max-width:440px;margin:16px auto 0;">This scan is automated and for informational purposes only — not legal advice, a formal audit, or a compliance guarantee. GDRock provides software tools and templates, not legal services.</p>
 </div>
 <div class="scan-result" id="scan-result"><div class="score-num" id="score-display"></div><div class="score-lbl" id="score-label"></div><div id="fake-warn" class="fake-warn"></div><div id="site-info" class="site-info"><div class="site-info-lbl">Site identified as</div><div class="site-info-txt" id="site-info-txt"></div></div><div id="sum-box" class="sum-box"></div><div class="issues-list" id="issues-list"></div><a class="btn-primary" style="width:100%;justify-content:center;margin-bottom:9px;" href="checkout.html?plan=core">Fix automatically with GDRock &rarr;</a><p class="help-line">Core Pack fixes all critical issues in under 10 min. Questions? <a href="mailto:office@gdrock.com">office@gdrock.com</a></p></div>
 </div></div></section>
@@ -654,7 +662,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="app-bar"><span class="app-dot"></span><span class="app-dot"></span><span class="app-dot"></span><span class="app-url">app.gdrock.com/consent</span></div>
 <div class="app-body">
 <div class="app-side">
-<div class="brand"><svg width="18" height="20" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(43,217,142,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
+<div class="brand"><svg width="18" height="20" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(59,130,246,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
 <div class="nav-i on"><span class="nd"></span>Overview</div>
 <div class="nav-i"><span class="nd"></span>Consent logs</div>
 <div class="nav-i"><span class="nd"></span>Cookie banner</div>
@@ -665,7 +673,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="app-main">
 <div class="app-top">
 <div class="ring-wrap">
-<svg viewBox="0 0 108 108"><circle cx="54" cy="54" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/><circle cx="54" cy="54" r="48" fill="none" stroke="#2bd98e" stroke-width="9" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="9" transform="rotate(-90 54 54)"/></svg>
+<svg viewBox="0 0 108 108"><circle cx="54" cy="54" r="48" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="9"/><circle cx="54" cy="54" r="48" fill="none" stroke="#3b82f6" stroke-width="9" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="9" transform="rotate(-90 54 54)"/></svg>
 <div class="lbl"><span class="n">97</span><span class="t">Compliant</span></div>
 </div>
 <div class="tiles">
@@ -719,19 +727,19 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="mk-body" style="display:grid;grid-template-columns:120px 1fr;min-height:280px;">
 <div style="border-right:1px solid rgba(255,255,255,.06);padding:14px;">
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:8px;">Presets</div>
-<div class="mk-presets" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;"><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#1a6dff,#0a1628);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#00c9b1,#04181c);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#8b5cf6,#0f0a1e);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#10b981,#041410);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f43f5e,#1a0408);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#1a1200);"></span></div>
+<div class="mk-presets" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;"><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#1a6dff,#0a1628);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#3b82f6,#04181c);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#8b5cf6,#0f0a1e);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#10b981,#041410);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f43f5e,#1a0408);"></span><span style="aspect-ratio:1;border-radius:6px;background:linear-gradient(135deg,#f59e0b,#1a1200);"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:6px;">Accent</div>
-<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;"><span style="width:24px;height:24px;border-radius:6px;background:#2bd98e;border:2px solid rgba(255,255,255,.15);"></span><span style="flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.06);"></span></div>
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;"><span style="width:24px;height:24px;border-radius:6px;background:#3b82f6;border:2px solid rgba(255,255,255,.15);"></span><span style="flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,.06);"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin-bottom:6px;">Radius</div>
-<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-bottom:5px;position:relative;"><span style="position:absolute;left:55%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#2bd98e;"></span></div>
+<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin-bottom:5px;position:relative;"><span style="position:absolute;left:55%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#3b82f6;"></span></div>
 <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b6a8a;margin:12px 0 6px;">Logo size</div>
-<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);position:relative;"><span style="position:absolute;left:40%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#2bd98e;"></span></div>
+<div style="height:4px;border-radius:2px;background:rgba(255,255,255,.08);position:relative;"><span style="position:absolute;left:40%;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#3b82f6;"></span></div>
 </div>
 <div style="padding:18px;display:flex;align-items:flex-end;background:repeating-linear-gradient(45deg,#07102000,#07102000 10px,#ffffff04 10px,#ffffff04 20px);">
 <div style="width:100%;background:#0a1628;border:1px solid rgba(176,188,212,.18);border-radius:14px;padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.5);">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;"><svg width="22" height="24" viewBox="0 0 30 34" fill="none" style="flex-shrink:0;"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" fill="rgba(0,201,177,.12)" stroke="#00c9b1" stroke-width="2.5"/><path d="M10 16.5L13.5 20L20 13" stroke="#00c9b1" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#f4f6fb;">We value your privacy</span></div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;"><svg width="22" height="24" viewBox="0 0 30 34" fill="none" style="flex-shrink:0;"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" fill="rgba(0,201,177,.12)" stroke="#3b82f6" stroke-width="2.5"/><path d="M10 16.5L13.5 20L20 13" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span style="font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#f4f6fb;">We value your privacy</span></div>
 <div style="font-size:10px;line-height:1.5;color:#b0bcd4;margin-bottom:10px;">We use cookies to improve your experience and personalize content.</div>
-<div style="display:flex;gap:5px;"><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Reject</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Customize</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:linear-gradient(135deg,#2bd98e,#16b274);color:#04140d;">Accept all</span></div>
+<div style="display:flex;gap:5px;"><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Reject</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:rgba(255,255,255,.1);color:#cfd8ea;">Customize</span><span style="flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:600;text-align:center;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#ffffff;">Accept all</span></div>
 </div>
 </div>
 </div>
@@ -752,7 +760,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <p class="help-line" style="margin-top:16px;">Or email <a href="mailto:office@gdrock.com">office@gdrock.com</a> &mdash; we reply within 24h.</p>
 </div></div></section>
 <section id="faq"><div class="container"><div class="sec-label reveal">FAQ</div><h2 class="sec-title reveal">Questions, answered.</h2><div class="faq-grid" id="faq-grid"></div></div></section>
-<footer><div class="foot-inner"><div class="foot-logo"><svg width="22" height="24" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#00c9b1" stroke-width="2.5" fill="rgba(0,201,177,.1)" stroke-linejoin="round"/></svg>GDRock</div><div class="foot-links"><a href="terms-and-conditions.html">Terms</a><a href="terms-and-conditions.html#privacy">Privacy</a><a href="terms-and-conditions.html#refund">Refund</a><a href="dfy.html">Done-For-You</a><a href="mailto:office@gdrock.com">Contact</a></div><p class="foot-copy">&copy; 2026 GDRock. All rights reserved. &middot; Payments by Paddle.com Market Ltd.</p></div></footer>
+<footer><div class="foot-inner"><div class="foot-logo"><svg width="22" height="24" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(0,201,177,.1)" stroke-linejoin="round"/></svg>GDRock</div><div class="foot-links"><a href="terms-and-conditions.html">Terms</a><a href="terms-and-conditions.html#privacy">Privacy</a><a href="terms-and-conditions.html#refund">Refund</a><a href="dfy.html">Done-For-You</a><a href="mailto:office@gdrock.com">Contact</a></div><p class="foot-copy">&copy; 2026 GDRock. All rights reserved. &middot; Payments by Paddle.com Market Ltd.</p></div></footer>
 <button class="help-fab" onclick="document.getElementById('faq').scrollIntoView({behavior:'smooth'})"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px;"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.8-5.9A8.5 8.5 0 1 1 21 11.5z"/></svg>Help</button>
 <div class="modal-ov" id="modal" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="modal-x" onclick="closeModal()">&times;</button><h2>Get your free starter pack</h2><p>Enter your email and we'll send the GDPR Basics guide, compliance checklist, and fine-tier reference instantly.</p><input type="email" class="modal-inp" id="modal-email" placeholder="your@email.com"><button class="btn-primary" style="width:100%;justify-content:center;" onclick="submitModal()">Send me the pack &rarr;</button><div class="modal-msg" id="modal-msg"></div></div></div>
 <script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
@@ -815,7 +823,7 @@ function runScan(){
   },3000);
 }
 function displayResult(data){
-  var s=data.score||42,c=s>=80?'#00c9b1':s>=60?'#f5c842':'#e63946';
+  var s=data.score||42,c=s>=80?'#3b82f6':s>=60?'#f5c842':'#e63946';
   document.getElementById('score-display').textContent=s+'/100';document.getElementById('score-display').style.color=c;
   document.getElementById('score-label').textContent=s>=80?'Good compliance score':s>=60?'Needs attention':'Significant issues found';
   var fw=document.getElementById('fake-warn');if(data.is_real_site===false){fw.textContent='This domain does not appear to be a real or active website.';fw.style.display='block';}
@@ -837,7 +845,7 @@ function submitEmail(){
   var e=document.getElementById('hero-email').value.trim();
   if(!e||!e.includes('@'))return document.getElementById('hero-email').focus();
   fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:e,source:'hero',plan:'free'})})
-  .finally(function(){var r=document.getElementById('hero-email').closest('.email-row');if(r)r.innerHTML='<div style="padding:12px 14px;border-radius:9px;background:rgba(17,197,173,.08);border:1px solid rgba(17,197,173,.25);color:#2fe0c8;font-size:14px;width:100%;">Sent. Check your inbox for your free pack.</div>';});
+  .finally(function(){var r=document.getElementById('hero-email').closest('.email-row');if(r)r.innerHTML='<div style="padding:12px 14px;border-radius:9px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);color:#60a5fa;font-size:14px;width:100%;">Sent. Check your inbox for your free pack.</div>';});
 }
 var faqs=[
 {q:'What exactly is in Core Pack?',a:'A white-label privacy policy template, cookie banner script, data retention table, breach response pack, and a Shopify setup guide - all pre-configured for EU compliance.'},
@@ -866,7 +874,13 @@ document.addEventListener('click',function(e){
 </script>
 <script>/* HERO-FALLBACK */setTimeout(function(){document.querySelectorAll('.hero-badge,.hero h1,.hero-sub,.hero-btns,.trust-row').forEach(function(e){if(getComputedStyle(e).visibility==='hidden'){e.style.visibility='visible';e.style.opacity='1';}});},2600);</script>
 <script>/* cursor spotlight on cards (premium hover, no deps) */(function(){document.querySelectorAll('.prod-card,.prob-card').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');});});})();</script>
-<script>/* hero parallax — event-driven, no rAF loop */(function(){var s=document.getElementById('hero-stage'),hero=document.querySelector('.hero');if(!s||!hero)return;hero.addEventListener('pointermove',function(e){var r=hero.getBoundingClientRect();s.style.setProperty('--px',(((e.clientX-r.left)/r.width-.5)*16).toFixed(1)+'px');s.style.setProperty('--py',(((e.clientY-r.top)/r.height-.5)*16).toFixed(1)+'px');});})();</script>
+<script>/* hero parallax + scroll-scale fallback — throttled, reduced-motion aware */(function(){var s=document.getElementById('hero-stage'),hero=document.querySelector('.hero');if(!s||!hero)return;
+hero.addEventListener('pointermove',function(e){var r=hero.getBoundingClientRect();s.style.setProperty('--px',(((e.clientX-r.left)/r.width-.5)*16).toFixed(1)+'px');s.style.setProperty('--py',(((e.clientY-r.top)/r.height-.5)*16).toFixed(1)+'px');});
+var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+var hasTimeline=window.CSS&&CSS.supports&&CSS.supports('animation-timeline','scroll()');
+if(!hasTimeline&&!reduce){var tick=false;function upd(){tick=false;var p=Math.min(Math.max(window.scrollY/(window.innerHeight*0.8),0),1);var scale=(0.96+0.11*Math.sin(p*Math.PI)).toFixed(3);var ty=(-8*Math.sin(p*Math.PI)+10*p).toFixed(1);s.style.transform='translateY('+ty+'px) scale('+scale+')';}
+window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(upd);}},{passive:true});upd();}
+})();</script>
 <script>/* ===== GDPR Fine Estimator ===== */(function(){
   var slider=document.getElementById('rev-slider');
   if(!slider)return;
@@ -877,7 +891,7 @@ document.addEventListener('click',function(e){
 
   function revenue(){return Math.round(10000*Math.pow(1000,slider.value/100));}
   function money(n){if(n>=1e6)return '€'+(n/1e6).toFixed(n>=1e7?0:1).replace(/\.0$/,'')+'M';if(n>=1e3)return '€'+Math.round(n/1e3)+'k';return '€'+Math.round(n);}
-  function level(s){if(s<30)return{w:'Low risk',c:'#00c9b1'};if(s<55)return{w:'Moderate risk',c:'#f6b73c'};if(s<78)return{w:'High risk',c:'#fb923c'};return{w:'Severe risk',c:'#ef4444'};}
+  function level(s){if(s<30)return{w:'Low risk',c:'#3b82f6'};if(s<55)return{w:'Moderate risk',c:'#f6b73c'};if(s<78)return{w:'High risk',c:'#fb923c'};return{w:'Severe risk',c:'#ef4444'};}
 
   // smooth count-up between values
   function animateNum(el,from,to,fmt){var t0=performance.now(),d=650,done=false;function fin(){if(done)return;done=true;el.textContent=fmt(to);}function step(now){if(done)return;var p=Math.min((now-t0)/d,1),e=1-Math.pow(1-p,3),v=from+(to-from)*e;el.textContent=fmt(v);if(p<1)requestAnimationFrame(step);else done=true;}requestAnimationFrame(step);setTimeout(fin,d+60);/* safety: guarantee final value even when rAF is throttled (hidden tab) */}

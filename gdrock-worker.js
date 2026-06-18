@@ -46,9 +46,11 @@ var CSS=".gdrock-root,.gdrock-root *{box-sizing:border-box;font-family:'DM Sans'
 ".gdrock-row{display:flex;gap:8px;flex-wrap:wrap}"+
 ".gdrock-btn{flex:1;min-width:110px;min-height:44px;border:0;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:transform .1s,box-shadow .2s;font-family:inherit}"+
 ".gdrock-btn:active{transform:scale(.97)}"+
-".gdrock-btn-primary{background:var(--gdr-accent,linear-gradient(135deg,#1a6dff,#0044cc));color:#fff;box-shadow:0 4px 14px rgba(26,109,255,.35)}"+
+".gdrock-btn-primary{background:var(--gdr-accent,linear-gradient(135deg,#3b82f6,#2563eb));color:#fff;box-shadow:0 4px 14px rgba(26,109,255,.35)}"+
 ".gdrock-btn-ghost{background:rgba(255,255,255,.1);color:var(--gdr-fg,#f4f6fb)}"+
 ".gdrock-btn-ghost:hover{background:rgba(255,255,255,.18)}"+
+".gdrock-btn-secondary{background:rgba(60,75,110,.75);color:var(--gdr-fg,#f4f6fb);box-shadow:0 2px 8px rgba(0,0,0,.22)}"+
+".gdrock-btn-secondary:hover{background:rgba(60,75,110,.95)}"+
 ".gdrock-cat{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--gdr-border,rgba(176,188,212,.18))}"+
 ".gdrock-cat-name{font-size:13px;font-weight:600}"+
 ".gdrock-cat-desc{font-size:12px;color:var(--gdr-muted,#b0bcd4);margin-top:2px;line-height:1.45}"+
@@ -56,14 +58,14 @@ var CSS=".gdrock-root,.gdrock-root *{box-sizing:border-box;font-family:'DM Sans'
 ".gdrock-switch input{opacity:0;width:0;height:0}"+
 ".gdrock-slider{position:absolute;inset:0;background:#4b5563;border-radius:22px;transition:.2s;cursor:pointer}"+
 ".gdrock-slider:before{content:'';position:absolute;height:18px;width:18px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}"+
-".gdrock-switch input:checked+.gdrock-slider{background:var(--gdr-accent,#1a6dff)}"+
+".gdrock-switch input:checked+.gdrock-slider{background:var(--gdr-accent,#3b82f6)}"+
 ".gdrock-switch input:checked+.gdrock-slider:before{transform:translateX(18px)}"+
 ".gdrock-switch input:disabled+.gdrock-slider{opacity:.5;cursor:not-allowed}"+
 ".gdrock-foot{margin-top:14px;font-size:11px;color:var(--gdr-muted,#b0bcd4);text-align:center}"+
-".gdrock-foot a{color:var(--gdr-accent,#1a6dff);text-decoration:none;font-weight:600}"+
+".gdrock-foot a{color:var(--gdr-accent,#3b82f6);text-decoration:none;font-weight:600}"+
 ".gdrock-foot a:hover{text-decoration:underline}"+
 "@media(max-width:520px){.gdrock-banner{left:8px;right:8px;bottom:8px;padding:18px;border-radius:14px}.gdrock-btn{min-width:0;flex:1 1 100%;padding:14px}.gdrock-row{flex-direction:column-reverse}}";
-var config={theme:"auto",accent:"#1a6dff",bg:null,fg:null,radius:16,logoSize:32,titleSize:16,customLogoB64:null};
+var config={theme:"auto",accent:"#3b82f6",bg:null,fg:null,radius:16,logoSize:32,titleSize:16,customLogoB64:null};
 function applyConfig(cfg){
   var dark=cfg.theme==="dark"||(cfg.theme==="auto"&&window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches);
   var s=document.documentElement.style;
@@ -71,7 +73,7 @@ function applyConfig(cfg){
   s.setProperty("--gdr-fg",cfg.fg||(dark?"#f4f6fb":"#0a1628"));
   s.setProperty("--gdr-muted",dark?"#b0bcd4":"#6b7a99");
   s.setProperty("--gdr-border",dark?"rgba(176,188,212,.18)":"#e8ecf4");
-  s.setProperty("--gdr-accent",cfg.accentBtn||cfg.accent||"#1a6dff");
+  s.setProperty("--gdr-accent",cfg.accentBtn||cfg.accent||"#3b82f6");
   s.setProperty("--gdr-radius",(cfg.radius||16)+"px");
   s.setProperty("--gdr-logo-size",(cfg.logoSize||32)+"px");
   s.setProperty("--gdr-title-size",(cfg.titleSize||16)+"px");
@@ -94,7 +96,7 @@ function render(showCustomize){
       '<div class="gdrock-row" style="margin-top:14px"><button type="button" class="gdrock-btn gdrock-btn-primary" data-action="save">'+T.save+'</button></div>';
   }else{
     html+='<div class="gdrock-row">'+
-      '<button type="button" class="gdrock-btn gdrock-btn-ghost" data-action="reject">'+T.reject+'</button>'+
+      '<button type="button" class="gdrock-btn gdrock-btn-secondary" data-action="reject">'+T.reject+'</button>'+
       '<button type="button" class="gdrock-btn gdrock-btn-ghost" data-action="customize">'+T.customize+'</button>'+
       '<button type="button" class="gdrock-btn gdrock-btn-primary" data-action="accept">'+T.accept+'</button></div>';
   }
@@ -130,6 +132,43 @@ window.GDRock={show:function(){injectCSS();applyConfig(config);render(false);},c
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
 })();
 `;
+
+// -- Hosted Privacy Policy loader script --------------------------
+const GDROCK_POLICY_JS = `/*!
+ * GDRock Privacy Policy Loader v1.0 — cdn.gdrock.com
+ * Usage: <div data-gdrock-policy="YOUR_SITE_ID"></div>
+ *        <script src="https://cdn.gdrock.com/gdrock-policy.js"><\/script>
+ */
+(function(){
+"use strict";
+var el=document.querySelector("[data-gdrock-policy]");
+if(!el)return;
+var siteId=el.getAttribute("data-gdrock-policy");
+if(!siteId){console.warn("[GDRock] Missing data-gdrock-policy value");return;}
+el.innerHTML='<p style="color:#6b7a99;font-size:14px;padding:20px 0;">Loading privacy policy…</p>';
+fetch("https://cdn.gdrock.com/api/policy/"+encodeURIComponent(siteId))
+  .then(function(r){return r.ok?r.json():{};})
+  .catch(function(){return{};})
+  .then(function(d){
+    if(d&&d.html){el.innerHTML=d.html;}
+    else{el.innerHTML='<p style="color:#e63946;font-size:14px;padding:20px 0;">Privacy policy not configured. Please contact the site owner.</p>';}
+  });
+})();
+`;
+
+// -- DPA map (country code → supervisory authority) ---------------
+const DPA_MAP = {
+  IE:{name:"Data Protection Commission (DPC) Ireland",url:"https://www.dataprotection.ie"},
+  FR:{name:"CNIL",url:"https://www.cnil.fr"},
+  DE:{name:"Bundesbeauftragter für den Datenschutz (BfDI)",url:"https://www.bfdi.bund.de"},
+  GB:{name:"Information Commissioner's Office (ICO)",url:"https://ico.org.uk"},
+  NL:{name:"Autoriteit Persoonsgegevens",url:"https://www.autoriteitpersoonsgegevens.nl"},
+  ES:{name:"Agencia Española de Protección de Datos (AEPD)",url:"https://www.aepd.es"},
+  IT:{name:"Garante per la protezione dei dati personali",url:"https://www.garanteprivacy.it"},
+  SE:{name:"Integritetsskyddsmyndigheten (IMY)",url:"https://www.imy.se"},
+  PL:{name:"Urząd Ochrony Danych Osobowych (UODO)",url:"https://uodo.gov.pl"},
+  IL:{name:"Privacy Protection Authority (PPA)",url:"https://www.gov.il/en/departments/pppa"},
+};
 
 // -- CORS headers for all responses -------------------------------
 const CORS = {
@@ -168,7 +207,7 @@ export default {
       if (!siteId) return json({ error: "Missing siteId" }, 400);
 
       if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
-        return json({ blocked: false, theme: "auto", primary: "#1a6dff" });
+        return json({ blocked: false, theme: "auto", primary: "#3b82f6" });
       }
 
       try {
@@ -177,13 +216,13 @@ export default {
           { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
         );
         const rows = await r.json();
-        if (!rows || rows.length === 0) return json({ blocked: false, theme: "auto", primary: "#1a6dff" });
+        if (!rows || rows.length === 0) return json({ blocked: false, theme: "auto", primary: "#3b82f6" });
         const row = rows[0];
         const cfg = row.config || {};
         return json({
           blocked: false, plan: row.plan,
-          theme: cfg.theme || "auto", primary: cfg.accent || "#1a6dff",
-          accentBtn: cfg.accent || "#1a6dff", bg: cfg.bg || null, fg: cfg.fg || null,
+          theme: cfg.theme || "auto", primary: cfg.accent || "#3b82f6",
+          accentBtn: cfg.accent || "#3b82f6", bg: cfg.bg || null, fg: cfg.fg || null,
           radius: cfg.radius ?? 16, titleSize: cfg.titleSize ?? 16, logoSize: cfg.logoSize ?? 32,
           customLogoB64: cfg.customLogoB64 || null, accessCode: row.access_code || null,
           poweredByLocked: true,
@@ -291,6 +330,15 @@ export default {
       if (!result || typeof result.score !== "number") result = signalScan(domain, scraped);
       result.legal_disclaimer = result.legal_disclaimer || SCAN_DISCLAIMER;
 
+      // Persist scan result for funnel analytics (best-effort)
+      if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
+        fetch(`${env.SUPABASE_URL}/rest/v1/scan_results`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`, Prefer: "return=minimal" },
+          body: JSON.stringify({ email: email || null, domain, score: result.score, summary: result.summary || null, issues: result.issues || [] }),
+        }).catch(() => {});
+      }
+
       // Email the report to the visitor + notify office@gdrock.com (best-effort, never blocks the response)
       if (email && email.includes("@")) {
         try { await sendScanReport(env, email, domain, result); } catch (e) {}
@@ -354,7 +402,65 @@ export default {
       }
     }
 
-    return cors("GDRock CDN � OK", 200, { "Content-Type": "text/plain" });
+    // -- GET /gdrock-policy.js ---------------------------------------
+    if (path === "/gdrock-policy.js") {
+      return cors(GDROCK_POLICY_JS, 200, {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, s-maxage=86400",
+      });
+    }
+
+    // -- GET /api/policy/:siteId -------------------------------------
+    if (path.startsWith("/api/policy/") && !path.endsWith("/save") && request.method === "GET") {
+      const siteId = decodeURIComponent(path.replace("/api/policy/", ""));
+      if (!siteId) return json({ error: "Missing siteId" }, 400);
+      if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return json({ error: "Not configured" }, 503);
+      try {
+        const r = await fetch(
+          `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(siteId)}&active=eq.true&select=config`,
+          { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+        );
+        const rows = await r.json();
+        if (!rows || rows.length === 0) return json({ error: "Site not found" }, 404);
+        const pc = (rows[0].config || {}).policy || {};
+        if (!pc.company_name) return json({ error: "Policy not configured for this site" }, 404);
+        return json({ html: buildPolicyHtml(pc) });
+      } catch (e) {
+        return json({ error: "db_error" }, 500);
+      }
+    }
+
+    // -- POST /api/policy/save ---------------------------------------
+    if (path === "/api/policy/save" && request.method === "POST") {
+      const body = await request.json().catch(() => ({}));
+      const { site_id, accessCode, ...policyFields } = body;
+      if (!site_id || !accessCode) return json({ error: "Missing site_id or accessCode" }, 400);
+      if (!policyFields.company_name || !policyFields.contact_email)
+        return json({ error: "company_name and contact_email are required" }, 400);
+
+      const checkR = await fetch(
+        `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(site_id)}&active=eq.true&select=config,access_code`,
+        { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+      );
+      const rows = await checkR.json();
+      if (!rows || rows.length === 0) return json({ error: "Site not found" }, 403);
+      if (rows[0].access_code && rows[0].access_code.toUpperCase() !== accessCode.toUpperCase())
+        return json({ error: "Invalid access code" }, 403);
+
+      const existingConfig = rows[0].config || {};
+      const newPolicy = { ...policyFields, updated_date: new Date().toISOString().slice(0, 10) };
+      await fetch(
+        `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(site_id)}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json", apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`, Prefer: "return=minimal" },
+          body: JSON.stringify({ config: { ...existingConfig, policy: newPolicy } }),
+        }
+      );
+      return json({ ok: true, preview_url: `https://cdn.gdrock.com/api/policy/${encodeURIComponent(site_id)}` });
+    }
+
+    return cors("GDRock CDN — OK", 200, { "Content-Type": "text/plain" });
   }
 };
 
@@ -562,4 +668,66 @@ function signalScan(domain, s) {
   return { score, is_real_site: true, site_description: "Website at " + domain,
     summary: "Automated signal scan of the homepage source. " + (score >= 70 ? "Core privacy indicators are present." : "Several GDPR indicators appear to be missing."),
     legal_disclaimer: SCAN_DISCLAIMER, issues: issues.slice(0, 8) };
+}
+
+// Server-renders the GDPR privacy policy HTML from stored per-site config
+function buildPolicyHtml(pc) {
+  const dpa = DPA_MAP[pc.country] || { name: "your national Data Protection Authority", url: "https://www.edpb.europa.eu/about-edpb/about-edpb/members_en" };
+  const websiteDisplay = (pc.website || "").replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const website = pc.website ? (pc.website.startsWith("http") ? pc.website : "https://" + pc.website) : "https://" + websiteDisplay;
+  const dpoLine = pc.dpo_name ? `<br>Data Protection Officer: ${pc.dpo_name}` : "";
+  const transferText = "Where we use US-based processors (e.g. analytics, cloud services), data transfers outside the EEA are protected by Standard Contractual Clauses (SCCs) under Art. 46 GDPR.";
+  const updated = pc.updated_date || new Date().toISOString().slice(0, 10);
+
+  const css = `<style>.gdp-policy{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:760px;margin:0 auto;padding:24px 16px;color:#1a2033;line-height:1.65;font-size:15px}.gdp-h1{font-size:28px;font-weight:800;color:#0a1628;margin:0 0 8px}.gdp-h2{font-size:17px;font-weight:700;color:#0a1628;margin:28px 0 10px;padding-bottom:6px;border-bottom:1px solid #e8ecf4}.gdp-meta{color:#6b7a99;font-size:13px;margin:0 0 28px}.gdp-list{padding-left:22px;margin:8px 0 16px}.gdp-list li{margin-bottom:6px}.gdp-table{width:100%;border-collapse:collapse;margin:10px 0 16px;font-size:14px}.gdp-table th{background:#f0f4fa;padding:9px 12px;text-align:left;font-weight:600;border:1px solid #dde3ef;color:#0a1628}.gdp-table td{padding:8px 12px;border:1px solid #dde3ef;vertical-align:top}.gdp-table tr:nth-child(even) td{background:#f8fafd}.gdp-link{color:#3b82f6;text-decoration:none;font-weight:500}.gdp-link:hover{text-decoration:underline}.gdp-footer{margin-top:40px;padding-top:16px;border-top:1px solid #e8ecf4;font-size:12px;color:#9CA3AF;text-align:center}@media(max-width:600px){.gdp-table{font-size:12px}.gdp-h1{font-size:22px}}</style>`;
+
+  return `${css}<div class="gdp-policy">
+<h1 class="gdp-h1">Privacy Policy</h1>
+<p class="gdp-meta">Last updated: ${updated} &nbsp;·&nbsp; <a href="${website}" class="gdp-link">${websiteDisplay}</a></p>
+
+<h2 class="gdp-h2">1. Who We Are</h2>
+<p><strong>${pc.company_name}</strong> ("we", "our") operates <a href="${website}" class="gdp-link">${websiteDisplay}</a> and is the data controller for personal data collected through it.</p>
+<p>Contact: <a href="mailto:${pc.contact_email}" class="gdp-link">${pc.contact_email}</a>${dpoLine}</p>
+
+<h2 class="gdp-h2">2. Data We Collect &amp; Why</h2>
+<table class="gdp-table"><thead><tr><th>Category</th><th>Examples</th><th>Legal basis (GDPR)</th></tr></thead><tbody>
+<tr><td>Contact &amp; account data</td><td>Name, email, phone</td><td>Consent or Contract — Art. 6(1)(a)/(b)</td></tr>
+<tr><td>Payment data</td><td>Billing address; card details held by ${pc.payment_processor || "our payment processor"}</td><td>Contract — Art. 6(1)(b)</td></tr>
+<tr><td>Usage &amp; analytics</td><td>Pages viewed, session duration, device type</td><td>Consent — Art. 6(1)(a)</td></tr>
+<tr><td>Server logs</td><td>IP address, referrer, timestamps</td><td>Legitimate interest (security) — Art. 6(1)(f)</td></tr>
+</tbody></table>
+
+<h2 class="gdp-h2">3. Cookies</h2>
+<p>We use a GDPR-compliant cookie banner. Non-essential cookies (analytics, marketing) are placed <strong>only after you click "Accept"</strong>. Withdraw or change consent at any time via the "Customize" option in the banner. We never sell data collected via cookies.</p>
+
+<h2 class="gdp-h2">4. Who We Share Data With</h2>
+<p>We share data only with processors bound by Data Processing Agreements (DPAs):</p>
+<ul class="gdp-list">
+<li><strong>Hosting &amp; CDN:</strong> ${pc.hosting_provider || "Cloudflare"}</li>
+<li><strong>Payments:</strong> ${pc.payment_processor || "Paddle / Stripe"}</li>
+<li><strong>Email delivery:</strong> ${pc.email_provider || "ZeptoMail / Zoho"}</li>
+<li><strong>Analytics:</strong> ${pc.analytics_provider || "Google Analytics 4 (only with your consent)"}</li>
+</ul>
+<p>We do <strong>not sell</strong> your personal data.</p>
+
+<h2 class="gdp-h2">5. International Transfers</h2>
+<p>${transferText}</p>
+
+<h2 class="gdp-h2">6. Retention Periods</h2>
+<table class="gdp-table"><thead><tr><th>Data category</th><th>Retention</th></tr></thead><tbody>
+<tr><td>Customer account data</td><td>${pc.retention_customer || "3 years"} after end of subscription</td></tr>
+<tr><td>Contact enquiries</td><td>${pc.retention_contact || "1 year"}</td></tr>
+<tr><td>Analytics data</td><td>${pc.retention_analytics || "26 months"}</td></tr>
+<tr><td>Financial records</td><td>${pc.retention_financial || "7 years"} (legal obligation)</td></tr>
+</tbody></table>
+
+<h2 class="gdp-h2">7. Your Rights</h2>
+<p>Under the GDPR you have the right to: <strong>access</strong> your data (Art. 15), <strong>rectification</strong> (Art. 16), <strong>erasure</strong> — "right to be forgotten" (Art. 17), <strong>restriction of processing</strong> (Art. 18), <strong>data portability</strong> (Art. 20), <strong>object</strong> to processing (Art. 21), and to <strong>withdraw consent</strong> at any time without affecting prior processing (Art. 7(3)).</p>
+<p>To exercise any right, email <a href="mailto:${pc.contact_email}" class="gdp-link">${pc.contact_email}</a>. We respond within <strong>30 days</strong>. You may also lodge a complaint with <a href="${dpa.url}" class="gdp-link" target="_blank" rel="noopener">${dpa.name}</a>.</p>
+
+<h2 class="gdp-h2">8. Changes to This Policy</h2>
+<p>This policy is hosted and <strong>automatically kept up to date</strong> by <a href="https://gdrock.com" class="gdp-link" target="_blank" rel="noopener">GDRock</a>. When GDPR regulations change, this page updates without any action required from you.</p>
+
+<div class="gdp-footer">Managed by <a href="https://gdrock.com" class="gdp-link" target="_blank" rel="noopener">GDRock</a> &nbsp;·&nbsp; GDPR Compliance</div>
+</div>`;
 }
