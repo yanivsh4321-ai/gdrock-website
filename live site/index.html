@@ -536,13 +536,15 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 @keyframes spin{to{transform:rotate(360deg);}}
 .hero-stage .hero-shield{position:relative;width:52%!important;height:auto!important;border-radius:0!important;z-index:3;filter:drop-shadow(0 34px 64px rgba(0,0,0,.65))!important;transform:none;}
 .hero-visual{perspective:1100px;}
-@keyframes shieldSpin{0%{transform:rotateY(0) translateY(0)}50%{transform:rotateY(180deg) translateY(-12px)}100%{transform:rotateY(360deg) translateY(0)}}
-@keyframes shieldScroll{0%{transform:translateY(0) scale(.96)}45%{transform:translateY(-8px) scale(1.07)}100%{transform:translateY(10px) scale(.9)}}
+.hero-shot{max-width:1080px;margin:38px auto 0;width:100%;position:relative;}
+.hero-shot img{width:100%;height:auto;display:block;border-radius:0!important;filter:none!important;animation:none!important;
+  -webkit-mask-image:radial-gradient(ellipse 88% 86% at 50% 46%,#000 58%,transparent 90%);mask-image:radial-gradient(ellipse 88% 86% at 50% 46%,#000 58%,transparent 90%);}
+.hero-shot::after{content:'';position:absolute;left:50%;bottom:4%;transform:translateX(-50%);width:48%;height:46px;background:radial-gradient(ellipse,rgba(59,130,246,.5),transparent 72%);filter:blur(24px);z-index:-1;}
+@keyframes shieldScroll{0%{transform:translateY(0) scale(.985)}50%{transform:translateY(-6px) scale(1.03)}100%{transform:translateY(8px) scale(.95)}}
 @media(prefers-reduced-motion:no-preference){
-  .hero-stage .hero-shield{animation:shieldSpin 26s linear infinite;}
-  @supports (animation-timeline:scroll()){.hero-stage{animation:shieldScroll linear both;animation-timeline:scroll(root);animation-range:0 80vh;}}
+  @supports (animation-timeline:scroll()){#hero-stage{animation:shieldScroll linear both;animation-timeline:scroll(root);animation-range:0 80vh;}}
 }
-@media(prefers-reduced-motion:reduce){.hero-stage .hero-shield,.orbit,.stage-glow,.spark{animation:none!important;}}
+@media(prefers-reduced-motion:reduce){#hero-stage{animation:none!important;}}
 .hero-stage video.hero-shield{width:62%!important;border-radius:0!important;-webkit-mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 52%,transparent 86%);mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 52%,transparent 86%);}
 .spark{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc);opacity:.7;z-index:2;}
 .spark.sp1{top:18%;left:24%;animation:drift 7s ease-in-out infinite;}
@@ -566,12 +568,8 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <p class="hero-sub">The complete GDPR layer for modern stores &mdash; cookie consent, privacy policies, consent logs and an AI compliance scanner. Live in minutes.</p>
 <div class="hero-btns"><a href="#estimator" class="btn-primary">Check my risk &rarr;</a><a href="#scanner" class="btn-outline">Scan my site free</a></div>
 <div class="trust-row"><div class="trust-item"><span class="trust-icon">&check;</span>14-day money-back</div><div class="trust-item"><span class="trust-icon">&check;</span>EU data hosting</div><div class="trust-item"><span class="trust-icon">&check;</span>Payments by Paddle</div><div class="trust-item"><span class="trust-icon">&check;</span>No card for scan</div></div>
-<div class="hero-visual"><div class="hero-stage" id="hero-stage">
-<div class="stage-grid"></div>
-<div class="orbit o3"></div><div class="orbit o1"></div><div class="orbit o2"></div>
-<div class="stage-glow"></div>
-<img src="assets/hero-shield.png" class="hero-shield" alt="GDRock — your store, protected" loading="eager">
-<i class="spark sp1"></i><i class="spark sp2"></i><i class="spark sp3"></i><i class="spark sp4"></i>
+<div class="hero-visual"><div class="hero-shot" id="hero-stage">
+<img src="assets/hero-commerce.png" alt="An online store protected by GDRock" loading="eager">
 </div></div>
 </div>
 <div class="scroll-hint"><div class="scroll-line"></div><div class="scroll-txt">Scroll</div></div>
@@ -580,6 +578,13 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <span class="tick-item"><span class="tick-dot">&diams;</span>&euro;4.5 billion in GDPR fines since 2018</span><span class="tick-item"><span class="tick-dot">&diams;</span>Average fine for small businesses: &euro;12k&ndash;&euro;45k</span><span class="tick-item"><span class="tick-dot">&diams;</span>72 hours to notify regulators of a breach</span><span class="tick-item"><span class="tick-dot">&diams;</span>60% of EU stores are non-compliant</span><span class="tick-item"><span class="tick-dot">&diams;</span>Get compliant in under 10 minutes</span>
 <span class="tick-item"><span class="tick-dot">&diams;</span>&euro;4.5 billion in GDPR fines since 2018</span><span class="tick-item"><span class="tick-dot">&diams;</span>Average fine for small businesses: &euro;12k&ndash;&euro;45k</span><span class="tick-item"><span class="tick-dot">&diams;</span>72 hours to notify regulators of a breach</span><span class="tick-item"><span class="tick-dot">&diams;</span>60% of EU stores are non-compliant</span><span class="tick-item"><span class="tick-dot">&diams;</span>Get compliant in under 10 minutes</span>
 </div></div>
+<section style="padding:52px 0 12px;"><div class="container">
+<style>.plat{font-family:var(--D);font-weight:600;font-size:clamp(15px,1.6vw,19px);letter-spacing:-.02em;color:var(--ink2);transition:color .2s;}.plat:hover{color:var(--ink);}</style>
+<p style="text-align:center;font-family:var(--M);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:24px;">Drops into the tools you already run</p>
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px 42px;">
+<span class="plat">Shopify</span><span class="plat">WooCommerce</span><span class="plat">Webflow</span><span class="plat">BigCommerce</span><span class="plat">Stripe</span><span class="plat">Wix</span>
+</div>
+</div></section>
 <section class="est-sec" id="estimator"><div class="est-bg" id="est-bg" style="background-image:url('assets/risk-bg.webp');"></div><div class="container"><div class="est-wrap reveal">
 <div class="est-head">
 <div class="sec-label">Free tool &middot; 10-second risk check</div>
