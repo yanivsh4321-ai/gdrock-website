@@ -5,8 +5,8 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="GDRock checkout — choose your GDPR compliance plan. Secure payment via Paddle.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2304081a' stroke='%2300c9b1' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%2300c9b1' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="GDRock checkout — choose your GDPR compliance plan. Secure card payment.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2308090c' stroke='%233b82f6' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%233b82f6' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <title>Checkout — GDRock</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
@@ -117,7 +117,7 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #60a5
 <nav><div class="nav-inner">
 <a href="/" class="logo"><svg width="24" height="26" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(0,201,177,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GDRock</a>
 <a href="/#products" class="back">&larr; Back to plans</a>
-<div class="secure-badge">&#128274; Secured by Paddle</div>
+<div class="secure-badge">&#128274; Secure checkout</div>
 </div></nav>
 <div class="wrap">
 <div class="checkout-head"><h1>Complete your order</h1><p>Choose your plan, review what's included, and check out securely.</p></div>
@@ -155,29 +155,26 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid #60a5
 <div class="sum-total-row"><div><div class="sum-total-label">Total</div><div class="sum-period" id="s-period">one-time payment</div></div><div class="sum-total" id="s-total">&euro;29</div></div>
 <button class="cta-btn" id="cta-btn" onclick="handleCheckout()"><span id="cta-label">Pay securely &mdash; &euro;29</span></button>
 <div class="guarantee">&#128737; 14-day unconditional money-back guarantee</div>
-<div class="trust-strip"><span>&#128274; SSL encrypted</span><span>&#127942; Paddle MoR</span><span>&#9989; VAT handled</span></div>
+<div class="trust-strip"><span>&#128274; SSL encrypted</span><span>&#127942; Secure card payment</span><span>&#9989; Instant access</span></div>
 </div>
 </div>
 </div>
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script>
-/* ===== PADDLE CONFIG — paste your 2 values from Paddle dashboard ===== */
-var PADDLE_TOKEN = "live_f6041bfb7a1abf79ded05c9031e";   /* Paddle > Developer Tools > Authentication > Client-side token */
-var PADDLE_PRICES = {
-  core:   "pri_01krews3g4qytjqv4dbpjt6d4f",   /* Core Pack */
-  care:   "pri_01krex2459hxzg03sg5dsgrfkh",   /* Care */
-  pro:    "pri_01krex446vvahzy4sq7m1cr03g",    /* Pro */
-  agency: "pri_01krex5xq5cd3k5p1p2j13ek61"  /* Agency */
+/* ================== ZOHO PAYMENT LINKS — paste your hosted payment page URLs ==================
+   Create one Payment Page (Zoho Checkout) or Payment Link (Zoho Billing) per plan,
+   then paste each hosted URL below. The button redirects the customer straight to it.
+   Until a real URL is pasted, the button gracefully falls back to an email prompt. */
+var ZOHO_LINKS = {
+  core:   "PASTE_ZOHO_LINK_CORE",     /* Core Pack — €29 one-time   */
+  care:   "PASTE_ZOHO_LINK_CARE",     /* Care      — €39/mo         */
+  pro:    "PASTE_ZOHO_LINK_PRO",      /* Pro       — €79/mo         */
+  agency: "PASTE_ZOHO_LINK_AGENCY"    /* Agency    — €199/mo        */
 };
-/* ==================================================================== */
-var PADDLE_READY=false;
-try{
-  if(window.Paddle && PADDLE_TOKEN.indexOf("XXXX")===-1){
-    Paddle.Initialize({ token: PADDLE_TOKEN });
-    PADDLE_READY=true;
-  }
-}catch(e){}
-</script>
+/* ============================================================================================ */
+function zohoLinkFor(plan){
+  var u = ZOHO_LINKS[plan];
+  return (u && u.indexOf("PASTE_") === -1) ? u : null;
+}
 <script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
 <script>
 (function(){var p=new URLSearchParams(window.location.search).get('plan');if(p){var c=document.querySelector('.plan-card[data-plan="'+p+'"]');if(c){document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('selected');});c.classList.add('selected');}}})();
@@ -203,11 +200,13 @@ function handleCheckout(){
   if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
   var d=selectedPlan?selectedPlan.dataset:{};
   fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'checkout',name:first+(last?' '+last:''),email:email,website_url:url,plan:d.name||d.plan||''})}).catch(function(){});
-  var priceId=PADDLE_PRICES[d.plan];
-  if(PADDLE_READY && priceId && priceId.indexOf('XXXX')===-1){
-    Paddle.Checkout.open({items:[{priceId:priceId,quantity:1}],customer:{email:email},customData:{customer_name:first+(last?' '+last:''),website_url:url,vat_number:document.getElementById('f-vat').value.trim(),country:document.getElementById('f-country').value},settings:{successUrl:'https://www.gdrock.com/?purchase=success'}});
+  var link=zohoLinkFor(d.plan);
+  if(link){
+    /* prefill the buyer email on the Zoho page when supported (extra params are ignored otherwise) */
+    var sep=link.indexOf('?')===-1?'?':'&';
+    window.location.href=link+sep+'email='+encodeURIComponent(email);
   } else {
-    alert('Payment is being activated. Email office@gdrock.com to complete your order and we will send a secure payment link within minutes.');
+    alert('Secure payment for this plan is being finalised. Email office@gdrock.com and we will send your payment link within minutes — your details are saved.');
   }
 }
 updateSummary();

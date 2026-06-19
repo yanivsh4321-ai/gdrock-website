@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GDRock — Done-For-You GDPR Setup & Enterprise Infrastructure</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 30 34%27%3E%3Cpath d=%27M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z%27 fill=%27%2304081a%27 stroke=%27%2300c9b1%27 stroke-width=%272.5%27/%3E%3Cpath d=%27M10 16.5L13.5 20L20 13%27 stroke=%27%2300c9b1%27 stroke-width=%272.5%27 fill=%27none%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2308090c' stroke='%233b82f6' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%233b82f6' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
@@ -510,7 +510,7 @@ var faqs = [
   {q:'How long does setup take?',a:'Essential setup typically takes 1–2 business days after the call. Shopify Pro takes 2–3 days. SaaS Compliance can take up to 5 business days. Enterprise projects are scoped individually and timelines are confirmed in writing before work begins.'},
   {q:'What platforms do you support?',a:'We support Shopify, WooCommerce, Webflow, Squarespace, Wix, and most custom-built websites. Enterprise engagements also support Supabase, Vercel, and custom SaaS infrastructure. If you are on a platform not listed here, mention it in the booking form.'},
   {q:'Does GDRock provide legal advice?',a:'No. GDRock is a software and digital template product. Our setup service deploys pre-configured technical components — it is not legal consulting and does not substitute for professional legal advice.'},
-  {q:'What is your refund policy?',a:'All packages are covered by GDRock\'s unconditional 14-day money-back guarantee. If you are unsatisfied for any reason within 14 days of purchase, contact office@gdrock.com for a full refund — no questions asked. Refunds are processed by Paddle.'},
+  {q:'What is your refund policy?',a:'All packages are covered by GDRock\'s unconditional 14-day money-back guarantee. If you are unsatisfied for any reason within 14 days of purchase, contact office@gdrock.com for a full refund — no questions asked. Refunds are processed directly by GDRock.'},
   {q:'Can I upgrade to a Care or Pro subscription after setup?',a:'Yes. After Essential or Shopify Pro setup, your site is already configured for GDRock Care — the hosted banner slot is there. Upgrading to Care means we switch your self-hosted script to our hosted version, which auto-updates when EU law changes.'},
   {q:'What if something breaks on my site?',a:'The cookie banner is a non-intrusive script addition. The privacy policy is a new page. Neither change affects your checkout, products, or existing content. We test everything before signing off.'},
   {q:'What happens after the setup is done?',a:'You receive a written compliance report and we answer any follow-up questions for the support period. After that, email support is available through your GDRock subscription.'},
@@ -540,22 +540,14 @@ document.querySelectorAll('.service-card,.what-item,.how-step,.faq-item').forEac
 });
 </script>
 <div style="border-top:1px solid rgba(255,255,255,.06);padding:20px 48px;text-align:center;">
-  <p style="font-size:11px;color:#6b7a99;line-height:1.6;max-width:820px;margin:0 auto 10px;"><strong style="color:#b0bcd4;">Disclaimer:</strong> GDRock is a software-as-a-service platform providing pre-configured digital templates and technical deployment services. All work performed constitutes software installation and template configuration only — it does not constitute legal, professional, or regulatory advice. Customers remain responsible for their own compliance. Consult a qualified data-protection professional for advice specific to your situation. All purchases processed by Paddle.com Market Ltd., Merchant of Record. Unconditional 14-day refund guarantee on all packages.</p>
+  <p style="font-size:11px;color:#6b7a99;line-height:1.6;max-width:820px;margin:0 auto 10px;"><strong style="color:#b0bcd4;">Disclaimer:</strong> GDRock is a software-as-a-service platform providing pre-configured digital templates and technical deployment services. All work performed constitutes software installation and template configuration only — it does not constitute legal, professional, or regulatory advice. Customers remain responsible for their own compliance. Consult a qualified data-protection professional for advice specific to your situation. Payments are processed securely via Zoho. Unconditional 14-day refund guarantee on all packages.</p>
   <div style="color:#6b7a99;font-size:12px;">© 2026 GDRock. GDPR software tools &amp; technical setup for EU businesses.</div>
 </div>
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script>
-var PADDLE_TOKEN="live_f6041bfb7a1abf79ded05c9031e";
-var DFY_PRICES={basic:"pri_01kt59ntp3sdxt54ap5h3vmav7",shopify:"pri_01kt59rg49v4p3x5gysgnx2b9z",saas:"pri_01kt59t6mydjracqzpwf447m2j"};
-var PADDLE_READY=false;
-try{if(window.Paddle){Paddle.Initialize({token:PADDLE_TOKEN});PADDLE_READY=true;}}catch(e){}
+/* DFY purchase → secure checkout page (Zoho payment links live in dfy-checkout.html). */
 function buyDFY(plan){
-  var pid=DFY_PRICES[plan];
-  if(PADDLE_READY&&pid){
-    Paddle.Checkout.open({items:[{priceId:pid,quantity:1}],settings:{successUrl:'https://www.gdrock.com/?purchase=success'}});
-  }else{
-    document.getElementById('book').scrollIntoView({behavior:'smooth'});
-  }
+  if(['basic','shopify','saas'].indexOf(plan)===-1){document.getElementById('book').scrollIntoView({behavior:'smooth'});return;}
+  window.location.href='dfy-checkout.html?plan='+encodeURIComponent(plan);
 }
 </script>
 <script async src="https://cdn.gdrock.com/gdrock.js"
