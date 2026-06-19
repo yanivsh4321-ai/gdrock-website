@@ -184,6 +184,33 @@ function json(obj, status = 200) {
   return cors(JSON.stringify(obj), status, { "Content-Type": "application/json" });
 }
 
+// -- Domain authorization -----------------------------------------
+// A site_id is a public identifier (it ships in the customer's page source),
+// so it can't be a secret. We authorize by the request's Origin/Referer host —
+// the browser sets these honestly and page JS can't forge them — against the
+// domain(s) registered to that site. A copied site_id therefore only works on
+// the domain it was sold to.
+function reqHost(request) {
+  const src = request.headers.get("Origin") || request.headers.get("Referer") || "";
+  try { return new URL(src).hostname.replace(/^www\./, "").toLowerCase(); } catch (e) { return ""; }
+}
+function normDomain(s) {
+  return String(s || "").replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/[\/?#].*$/, "").trim().toLowerCase();
+}
+// Lenient only when no host can be determined (rare no-referrer / non-browser
+// callers gain nothing — they can't render the banner for real visitors). A real
+// browser on the wrong domain always sends a host and is blocked. Falls back to
+// the site_id-as-domain when allowed_domains hasn't been set on the row yet, so
+// existing customers keep working without a migration.
+function hostAuthorized(request, siteId, allowedDomains) {
+  const host = reqHost(request);
+  if (!host) return true;
+  const list = (Array.isArray(allowedDomains) && allowedDomains.length)
+    ? allowedDomains.map(normDomain)
+    : [normDomain(siteId)];
+  return list.includes(host);
+}
+
 // -- Router --------------------------------------------------------
 export default {
   async fetch(request, env) {
@@ -212,12 +239,16 @@ export default {
 
       try {
         const r = await fetch(
-          `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(siteId)}&active=eq.true&select=config,access_code,plan`,
+          `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(siteId)}&active=eq.true&select=*`,
           { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
         );
         const rows = await r.json();
         if (!rows || rows.length === 0) return json({ blocked: false, theme: "auto", primary: "#3b82f6" });
         const row = rows[0];
+        // Only serve the banner to the domain(s) this site_id is registered to.
+        if (!hostAuthorized(request, siteId, row.allowed_domains)) {
+          return json({ blocked: true, reason: "unauthorized_domain" });
+        }
         const cfg = row.config || {};
         return json({
           blocked: false, plan: row.plan,
@@ -263,6 +294,16 @@ export default {
       if (!site_id) return json({ error: "Missing site_id" }, 400);
 
       if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
+        // Only log consent from a domain registered to this site.
+        try {
+          const sr = await fetch(
+            `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(site_id)}&active=eq.true&select=allowed_domains`,
+            { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+          );
+          const srows = await sr.json();
+          const allowed = (Array.isArray(srows) && srows[0]) ? srows[0].allowed_domains : null;
+          if (!hostAuthorized(request, site_id, allowed)) return json({ ok: true, skipped: "unauthorized_domain" });
+        } catch (e) { /* if the lookup fails, fall through and log */ }
         await fetch(`${env.SUPABASE_URL}/rest/v1/consent_logs`, {
           method: "POST",
           headers: { "Content-Type": "application/json", apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`, Prefer: "return=minimal" },
