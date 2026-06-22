@@ -1,0 +1,25 @@
+# === GDRock — never deploy these to the public site ===
+
+# Prospect/customer data (PII) — must never be committed or served
+leads.csv
+shopify_leads.csv
+outreach_drafts/
+outreach_drafts.csv
+sweep.log
+*.output
+
+# Local lead-gen / outreach tooling (internal only)
+leadfinder.py
+shopify_audit.py
+make_emails.py
+zoho_send.py
+zoho_check.py
+lead.js
+
+# Caches & local env
+__pycache__/
+*.pyc
+.env
+.env.*
+.claude/
+node_modules/

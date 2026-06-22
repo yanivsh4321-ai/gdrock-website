@@ -175,6 +175,7 @@ function zohoLinkFor(plan){
   var u = ZOHO_LINKS[plan];
   return (u && u.indexOf("PASTE_") === -1) ? u : null;
 }
+</script>
 <script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
 <script>
 (function(){var p=new URLSearchParams(window.location.search).get('plan');if(p){var c=document.querySelector('.plan-card[data-plan="'+p+'"]');if(c){document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('selected');});c.classList.add('selected');}}})();
@@ -206,7 +207,18 @@ function handleCheckout(){
     var sep=link.indexOf('?')===-1?'?':'&';
     window.location.href=link+sep+'email='+encodeURIComponent(email);
   } else {
-    alert('Secure payment for this plan is being finalised. Email office@gdrock.com and we will send your payment link within minutes — your details are saved.');
+    /* no live payment link yet — capture the lead and confirm inline (no alert) */
+    var btn=document.getElementById('cta-btn');
+    btn.disabled=true;btn.style.opacity='.6';btn.style.cursor='default';
+    document.getElementById('cta-label').innerHTML='Details saved &check;';
+    var sumEl=document.querySelector('.summary');
+    if(sumEl&&!document.getElementById('checkout-note')){
+      var note=document.createElement('div');
+      note.id='checkout-note';
+      note.style.cssText='margin-top:14px;padding:14px 16px;border-radius:11px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.28);color:#cfe0ff;font-size:13px;line-height:1.55;';
+      note.innerHTML='Thanks, '+(first.replace(/[<>]/g,'')||'there')+'. Your order details are saved &mdash; we’ll email your secure payment link to <strong>'+email.replace(/[<>]/g,'')+'</strong> within minutes. Questions? <a href="mailto:office@gdrock.com" style="color:#60a5fa;text-decoration:none;">office@gdrock.com</a>';
+      sumEl.appendChild(note);
+    }
   }
 }
 updateSummary();
