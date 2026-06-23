@@ -5,6 +5,7 @@ leads.csv
 shopify_leads.csv
 outreach_drafts/
 outreach_drafts.csv
+sent_log.csv
 sweep.log
 *.output
 
@@ -14,6 +15,7 @@ shopify_audit.py
 make_emails.py
 zoho_send.py
 zoho_check.py
+zoho_invoice.py
 lead.js
 
 # Caches & local env

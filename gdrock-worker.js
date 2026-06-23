@@ -313,6 +313,29 @@ export default {
       return json({ ok: true });
     }
 
+    // -- GET /api/consent-logs?site_id=X -------------------------
+    // Read-only feed of recent consent events for the Compliance Console
+    // (app.html). Returns ONLY non-PII fields (no IP / user-agent) by reading
+    // the consent_logs_public view, so the public site_id can never expose a
+    // visitor's personal data. See supabase-consent-logs-read.sql for the view.
+    if (path === "/api/consent-logs" && request.method === "GET") {
+      const siteId = (url.searchParams.get("site_id") || "").trim();
+      if (!siteId) return json({ error: "Missing site_id" }, 400);
+      if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return json([]);
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10) || 50, 200);
+      try {
+        const r = await fetch(
+          `${env.SUPABASE_URL}/rest/v1/consent_logs_public?site_id=eq.${encodeURIComponent(siteId)}&select=created_at,accepted,analytics,marketing&order=created_at.desc&limit=${limit}`,
+          { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+        );
+        if (!r.ok) return json([]);
+        const rows = await r.json();
+        return json(Array.isArray(rows) ? rows : []);
+      } catch (e) {
+        return json([]);
+      }
+    }
+
     // -- POST /api/lead ------------------------------------------
     if (path === "/api/lead" && request.method === "POST") {
       const body = await request.json().catch(() => ({}));

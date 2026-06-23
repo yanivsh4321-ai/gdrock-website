@@ -1,0 +1,20 @@
+# GDRock CDN Worker — deploy config for `wrangler deploy`
+# Updates the existing "gdrock-cdn" Worker (cdn.gdrock.com).
+#
+# Secrets (SUPABASE_ANON_KEY, TELEGRAM_BOT_TOKEN, ANTHROPIC_API_KEY, ZEPTO_TOKEN,
+# RESEND_API_KEY, …) live encrypted ON the Worker and are PRESERVED by a deploy —
+# this file intentionally declares no [vars] so a deploy can never wipe them.
+# The cdn.gdrock.com custom domain is attached in the dashboard and also persists.
+#
+# Deploy (one-time auth, then repeatable):
+#   wrangler login            # opens browser OAuth, once
+#   wrangler deploy           # ships gdrock-worker.js to gdrock-cdn
+#
+# keep_vars=true tells wrangler NOT to delete any vars/secrets that were set in
+# the dashboard (SUPABASE_URL, MAIL_FROM, etc.) — without it, a CLI deploy can
+# wipe dashboard-defined plaintext vars and break the live banner.
+
+name = "gdrock-cdn"
+main = "gdrock-worker.js"
+compatibility_date = "2025-06-01"
+keep_vars = true
