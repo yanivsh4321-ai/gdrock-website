@@ -255,7 +255,8 @@ export default {
           theme: cfg.theme || "auto", primary: cfg.accent || "#3b82f6",
           accentBtn: cfg.accent || "#3b82f6", bg: cfg.bg || null, fg: cfg.fg || null,
           radius: cfg.radius ?? 16, titleSize: cfg.titleSize ?? 16, logoSize: cfg.logoSize ?? 32,
-          customLogoB64: cfg.customLogoB64 || null, accessCode: row.access_code || null,
+          customLogoB64: cfg.customLogoB64 || null,
+          // access_code is deliberately NOT exposed here — /save validates it server-side
           poweredByLocked: true,
         });
       } catch (e) {
@@ -342,7 +343,7 @@ export default {
       const { source = "unknown", name = "", email = "", website_url = "", service = "", notes = "", plan = "" } = body;
       if (!email || !email.includes("@")) return json({ error: "Valid email required" }, 400);
 
-      const SOURCE_LABELS = { modal_free: "?? Free Download", modal_paid: "?? Paid Modal", hero: "?? Hero Email", dfy_booking: "?? DFY Booking", checkout: "?? Checkout Started" };
+      const SOURCE_LABELS = { modal_free: "?? Free Download", modal_paid: "?? Paid Modal", hero: "?? Hero Email", dfy_booking: "?? DFY Booking", checkout: "?? Checkout Started", agency_pilot: "?? AGENCY PILOT APPLICATION", scanner: "?? Scanner Lead" };
 
       // Save to Supabase
       if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
