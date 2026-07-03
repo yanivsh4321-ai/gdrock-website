@@ -1,0 +1,136 @@
+{
+  "name": "GDRock — Reply → CRM → Alert → Close",
+  "nodes": [
+    {
+      "parameters": {
+        "format": "simple",
+        "options": {}
+      },
+      "id": "imap-trigger-0001",
+      "name": "Cold inbox (IMAP)",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [-220, 300],
+      "credentials": {
+        "imap": {
+          "id": "REPLACE_WITH_IMAP_CREDENTIAL",
+          "name": "GDRock cold mailbox (IMAP)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Classify an inbound reply to the GDRock cold-outreach mailbox.\n// Mirrors reply_watch.py: drop bounces + OOO/auto-replies, flag positives.\nconst item = $input.first().json;\n\nconst from = (item.from || item.fromAddress || item.sender || '').toString();\nconst m = from.match(/[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}/);\nconst senderEmail = (m ? m[0] : from).toLowerCase().trim();\nconst subject = (item.subject || '').toString();\nconst body = (item.text || item.textPlain || item.textHtml || '').toString();\nconst blob = (from + ' ' + subject + ' ' + body).toLowerCase();\n\nconst BOUNCE = ['mailer-daemon','postmaster','mail delivery','delivery status','undeliverable','delivery has failed','returned mail','message could not be delivered'];\nconst AUTO = ['auto-reply','autoreply','automatic reply','automatische','out of office','out-of-office','vacation','away from','currently out','currently away','off-grid','off grid','on leave','annual leave','maternity','parental leave','will be back','back in the office','back on ','limited access to email','reduced availability','upcoming schedule','noreply','no-reply','do-not-reply'];\nconst POSITIVE = ['yes','send','audit','sure','interested','please','go ahead','sounds good','keen','ja','oui'];\n\nconst isBounce = BOUNCE.some(s => blob.includes(s));\nconst isAuto   = AUTO.some(s => blob.includes(s));\n\n// Drop bounces and auto-replies — they are not human leads. Returning [] stops the branch.\nif (isBounce || isAuto) { return []; }\n\nconst hay = (subject + ' ' + body).toLowerCase();\nconst esc = w => w.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');\nconst isPositive = new RegExp('\\\\b(' + POSITIVE.map(esc).join('|') + ')\\\\b').test(hay);\n\nconst snippet = (body || subject).replace(/\\s+/g, ' ').trim().slice(0, 400);\nconst dom = senderEmail.split('@')[1] || '';\nconst company = dom ? dom.replace(/\\.[a-z.]+$/, '') : senderEmail;\n\n// ── EDIT THIS once cal.com is live (also set GDROCK_CAL_LINK for the Python path) ──\nconst CAL_LINK = 'https://cal.eu/gdrock/15min';\n\nconst alertText =\n  '🔥 REPLY — ' + (company || senderEmail) + ' (' + senderEmail + ')\\n' +\n  'Subject: ' + subject + '\\n' +\n  'Message: ' + snippet + '\\n' +\n  'Respond within 15 min.';\n\nconst positiveText =\n  '✅ POSITIVE — ' + (company || senderEmail) + ' (' + senderEmail + ')\\n' +\n  'They sound interested. Send the audit + booking link:\\n' +\n  CAL_LINK + '\\n\\n“' + snippet + '”';\n\nreturn [{ json: { senderEmail, company, dom, subject, snippet, isPositive, alertText, positiveText, replied_at: new Date().toISOString() } }];"
+      },
+      "id": "classify-0002",
+      "name": "Classify reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [20, 300]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://YOUR-PROJECT-REF.supabase.co/rest/v1/outreach?email=eq.{{ $json.senderEmail }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Prefer", "value": "return=minimal" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"stage\": \"REPLIED\", \"reply_text\": $json.snippet, \"replied_at\": $json.replied_at } }}",
+        "options": {}
+      },
+      "id": "supabase-replied-0003",
+      "name": "Supabase: mark REPLIED",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 180],
+      "credentials": {
+        "supabaseApi": {
+          "id": "REPLACE_WITH_SUPABASE_CREDENTIAL",
+          "name": "GDRock Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "PASTE_YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.alertText }}",
+        "additionalFields": {
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "tg-alert-0004",
+      "name": "Telegram: reply alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [280, 380],
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_WITH_TELEGRAM_CREDENTIAL",
+          "name": "GDRock Telegram bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Only continue for positive replies (yes / send / interested ...).\nif (!$input.first().json.isPositive) { return []; }\nreturn $input.all();"
+      },
+      "id": "positive-gate-0005",
+      "name": "Positive?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [540, 380]
+    },
+    {
+      "parameters": {
+        "chatId": "PASTE_YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.positiveText }}",
+        "additionalFields": {
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "tg-positive-0006",
+      "name": "Telegram: send audit + cal link",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [800, 380],
+      "credentials": {
+        "telegramApi": {
+          "id": "REPLACE_WITH_TELEGRAM_CREDENTIAL",
+          "name": "GDRock Telegram bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Cold inbox (IMAP)": {
+      "main": [[{ "node": "Classify reply", "type": "main", "index": 0 }]]
+    },
+    "Classify reply": {
+      "main": [[
+        { "node": "Supabase: mark REPLIED", "type": "main", "index": 0 },
+        { "node": "Telegram: reply alert", "type": "main", "index": 0 }
+      ]]
+    },
+    "Telegram: reply alert": {
+      "main": [[{ "node": "Positive?", "type": "main", "index": 0 }]]
+    },
+    "Positive?": {
+      "main": [[{ "node": "Telegram: send audit + cal link", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "pinData": {},
+  "meta": {
+    "templatecredsSetupCompleted": false,
+    "description": "GDRock cold-outreach reply handler. IMAP trigger on the cold mailbox -> classify (drop bounces/OOO) -> mark REPLIED in Supabase + fire a Telegram alert within seconds -> on positive replies, push the audit + cal.com booking link to Telegram for human review/send. Replaces reply_watch.py once the new sending domain mailbox exists."
+  }
+}
