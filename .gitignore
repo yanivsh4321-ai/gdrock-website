@@ -33,3 +33,12 @@ kickbacks_inspect/
 kickbacks.vsix
 .mcp.json
 gdrock-banner/
+
+# Internal outreach/automation tooling — local only
+digest_send.py
+digest_body.txt
+gdrock_log.py
+reply_watch.py
+send_schedule.py
+scratch_write_csv.py
+reply_seen.json
