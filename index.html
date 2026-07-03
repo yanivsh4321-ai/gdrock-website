@@ -732,14 +732,47 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 .proof-founder p span{display:block;font-style:normal;font-family:var(--M);font-size:11px;color:var(--ink3);margin-top:8px;letter-spacing:.04em;}
 .proof-cta{display:flex;gap:12px;flex-wrap:wrap;}
 @media(max-width:860px){.proof-band{grid-template-columns:1fr;}.proof-stats{grid-template-columns:1fr 1fr;}}
+.proof-case{display:flex;align-items:center;gap:16px;margin-top:18px;padding:18px 22px;border:1px dashed rgba(255,255,255,.16);border-radius:14px;background:rgba(255,255,255,.015);}
+.proof-case-dot{width:8px;height:8px;border-radius:50%;background:#f5c842;flex-shrink:0;animation:pulse 2s infinite;}
+.proof-case p{font-size:13.5px;color:var(--ink3);line-height:1.55;}
+.proof-case a{color:var(--acc);text-decoration:none;font-weight:600;white-space:nowrap;}
 </style>
 </head>
 <body>
 <nav><div class="nav-inner">
 <a href="/" class="logo"><svg width="26" height="28" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(59,130,246,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>GDRock</a>
 <ul class="nav-links"><li><a href="#scanner">Free Scan</a></li><li><a href="#estimator">Fine Risk</a></li><li><a href="#products">Pricing</a></li><li><a href="#dfy">Done-For-You</a></li><li><a href="agencies.html">Agencies</a></li><li><a href="#faq">FAQ</a></li></ul>
-<div style="display:flex;align-items:center;gap:12px;"><a href="#contact" style="color:#a5b1cc;font-size:14px;text-decoration:none;">Contact</a><a href="#products" class="btn-nav">View Plans &rarr;</a></div>
+<div class="nav-cta" style="display:flex;align-items:center;gap:12px;"><a href="#contact" style="color:#a5b1cc;font-size:14px;text-decoration:none;">Contact</a><a href="#products" class="btn-nav">View Plans &rarr;</a></div>
+<button id="nav-burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
 </div></nav>
+<div id="mob-menu"><ul><li><a href="#scanner">Free Scan</a></li><li><a href="#estimator">Fine Risk</a></li><li><a href="#products">Pricing</a></li><li><a href="#dfy">Done-For-You</a></li><li><a href="agencies.html">Agencies</a></li><li><a href="#faq">FAQ</a></li><li><a href="#contact">Contact</a></li></ul><div class="mob-cta"><a href="#products" class="btn-nav">View Plans &rarr;</a></div></div>
+<style id="mobile-nav-style">
+#nav-burger{display:none;background:none;border:none;cursor:pointer;padding:8px;flex-direction:column;gap:5px;z-index:210;}
+#nav-burger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:transform .25s ease,opacity .2s ease;}
+#nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+#nav-burger.open span:nth-child(2){opacity:0;}
+#nav-burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+#mob-menu{position:fixed;top:64px;left:0;right:0;background:#08090c;border-bottom:1px solid rgba(255,255,255,.08);z-index:199;max-height:0;overflow:hidden;transition:max-height .3s ease;}
+#mob-menu.open{max-height:70vh;overflow-y:auto;}
+#mob-menu ul{list-style:none;display:flex;flex-direction:column;padding:8px 20px 0;}
+#mob-menu ul li a{display:block;padding:14px 0;color:var(--g300,#a5b1cc);text-decoration:none;font-size:15px;border-bottom:1px solid rgba(255,255,255,.06);}
+#mob-menu .mob-cta{padding:16px 20px 22px;}
+#mob-menu .mob-cta a{display:block;text-align:center;}
+@media(max-width:600px){#nav-burger{display:flex;}.nav-cta{display:none!important;}}
+body.nav-open{overflow:hidden;}
+</style>
+<script>
+(function(){
+  var b=document.getElementById('nav-burger'),m=document.getElementById('mob-menu');
+  if(!b||!m)return;
+  function close(){b.classList.remove('open');m.classList.remove('open');b.setAttribute('aria-expanded','false');document.body.classList.remove('nav-open');}
+  b.addEventListener('click',function(){
+    var open=b.classList.toggle('open');m.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open?'true':'false');document.body.classList.toggle('nav-open',open);
+  });
+  m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',close);});
+})();
+</script>
 <section class="hero"><div class="hero-grad"></div>
 <div class="hero-content">
 <div class="hero-badge"><div class="bdot"></div>GDPR compliance infrastructure</div>
@@ -750,7 +783,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="hero-visual"><div class="hero-laptop" id="hero-stage">
 <div class="lt-glow"></div>
 <div class="lt-lid"><div class="lt-screen">
-<div class="lt-bar"><span></span><span></span><span></span><b>app.gdrock.com/consent</b></div>
+<div class="lt-bar"><span></span><span></span><span></span><b>gdrock.com/app</b></div>
 <div class="lt-app">
 <div class="lt-side">
 <div class="lt-logo"><svg viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(59,130,246,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
@@ -917,7 +950,7 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 #compare .cmp-cost{font-family:var(--M);font-size:11px;letter-spacing:.03em;color:var(--ink3);white-space:nowrap;}
 #compare .cmp-new .cmp-cost{color:var(--acc);}
 #compare .cmp-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:15px;}
-#compare .cmp-list li{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--ink2);}
+#compare .cmp-list li{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:flex-start;font-size:14.5px;line-height:1.5;color:var(--ink2);}
 #compare .cmp-new .cmp-list li{color:var(--ink);}
 #compare .cmp-mk{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;line-height:1;}
 #compare .cmp-old .cmp-mk{background:rgba(255,107,112,.12);color:#ff6b70;}
@@ -1037,6 +1070,8 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="proof-cta"><a href="#scanner" class="btn-primary">Run it on your site &rarr;</a><a href="agencies.html" class="btn-outline">Agency programme &rarr;</a></div>
 </div>
 </div>
+<!-- Reserved for pilot #1's before/after telemetry + quote once the Founding Partner pilot closes (see agencies.html) -->
+<div class="proof-case reveal"><span class="proof-case-dot"></span><p>Case study #1 &mdash; in progress. Our first Founding Partner agency pilot is live; a full before/after breakdown lands here once it closes. <a href="agencies.html">See the pilot programme &rarr;</a></p></div>
 </div></section><section id="products"><div class="container">
 <div style="text-align:center;" class="reveal"><div class="sec-label" style="justify-content:center;">Pricing</div><h2 class="sec-title">Pick your level.</h2><p class="sec-sub" style="text-align:center;max-width:420px;margin:0 auto 44px;">Start free. Upgrade whenever you're ready &mdash; cancel anytime.</p></div>
 <div class="products-grid stagger"><div class="prod-card"><div class="prod-tier">One-time</div><div class="prod-name">Core Pack</div><div class="prod-price">&euro;29 <span>/ once</span></div><p class="prod-desc">The complete pre-configured toolkit. Copy, paste, publish in 10 minutes.</p><ul class="prod-feats"><li><span class="ck">&check;</span>White-label privacy policy</li><li><span class="ck">&check;</span>Cookie banner script</li><li><span class="ck">&check;</span>Data retention table</li><li><span class="ck">&check;</span>Breach response pack</li><li><span class="ck">&check;</span>Shopify setup guide</li><li><span class="ck">&check;</span>Lifetime updates</li></ul><a class="prod-btn pri" href="checkout.html?plan=core">Get Core Pack &rarr;</a></div><div class="prod-card feat"><div class="feat-badge">Recommended</div><div class="prod-tier">Monthly &middot; cancel anytime</div><div class="prod-name">Care</div><div class="prod-price">&euro;39 <span>/ month</span></div><div class="prod-save"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px;"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9.5 12l2 2 3.5-3.5"/></svg>14-day money-back guarantee</div><p class="prod-desc">Hosted cookie banner &mdash; one script tag, forever maintained.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Core Pack</li><li><span class="ck">&check;</span>Hosted banner (1 script tag)</li><li><span class="ck">&check;</span>Auto-updates on law changes</li><li><span class="ck">&check;</span>Monthly compliance alerts</li><li><span class="ck">&check;</span>Email support</li></ul><a class="prod-btn pri" href="checkout.html?plan=care">Get Care &rarr;</a></div><div class="prod-card"><div class="prod-tier">Monthly &middot; cancel anytime</div><div class="prod-name">Pro</div><div class="prod-price">&euro;79 <span>/ month</span></div><p class="prod-desc">Full compliance platform for your own brands.</p><ul class="prod-feats"><li><span class="ck">&check;</span>Everything in Care</li><li><span class="ck">&check;</span>25-step compliance board</li><li><span class="ck">&check;</span>Consent logs &amp; reports</li><li><span class="ck">&check;</span>Up to 2 stores</li><li><span class="ck">&check;</span>Priority support</li></ul><a class="prod-btn pri" href="checkout.html?plan=pro">Get Pro &rarr;</a></div></div><p class="reveal" style="text-align:center;color:var(--ink2);font-size:14px;line-height:1.65;margin:32px auto 0;max-width:680px;">Run an agency? <strong style="color:var(--ink);">Founding Partner programme</strong> &mdash; we install GDRock on up to 20 of your client sites <strong style="color:var(--ink);">free for 30 days</strong>, then white-label portfolio pricing from <strong style="color:var(--ink);">&euro;299/mo</strong> (25&ndash;100+ sites). First 5 agencies only. <a href="agencies.html" style="color:var(--acc);text-decoration:none;font-weight:600;white-space:nowrap;">See the agency programme &rarr;</a></p></div></section>
@@ -1115,15 +1150,36 @@ footer{background:transparent!important;border-top:1px solid var(--line)!importa
 <div class="fine-tiers"><div class="fine-tier"><div class="fine-amt">&euro;10M</div><div class="fine-lbl">or 2% turnover &mdash; Tier 1</div></div><div class="fine-tier"><div class="fine-amt">&euro;20M</div><div class="fine-lbl">or 4% turnover &mdash; Tier 2</div></div></div>
 <a href="#scanner" class="btn-primary" style="display:inline-flex;">Scan my site for free &rarr;</a>
 </div></div></section>
+<section id="faq"><div class="container"><div class="sec-label reveal">FAQ</div><h2 class="sec-title reveal">Questions, answered.</h2><div class="faq-grid" id="faq-grid"></div></div></section>
 <section id="contact" style="padding:80px 0;background:linear-gradient(180deg,transparent,rgba(0,51,153,.05),transparent);"><div class="container"><div class="contact-card reveal">
 <div class="sec-label" style="justify-content:center;">Talk to sales</div><h2 class="sec-title" style="margin-bottom:12px;">Speak with our product team.</h2><p class="sec-sub" style="text-align:center;margin:0 auto 24px;max-width:440px;">See how GDRock automates your compliance workflow. We respond within 24h.</p>
 <form class="contact-form" onsubmit="event.preventDefault();var e=document.getElementById('se').value;var m=document.getElementById('sm').value;window.location.href='mailto:office@gdrock.com?subject=Demo%20request&body='+encodeURIComponent('Email: '+e+'\n\n'+m);"><input type="email" required id="se" placeholder="Work email" class="scan-input" style="background:rgba(255,255,255,.07);"><textarea required id="sm" rows="4" placeholder="Tell us about your stores and needs..." class="scan-input" style="background:rgba(255,255,255,.07);resize:vertical;font-family:var(--B);"></textarea><button type="submit" class="btn-primary" style="justify-content:center;">Request a Product Demo &rarr;</button></form>
 <p class="help-line" style="margin-top:16px;">Or email <a href="mailto:office@gdrock.com">office@gdrock.com</a> &mdash; we reply within 24h.</p>
 </div></div></section>
-<section id="faq"><div class="container"><div class="sec-label reveal">FAQ</div><h2 class="sec-title reveal">Questions, answered.</h2><div class="faq-grid" id="faq-grid"></div></div></section>
-<footer><div class="foot-inner"><div class="foot-logo"><svg width="22" height="24" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(59,130,246,.1)" stroke-linejoin="round"/></svg>GDRock</div><div class="foot-links"><a href="terms-and-conditions.html">Terms</a><a href="terms-and-conditions.html#privacy">Privacy</a><a href="dpa.html">DPA</a><a href="terms-and-conditions.html#refund">Refund</a><a href="cookie-policy.html">Cookie Policy</a><a href="dfy.html">Done-For-You</a><a href="#" onclick="if(window.GDRock&&window.GDRock.show){window.GDRock.show();}return false;">Manage cookies</a><a href="mailto:office@gdrock.com">Contact</a></div>
+<footer><div class="foot-inner"><div class="foot-logo"><svg width="22" height="24" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(59,130,246,.1)" stroke-linejoin="round"/></svg>GDRock</div><div class="foot-links"><a href="terms-and-conditions.html">Terms</a><a href="terms-and-conditions.html#privacy">Privacy</a><a href="dpa.html">DPA</a><a href="terms-and-conditions.html#refund">Refund</a><a href="cookie-policy.html">Cookie Policy</a><a href="dfy.html">Done-For-You</a><a href="app.html">Client Console</a><a href="#" onclick="if(window.GDRock&&window.GDRock.show){window.GDRock.show();}return false;">Manage cookies</a><a href="mailto:office@gdrock.com">Contact</a></div>
 <!-- TODO(company-details): once GDRock Ltd is registered, replace "Company reg. pending" with the real UK company number (e.g. "Company No. 12345678"). Add VAT number when VAT-registered (e.g. "· VAT GB123456789"). Replace London with the full registered-office address. -->
 <p class="foot-copy">GDRock Ltd &middot; London, United Kingdom &middot; Company reg. pending &middot; Secure payments processed by Zoho.<br>&copy; 2026 GDRock Ltd. All rights reserved.</p></div></footer>
+<!-- ===== Sticky mobile CTA bar (mobile only, appears once past the hero). Reversible: delete this block. ===== -->
+<div id="sticky-cta"><a href="#scanner" class="btn-primary">Free Scan</a><a href="#products" class="btn-outline">View Plans</a></div>
+<style id="sticky-cta-style">
+#sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:150;display:none;gap:10px;padding:10px 14px;background:rgba(8,9,12,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,.08);}
+#sticky-cta a{flex:1;text-align:center;justify-content:center;font-size:13.5px;padding:11px 10px;}
+@media(max-width:600px){#sticky-cta.show{display:flex;}body.has-sticky #gdc-launch{bottom:78px;}}
+</style>
+<script>
+(function(){
+  var bar=document.getElementById('sticky-cta');if(!bar)return;
+  var hero=document.querySelector('.hero');var ticking=false;
+  function update(){
+    var past=hero?(window.scrollY>hero.offsetHeight*0.6):window.scrollY>400;
+    bar.classList.toggle('show',past);
+    document.body.classList.toggle('has-sticky',past);
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(update);ticking=true;}},{passive:true});
+  update();
+})();
+</script>
 <!-- ===== GDRock chat assistant (client-side, no backend). Reversible: delete this whole block to restore the old Help button. ===== -->
 <button id="gdc-launch" aria-label="Open GDRock help chat" aria-haspopup="dialog"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.8-5.9A8.5 8.5 0 1 1 21 11.5z"/></svg><span>Help</span></button>
 <div id="gdc-panel" role="dialog" aria-label="GDRock assistant" aria-hidden="true">
