@@ -1,0 +1,121 @@
+GDRock Monthly Compliance Alert — Email Template
+Care Tier · Send to subscribers each month · office@gdrock.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HOW TO USE THIS TEMPLATE:
+1. Copy this email at the start of each month
+2. Fill in the {{PLACEHOLDERS}} with current information
+3. Check the EU GDPR enforcement news for that month
+4. Send from office@gdrock.com to your Care subscriber list
+5. Keep it short, practical, and genuinely useful
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EMAIL TEMPLATE — COPY FROM HERE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject: GDRock Compliance Update — {{MONTH YEAR}}
+
+Hi {{FIRST_NAME}},
+
+Here is your monthly GDPR compliance update from GDRock.
+
+─────────────────────────────────────
+THIS MONTH IN GDPR ENFORCEMENT
+─────────────────────────────────────
+
+{{Insert 2-3 sentences about a real GDPR fine or regulatory update this month.
+Example: "The French regulator CNIL fined a major retailer €2.5M this month for
+failing to obtain valid cookie consent. The company's banner only had an Accept
+button — no Reject option. Your GDRock banner already handles this correctly."}}
+
+Source: {{Link to the enforcement news}}
+
+─────────────────────────────────────
+YOUR COMPLIANCE STATUS
+─────────────────────────────────────
+
+✅ Cookie banner: Active and up to date
+✅ Banner last updated: {{DATE}}
+✅ Your subscription: Active (renews {{RENEWAL_DATE}})
+
+If you have changed your website platform or added new tracking tools
+since installation, email us at office@gdrock.com so we can update
+your banner configuration.
+
+─────────────────────────────────────
+THIS MONTH'S COMPLIANCE TIP
+─────────────────────────────────────
+
+{{Insert one practical GDPR tip. Examples below — rotate each month:}}
+
+JANUARY:   "Review who has access to your customer data. Remove any team
+            members or tools that no longer need it."
+
+FEBRUARY:  "Check your email list for subscribers without a clear consent
+            record. When in doubt, run a re-permission campaign."
+
+MARCH:     "Review your data retention schedule. Are you still holding data
+            you should have deleted? Set a calendar reminder to purge old records."
+
+APRIL:     "Test your cookie banner in an incognito browser. Confirm that
+            analytics scripts do not fire before the visitor clicks Accept."
+
+MAY:       "GDPR anniversary month (May 25, 2018). A good time to audit your
+            full compliance posture. Run the free GDRock scanner at gdrock.com."
+
+JUNE:      "Review your third-party tools. Have you added any new apps,
+            plugins, or integrations? Each one may be a new data processor
+            requiring a DPA."
+
+JULY:      "Check your privacy policy is still accurate. Business changes
+            fast — make sure your policy reflects current reality."
+
+AUGUST:    "Review your breach response plan. Could you actually find it
+            and act on it in 72 hours if needed? Test the process."
+
+SEPTEMBER: "Back to school for GDPR: train any new team members on
+            basic data protection. Even a 30-minute briefing helps."
+
+OCTOBER:   "EU Cybersecurity Month. Review your password policies, 2FA
+            settings, and admin access controls."
+
+NOVEMBER:  "Black Friday prep: if you are running ads, check your Meta
+            Pixel and Google Analytics consent configuration."
+
+DECEMBER:  "Year-end compliance review. Update your retention table,
+            check processor DPAs are still valid, review staff access."
+
+─────────────────────────────────────
+NEED HELP?
+─────────────────────────────────────
+
+Reply to this email or contact: office@gdrock.com
+We respond within 24 hours on business days.
+
+Need a full compliance audit? Book a setup call at gdrock.com/dfy
+
+Stay compliant,
+GDRock Team
+gdrock.com
+
+─────────────────────────────────────
+You are receiving this because you are a GDRock Care subscriber.
+To unsubscribe: {{UNSUBSCRIBE_LINK}}
+GDRock GDPR Compliance · office@gdrock.com · gdrock.com
+This email does not constitute legal advice.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+END OF TEMPLATE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHERE TO FIND GDPR NEWS EACH MONTH:
+- enforcementtracker.com  (best source — all EU fines listed)
+- edpb.europa.eu/news      (official EU Data Protection Board)
+- gdprhub.eu               (free case summaries in plain English)
+- iapp.org/news/privacy    (industry news)
+
+TIPS FOR WRITING A GOOD UPDATE:
+- Keep it under 300 words total
+- Always reference a real enforcement action — it creates urgency
+- The tip should be something they can do in under 30 minutes
+- End with a clear way to contact you
+- Send on the 1st or 2nd of each month for consistency

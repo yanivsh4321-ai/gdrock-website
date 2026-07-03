@@ -25,3 +25,10 @@ __pycache__/
 .env.*
 .claude/
 node_modules/
+
+# Local tooling / generated caches — never commit
+.wrangler/
+graphify-out/
+kickbacks_inspect/
+kickbacks.vsix
+.mcp.json

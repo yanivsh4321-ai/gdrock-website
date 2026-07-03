@@ -1,0 +1,186 @@
+GDRock Data Subject Request (DSR) Response Templates
+Pro & Agency Tiers · office@gdrock.com · gdrock.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IMPORTANT RULES:
+• You have 30 days to respond from the date of receiving the request
+• You may extend by a further 60 days for complex requests (notify the person within 30 days)
+• Response must be FREE OF CHARGE (unless requests are manifestly unfounded or excessive)
+• Respond in the same language as the request where possible
+• Verify the person's identity before sharing or deleting data
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 1 — ACKNOWLEDGEMENT (send within 3 days of receiving any request)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject: We have received your data request — {{STORE_NAME}}
+
+Hi {{FIRST_NAME}},
+
+Thank you for your message. We have received your request regarding
+your personal data held by {{STORE_NAME}}.
+
+We are processing your request and will respond fully within 30 days
+of receiving it, as required by GDPR.
+
+Your request reference number is: {{REQ-YYYY-MM-DD-001}}
+
+If you have any questions in the meantime, please reply to this email.
+
+Kind regards,
+{{STORE_NAME}} Privacy Team
+office@{{STORE_DOMAIN}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 2 — DATA ACCESS REQUEST RESPONSE (Art. 15)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject: Your data access request — {{STORE_NAME}}
+
+Hi {{FIRST_NAME}},
+
+Following your request dated {{REQUEST_DATE}}, please find below
+a summary of the personal data we hold about you.
+
+DATA WE HOLD:
+• Name: {{NAME}}
+• Email address: {{EMAIL}}
+• Shipping address: {{ADDRESS}}
+• Order history: {{ORDER_DATES_AND_AMOUNTS}}
+• Account created: {{DATE}}
+• Marketing consent: {{Yes/No — date given: DATE}}
+
+HOW WE USE IT:
+• To process and fulfil your orders (lawful basis: Contract)
+• To comply with tax/accounting laws (lawful basis: Legal obligation)
+• To send you marketing emails if you consented (lawful basis: Consent)
+
+WHO WE SHARE IT WITH:
+• Payment processor (Stripe/PayPal) — for payment processing
+• Shipping carrier — for order delivery
+• Email platform ({{PLATFORM}}) — for order confirmations and marketing
+
+HOW LONG WE KEEP IT:
+• Order data: 7 years (statutory requirement)
+• Account data: 3 years after last log-in
+• Marketing data: until you unsubscribe
+
+YOUR RIGHTS:
+You may request correction, deletion, or portability of your data
+at any time. Reply to this email to exercise any of these rights.
+
+If you are unhappy with our response, you have the right to lodge
+a complaint with your national data protection authority.
+
+Kind regards,
+{{STORE_NAME}} Privacy Team
+office@{{STORE_DOMAIN}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 3 — ERASURE REQUEST RESPONSE (Art. 17)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject: Your data deletion request — {{STORE_NAME}}
+
+Hi {{FIRST_NAME}},
+
+Following your deletion request dated {{REQUEST_DATE}}, we have
+taken the following actions:
+
+DELETED:
+✓ Your account and login credentials
+✓ Your shipping and billing address
+✓ Your marketing consent record
+✓ Your customer support ticket history
+
+RETAINED (legal obligation — cannot be deleted):
+• Order and invoice records: retained for 7 years under EU tax law
+  (FR/DE statutory requirement). This data is kept securely and
+  not used for any other purpose.
+• Payment transaction logs: retained for 5 years for fraud
+  prevention and chargeback purposes.
+
+We have also instructed our processors to delete your data:
+• {{EMAIL PLATFORM}}: unsubscribed and data deletion requested
+• Stripe: customer data redaction requested
+
+If you believe we have retained data in error, or if you have any
+questions, please reply to this email.
+
+Kind regards,
+{{STORE_NAME}} Privacy Team
+office@{{STORE_DOMAIN}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 4 — PORTABILITY REQUEST RESPONSE (Art. 20)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject: Your data portability request — {{STORE_NAME}}
+
+Hi {{FIRST_NAME}},
+
+Following your portability request dated {{REQUEST_DATE}}, please
+find your personal data attached as a CSV file.
+
+The file includes:
+• Your profile information (name, email, address)
+• Your order history
+• Your consent records
+
+The data is provided in CSV format which can be opened in Excel,
+Google Sheets, or imported into another service.
+
+If you need the data in a different format, please let us know.
+
+Kind regards,
+{{STORE_NAME}} Privacy Team
+office@{{STORE_DOMAIN}}
+
+[ATTACH: customer_data_export_{{DATE}}.csv]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TEMPLATE 5 — REQUEST DENIAL (where legally justified)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject: Your data request — {{STORE_NAME}}
+
+Hi {{FIRST_NAME}},
+
+Thank you for your request dated {{REQUEST_DATE}}.
+
+We are unable to fulfil this request in full for the following reason:
+
+{{Choose the applicable reason:}}
+• The data must be retained to comply with our legal obligations
+  under EU tax law (invoices and order records for 7 years).
+• We cannot verify your identity with sufficient certainty to
+  process this request. Please provide [SPECIFY ID REQUIRED].
+• This request is covered by an exception under GDPR Art. {{17(3)/
+  21(1)}} because {{EXPLAIN REASON}}.
+
+If you disagree with this decision, you have the right to:
+1. Ask us to reconsider — reply to this email with further details
+2. Lodge a complaint with your national supervisory authority:
+   {{LINK TO RELEVANT DPA}}
+
+We take all data subject requests seriously and aim to resolve
+any concerns as quickly as possible.
+
+Kind regards,
+{{STORE_NAME}} Privacy Team
+office@{{STORE_DOMAIN}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DSR LOG — use this to track all requests
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Keep a log of every request in a spreadsheet with these columns:
+
+Ref No | Date Received | Name | Email | Request Type |
+Identity Verified (Y/N) | Date Responded | Action Taken | Notes
+
+You may need to show this log to regulators as evidence of compliance.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+© 2026 GDRock · gdrock.com · office@gdrock.com
+Templates for informational purposes. Not legal advice.

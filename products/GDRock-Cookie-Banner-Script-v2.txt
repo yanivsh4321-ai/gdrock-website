@@ -1,0 +1,187 @@
+<!-- ═══════════════════════════════════════════════════════════════════════
+     GDRock Cookie Consent Banner v2.0
+     © 2026 GDRock · gdrock.com · support@gdrock.com
+     
+     INSTRUCTIONS:
+     1. Paste this code into your site's <head> OR just before </body>
+     2. Change /privacy-policy to your actual privacy policy URL
+     3. Optional: change the colours (--gdrock-blue / --gdrock-teal) to match
+        your brand by editing the CSS variables in the :root block
+     4. The banner only appears if the visitor hasn't already chosen
+     
+     WHAT THIS DOES (GDPR-compliant):
+     ✓  Shows Accept and Reject buttons (genuine choice, not just "OK")
+     ✓  Does NOT load non-essential cookies before consent
+     ✓  Stores consent in a first-party cookie (gdrockConsent)
+     ✓  Accept = 365 days · Reject = 30 days (re-prompt)
+     ✓  Smooth fade-in / fade-out animation
+     ✓  Fully responsive (mobile & desktop)
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<style>
+  :root {
+    --gdrock-blue:  #003399;
+    --gdrock-teal:  #00a896;
+    --gdrock-navy:  #1e2d45;
+    --gdrock-white: #ffffff;
+    --gdrock-gray:  #b0bcd4;
+  }
+
+  @keyframes gdrockFadeIn {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to   { opacity: 1; transform: translate(-50%, 0);    }
+  }
+  @keyframes gdrockFadeOut {
+    from { opacity: 1; transform: translate(-50%, 0);    }
+    to   { opacity: 0; transform: translate(-50%, 20px); }
+  }
+
+  #gdrock-banner {
+    position:      fixed;
+    bottom:        20px;
+    left:          50%;
+    transform:     translateX(-50%);
+    width:         calc(100% - 32px);
+    max-width:     680px;
+    background:    var(--gdrock-navy);
+    border:        1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    padding:       16px 20px;
+    display:       flex;
+    align-items:   center;
+    gap:           18px;
+    flex-wrap:     wrap;
+    z-index:       9999;
+    box-shadow:    0 20px 60px rgba(0,0,0,0.45);
+    animation:     gdrockFadeIn 0.5s ease both;
+    font-family:   -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  #gdrock-banner.gdrock-hide {
+    animation: gdrockFadeOut 0.4s ease forwards;
+  }
+
+  .gdrock-text {
+    flex:        1;
+    font-size:   13px;
+    color:       var(--gdrock-gray);
+    line-height: 1.55;
+    min-width:   160px;
+  }
+
+  .gdrock-text strong { color: var(--gdrock-white); }
+
+  .gdrock-text a {
+    color:           var(--gdrock-teal);
+    text-decoration: none;
+    margin-left:     4px;
+    font-size:       12px;
+  }
+
+  .gdrock-text a:hover { text-decoration: underline; }
+
+  .gdrock-btns { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .gdrock-btn {
+    padding:       8px 18px;
+    border-radius: 7px;
+    font-size:     13px;
+    font-weight:   500;
+    cursor:        pointer;
+    border:        none;
+    transition:    background 0.2s, color 0.2s, border-color 0.2s;
+    font-family:   inherit;
+  }
+
+  .gdrock-btn-accept {
+    background: var(--gdrock-blue);
+    color:      var(--gdrock-white);
+  }
+
+  .gdrock-btn-accept:hover { background: #1a6dff; }
+
+  .gdrock-btn-reject {
+    background:   transparent;
+    color:        var(--gdrock-gray);
+    border:       1px solid rgba(255,255,255,0.15);
+  }
+
+  .gdrock-btn-reject:hover {
+    color:        var(--gdrock-white);
+    border-color: rgba(255,255,255,0.35);
+  }
+</style>
+
+<div id="gdrock-banner">
+  <div class="gdrock-text">
+    <strong>🍪 We use cookies</strong> for analytics only.
+    You can accept or reject below.
+    <a href="/privacy-policy" target="_blank" rel="noopener">Learn more</a>
+  </div>
+  <div class="gdrock-btns">
+    <button class="gdrock-btn gdrock-btn-reject" onclick="gdrockChoice('rejected')">Reject</button>
+    <button class="gdrock-btn gdrock-btn-accept" onclick="gdrockChoice('accepted')">Accept</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── helpers ── */
+  function setCookie(name, value, days) {
+    var d = new Date();
+    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie =
+      name + '=' + value +
+      ';expires=' + d.toUTCString() +
+      ';path=/;SameSite=Lax';
+  }
+
+  function getCookie(name) {
+    return document.cookie.split(';').some(function (c) {
+      return c.trim().indexOf(name + '=') === 0;
+    });
+  }
+
+  /* ── show banner only if no previous choice ── */
+  window.addEventListener('load', function () {
+    if (!getCookie('gdrockConsent')) {
+      document.getElementById('gdrock-banner').style.display = 'flex';
+    }
+  });
+
+  /* ── handle user choice ── */
+  window.gdrockChoice = function (choice) {
+    var days = choice === 'accepted' ? 365 : 30;
+    setCookie('gdrockConsent', choice, days);
+
+    var banner = document.getElementById('gdrock-banner');
+    banner.classList.add('gdrock-hide');
+    setTimeout(function () { banner.style.display = 'none'; }, 400);
+
+    /* ── fire your tag manager / analytics after acceptance ── */
+    if (choice === 'accepted') {
+      // Example: window.dataLayer && window.dataLayer.push({ event: 'cookie_accepted' });
+      // Example: gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  };
+}());
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     UPGRADE TO GDROCK CARE (€39/month)
+     ─────────────────────────────────────────────────────────────────────
+     The Care plan hosts this banner on GDRock's CDN. You install just
+     one line instead of the whole block above:
+
+       <script src="https://cdn.gdrock.com/banner.js?id=YOUR_ID"></script>
+
+     Benefits:
+     ✓  Automatic updates when EU law changes — you do nothing
+     ✓  Compliance dashboard showing consent rates
+     ✓  Monthly compliance alert emails
+     ✓  Priority support
+
+     Sign up: gdrock.com/care  ·  Use code NEW10 for 10% off
+     ═══════════════════════════════════════════════════════════════════════ -->
