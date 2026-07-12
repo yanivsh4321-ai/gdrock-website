@@ -45,6 +45,15 @@ reply_seen.json
 
 # Before-consent verification rig (internal) + its evidence output (prospect data)
 verify_consent.js
+verify_blocker.js
 verification/
 package.json
 package-lock.json
+
+# Outreach senders + drafts + logs (internal, prospect data — never deploy)
+send_batch3.py
+send_day*_batch2.py
+send_nudge1_batch1.py
+outreach_drafts_batch*.csv
+day1_send.log
+missim/
