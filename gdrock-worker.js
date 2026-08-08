@@ -215,8 +215,11 @@ function hostAuthorized(request, siteId, allowedDomains) {
   // in) from cdn.gdrock.com, not from the customer's domain — that's not the
   // theft scenario this check guards against (a site_id copied onto someone
   // else's live site), so always allow it. Actual writes still require the
-  // correct access_code in /save regardless of origin.
-  if (host === "cdn.gdrock.com") return true;
+  // correct access_code in /save regardless of origin. gdrock.com is the same
+  // trust tier — it's app.html, the Compliance Console, managing a client
+  // site's config on the agency's behalf (the portfolio pitch needs this to
+  // actually load a client's real saved settings, not just gdrock.com's own).
+  if (host === "cdn.gdrock.com" || host === "gdrock.com") return true;
   const list = (Array.isArray(allowedDomains) && allowedDomains.length)
     ? allowedDomains.map(normDomain)
     : [normDomain(siteId)];
