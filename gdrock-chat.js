@@ -61,7 +61,7 @@
    if(h('agency','agencies','client site','client store','white-label','white label','portfolio','resell','freelanc','my clients','for clients'))
     return{text:'GDRock has a dedicated agency programme - the Founding Partner pilot:\n- We install GDRock on up to 20 of your client sites, free for 30 days (we do the installs, not you).\n- After the pilot: white-label portfolio pricing - up to 25 sites €299/mo, 26-50 €499/mo, 51-100 €799/mo, locked for 12 months.\n- You resell it under your brand and bill your clients.\nFirst 5 agencies only.',actions:[{label:'See the agency programme',href:'agencies.html'},{label:'Apply for the free pilot',href:'agencies.html#apply'}]};
    if(h('which plan','recommend','plan fit','plan for','best plan','what plan','fits me','choose','not sure','should i'))
-    return{text:'Quick guide:\n- Core Pack: €29 once, a DIY toolkit you set up yourself.\n- Care: €39/mo, a hosted cookie banner that auto-updates when EU law changes (most popular).\n- Pro: €79/mo, adds consent logs, a 25-step board and up to 2 stores.\nRunning client sites as an agency? Founding Partner programme from €299/mo with a free 30-day pilot.',actions:[{label:'Get Care €39/mo',href:'checkout.html?plan=care'},{label:'Core €29',href:'checkout.html?plan=core'},{label:'Agency programme',href:'agencies.html'}]};
+    return{text:'Quick guide:\n- Core Pack: €29 once, the documents and script, you install them yourself (no hosting or updates).\n- Care: €15/mo, a hosted cookie banner we keep current when EU law changes (most popular). Extra sites €9/mo each.\nRunning client sites as an agency? Agency Portfolio from €299/mo with a free 30-day pilot.',actions:[{label:'Get Care €15/mo',href:'checkout.html?plan=care'},{label:'Core €29',href:'checkout.html?plan=core'},{label:'Agency programme',href:'agencies.html'}]};
    if(h('cookie','banner','consent'))
     return{text:'Yes - fully GDPR-compliant. It blocks non-essential cookies before consent, logs consent records with timestamps, and supports accept-all, reject-all and granular choices. Install is one script tag.',actions:[{label:'Get hosted banner (Care)',href:'checkout.html?plan=care'},{label:'See it live',go:'#customizer'}]};
    if(h('scan','audit','check my','test my','am i compliant','exposure','compliant'))
@@ -69,15 +69,15 @@
    if(h('fine','penalty','risk','sue','lawsuit','how much can'))
     return{text:'GDPR fines reach €20M or 4% of global turnover (Tier 2); €10M or 2% for Tier 1. Even stores under €1M revenue average €12k-€45k. Want to estimate yours?',actions:[{label:'Estimate my fine',go:'#estimator'},{label:'Run free scan',go:'#scanner'}]};
    if(h('price','pricing','cost','how much','plans','euro','cheap'))
-    return{text:'Pricing:\n- Core Pack: €29 one-time\n- Care: €39/month (hosted banner + auto-updates)\n- Pro: €79/month (platform, 2 stores)\n- Agencies: Founding Partner from €299/mo for a whole client portfolio (free 30-day pilot)',actions:[{label:'Core €29',href:'checkout.html?plan=core'},{label:'Care €39/mo',href:'checkout.html?plan=care'},{label:'Agency programme',href:'agencies.html'}]};
+    return{text:'Pricing:\n- Core Pack: €29 one-time\n- Care: €15/month (hosted banner, we maintain it)\n- Extra sites: €9/month each\n- Agencies: Portfolio pricing from €299/mo for a whole client portfolio (free 30-day pilot)',actions:[{label:'Core €29',href:'checkout.html?plan=core'},{label:'Care €15/mo',href:'checkout.html?plan=care'},{label:'Agency programme',href:'agencies.html'}]};
    if(h('refund','money back','guarantee','cancel'))
     return{text:'Every product has a 14-day unconditional money-back guarantee, and monthly plans cancel anytime. Email office@gdrock.com with your order reference.',actions:[{label:'Email us',href:'mailto:office@gdrock.com'}]};
    if(h('done for you','do it for me','dfy','install for me','set it up for me','setup service'))
-    return{text:'Our engineers install everything for you - cookie banner, privacy policy and consent logging, directly on your store. Live in 48 hours, from €199.',actions:[{label:'See Done-For-You',href:'dfy.html'}]};
+    return{text:'Our engineers install everything for you - cookie banner, privacy policy and consent logging, directly on your store. Live in 48 hours, from €249.',actions:[{label:'See Done-For-You',href:'dfy.html'}]};
    if(h('free','download','starter','sample','trial'))
     return{text:'Grab the free GDRock Starter pack - GDPR basics guide, compliance checklist and a fine-tier reference. No credit card.',actions:[{label:'Get the free pack',go:'#free'}]};
    if(h('shopify','woocommerce','wordpress','stripe','platform','website builder'))
-    return{text:'Yes - Core Pack includes a Shopify setup guide, the hosted banner works with any Shopify/WordPress theme, and Done-For-You covers WooCommerce, Stripe and custom stacks.',actions:[{label:'Get Care €39/mo',href:'checkout.html?plan=care'},{label:'Done-For-You',href:'dfy.html'}]};
+    return{text:'Yes - Core Pack includes a Shopify setup guide, the hosted banner works with any Shopify/WordPress theme, and Done-For-You covers WooCommerce, Stripe and custom stacks.',actions:[{label:'Get Care €15/mo',href:'checkout.html?plan=care'},{label:'Done-For-You',href:'dfy.html'}]};
    if(h('non-eu','non eu','outside eu','united states','usa','us based','not in eu'))
     return{text:'If you collect personal data from EU residents, GDPR applies regardless of where your business is based. GDRock works for any store selling into the EU.'};
    if(h('law change','update','changes','new rules'))

@@ -54,6 +54,21 @@ package-lock.json
 send_batch3.py
 send_day*_batch2.py
 send_nudge1_batch1.py
+send_nudge2_researchweek.py
 outreach_drafts_batch*.csv
 day1_send.log
 missim/
+
+# Nudge cadence engine + its state/drafts (internal, prospect data — never deploy)
+nudge_cadence.py
+nudge_state.csv
+nudge_drafts/
+loom_scripts/
+make_loom_script.py
+rerun_all_log.txt
+rerun_batch4_log.txt
+
+# Skill tooling state — local only, not site content
+.agents/
+.impeccable/
+skills-lock.json

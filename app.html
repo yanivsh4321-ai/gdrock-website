@@ -11,7 +11,8 @@
 <meta name="apple-mobile-web-app-title" content="GDRock">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/icon-192.png">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2308090c' stroke='%233b82f6' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%233b82f6' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -42,6 +43,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
 .sub{color:var(--ink2);font-size:13px;margin-top:3px}
 .site-pick{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink2);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 12px}
 .site-pick b{color:var(--ink);font-family:var(--M)}
+.site-pick select{background:var(--bg,#0b0d12);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-family:var(--M);font-size:12px;max-width:200px;cursor:pointer}
+.site-pick select:focus{outline:2px solid var(--acc);outline-offset:1px}
+.site-pick .btn{padding:5px 10px;font-size:12px}
 .view{display:none}.view.on{display:block;animation:fade .3s ease}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* cards */
@@ -87,7 +91,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
 .btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink)}
 .dl-hint{font-size:12.5px;color:var(--ink2);margin:0 0 12px;max-width:60ch;line-height:1.55}
 .dl-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
-.dl-actions .btn{box-shadow:0 6px 20px -8px var(--acc)}
+.dl-actions .btn{box-shadow:0 8px 22px -10px rgba(0,0,0,.6)}
 .dl-actions .btn svg{width:15px;height:15px}
 .dl-ok{font-size:12px;color:var(--acc);align-self:center;opacity:0;transition:opacity .2s}
 .dl-ok.show{opacity:1}
@@ -110,21 +114,29 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 <body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><svg width="20" height="22" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(59,130,246,.12)"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</div>
+    <div class="brand"><img src="/assets/gdrock-mark-light.png" alt="" width="22" height="22" style="height:22px;width:auto;display:block;">GDRock</div>
     <div class="nav-i on" data-v="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</div>
     <div class="nav-i" data-v="logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Consent logs</div>
     <div class="nav-i" data-v="banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15h18"/></svg>Cookie banner</div>
     <div class="nav-i" data-v="policy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Privacy policy</div>
     <div class="nav-i" data-v="dsr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Data requests</div>
     <div class="nav-i" data-v="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Settings</div>
-    <div class="side-foot">Banner <span class="ok">● live</span><br>Synced 2 min ago</div>
+    <div class="side-foot" id="side-foot">Checking banner status&hellip;</div>
   </aside>
 
   <main class="main">
     <div class="top">
       <div><div class="h1" id="view-title">Overview</div><div class="sub" id="view-sub">Your compliance at a glance</div></div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <div class="site-pick">Site: <b id="site-id">gdrock.com</b></div>
+        <!-- Portfolio switcher. The console already accepted ?site=, but with no
+             UI it could only ever show one site — which made the agency offer
+             (every client under one dashboard) impossible to demonstrate. -->
+        <div class="site-pick" id="site-pick">
+          <label for="site-sel" style="color:var(--ink2,#9aa2b2);font-size:12px;">Client site</label>
+          <select id="site-sel" aria-label="Select client site"></select>
+          <button class="btn ghost" id="add-site" type="button" title="Add a client site">+ Add</button>
+          <b id="site-id" hidden>gdrock.com</b>
+        </div>
         <button class="btn" id="install-app" style="display:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:7px;vertical-align:-2px"><path d="M12 3v12M7 11l5 4 5-4M4 21h16"/></svg>Install app</button>
         <button class="btn" id="dl-pdf"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:7px;vertical-align:-2px"><path d="M12 3v12M7 11l5 4 5-4M5 21h14"/></svg>Download summary</button>
       </div>
@@ -136,12 +148,12 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
       <div class="row r-top">
         <div class="ring">
           <svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/><circle cx="64" cy="64" r="56" fill="none" stroke="#3b82f6" stroke-width="10" stroke-linecap="round" stroke-dasharray="351.8" stroke-dashoffset="11" transform="rotate(-90 64 64)"/></svg>
-          <div class="lbl"><span class="n">97</span><span class="t">Compliant</span></div>
+          <div class="lbl"><span class="n" id="tv-score">&mdash;</span><span class="t" id="tv-score-l">Scanning&hellip;</span></div>
         </div>
         <div class="tiles">
-          <div class="tile"><div class="tv">12,840</div><div class="tk">Consents logged</div></div>
-          <div class="tile"><div class="tv">3,201</div><div class="tk">Trackers blocked pre-consent</div></div>
-          <div class="tile"><div class="tv">2 min</div><div class="tk">Since last sync</div></div>
+          <div class="tile"><div class="tv" id="tv-consents">&mdash;</div><div class="tk">Consents logged</div></div>
+          <div class="tile"><div class="tv" id="tv-blocked">&mdash;</div><div class="tk">Trackers blocked pre-consent</div></div>
+          <div class="tile"><div class="tv" id="tv-sync">&mdash;</div><div class="tk">Latest event</div></div>
         </div>
       </div>
       <div class="sec-h">Recent activity</div>
@@ -221,8 +233,61 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const TITLES={overview:['Overview','Your compliance at a glance'],logs:['Consent logs','Every consent event, timestamped'],banner:['Cookie banner','Preview, behaviour and install'],policy:['Privacy policy','Your live, versioned policy'],dsr:['Data requests','Subject access & erasure requests'],settings:['Settings','Site, plan and data region']};
-// site from ?site=
-const site=new URLSearchParams(location.search).get('site')||'gdrock.com';
+/* ---------------------------------------------------------------------------
+   Portfolio of client sites.
+   The list is kept in localStorage so an agency can add its own clients and
+   switch between them. Nothing is invented: each site loads whatever real data
+   the API returns for it, and an empty site shows an empty state rather than
+   demo rows dressed as a customer's numbers.
+   ------------------------------------------------------------------------ */
+const SITES_KEY='gdrock.portfolio.sites';
+
+function loadSites(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(SITES_KEY));
+    if(Array.isArray(raw)&&raw.length)return raw.map(String);
+  }catch(e){}
+  return ['gdrock.com'];
+}
+function saveSites(list){
+  try{localStorage.setItem(SITES_KEY,JSON.stringify(list));}catch(e){}
+}
+function normaliseHost(v){
+  return String(v||'').trim().replace(/^https?:\/\//i,'').replace(/\/.*$/,'').toLowerCase();
+}
+
+let sites=loadSites();
+const qsSite=normaliseHost(new URLSearchParams(location.search).get('site'));
+if(qsSite&&sites.indexOf(qsSite)===-1){sites.unshift(qsSite);saveSites(sites);}
+const site=qsSite||sites[0];
+
+(function initSwitcher(){
+  const sel=$('#site-sel');
+  function paint(){
+    sel.innerHTML='';
+    sites.forEach(function(s){
+      const o=document.createElement('option');
+      o.value=s;o.textContent=s;
+      if(s===site)o.selected=true;
+      sel.appendChild(o);
+    });
+    // Show the portfolio size once there is a portfolio to speak of.
+    const lab=document.querySelector('#site-pick label');
+    if(lab)lab.textContent=sites.length>1?('Client site · '+sites.length+' in portfolio'):'Client site';
+  }
+  paint();
+  sel.addEventListener('change',function(){
+    location.search='?site='+encodeURIComponent(sel.value);
+  });
+  $('#add-site').addEventListener('click',function(){
+    const v=normaliseHost(window.prompt('Client site domain (e.g. clientstore.com)'));
+    if(!v)return;
+    if(!/^[a-z0-9][a-z0-9-]*\.[a-z]{2,}/.test(v)){window.alert('That does not look like a domain.');return;}
+    if(sites.indexOf(v)===-1){sites.push(v);saveSites(sites);}
+    location.search='?site='+encodeURIComponent(v);
+  });
+})();
+
 $('#site-id').textContent=site;$('#set-site').textContent=site;
 // demo data (live fetch hook below)
 const LOG=[
@@ -243,21 +308,100 @@ const DSR=[
 ];
 function pill(s){return s==='ok'||s==='done'?'<span class="pill ok">'+s+'</span>':s==='no'?'<span class="pill no">blocked</span>':'<span class="pill w">'+(s==='progress'?'in progress':s)+'</span>';}
 function renderConsent(el,rows,head){el.innerHTML='<div class="tr head t-consent"><span>Time</span><span>Event</span><span class="src">Source</span><span>Status</span></div>'+rows.map(r=>`<div class="tr t-consent"><span class="tm">${r[0]}</span><span>${r[1]}</span><span class="src" style="color:var(--ink3)">${r[2]}</span>${pill(r[3])}</div>`).join('');}
-renderConsent($('#ov-log'),LOG.slice(0,5));
-renderConsent($('#full-log'),LOG);
-$('#dsr-tbl').innerHTML='<div class="tr head t-dsr"><span>Requester</span><span>Type</span><span>Received</span><span>Status</span></div>'+DSR.map(r=>`<div class="tr t-dsr"><span class="em mono" style="color:var(--ink2)">${r[0]}</span><span>${r[1]}</span><span class="tm">${r[2]}</span>${pill(r[3])}</div>`).join('');
+/* Empty state, not borrowed data. Rendering the demo rows up front meant that
+   adding a client site showed GDRock's own sample consent events and four
+   invented data-subject requests as if they belonged to that client — the
+   fastest way to lose a prospect who is paying attention. */
+function emptyState(el,head,msg){
+  el.innerHTML='<div class="tr head '+head+'">'+
+    (head==='t-consent'
+      ? '<span>Time</span><span>Event</span><span class="src">Source</span><span>Status</span>'
+      : '<span>Requester</span><span>Type</span><span>Received</span><span>Status</span>')+
+    '</div><div style="padding:22px 14px;color:var(--ink3);font-size:13.5px;line-height:1.6;">'+msg+'</div>';
+}
+
+const CONSENT_EMPTY='No consent events recorded for <b style="color:var(--ink2)">'+site+
+  '</b> yet. Paste the script tag from <b style="color:var(--ink2)">Cookie banner</b> and events appear here within minutes.';
+const DSR_EMPTY='No data-subject requests for <b style="color:var(--ink2)">'+site+
+  '</b>. Access and erasure requests raised through your banner will be listed here.';
+
+emptyState($('#ov-log'),'t-consent',CONSENT_EMPTY);
+emptyState($('#full-log'),'t-consent',CONSENT_EMPTY);
+emptyState($('#dsr-tbl'),'t-dsr',DSR_EMPTY);
+$('#live-note').textContent='Waiting for data from '+site+'…';
 // nav
 $$('.nav-i').forEach(n=>n.onclick=()=>{
   $$('.nav-i').forEach(x=>x.classList.remove('on'));n.classList.add('on');
   const v=n.dataset.v;$$('.view').forEach(x=>x.classList.remove('on'));$('#'+v).classList.add('on');
   $('#view-title').textContent=TITLES[v][0];$('#view-sub').textContent=TITLES[v][1];
 });
-// live fetch hook — pulls real consent logs when the read API is live
-(async function(){try{
-  const r=await fetch('https://cdn.gdrock.com/api/consent-logs?site_id='+encodeURIComponent(site),{headers:{'accept':'application/json'}});
-  if(!r.ok)return;const d=await r.json();
-  if(Array.isArray(d)&&d.length){const rows=d.slice(0,20).map(x=>[new Date(x.created_at).toLocaleTimeString(),x.accepted?'Consent · accept':'Consent · reject',x.source||'Banner',x.accepted?'ok':'ok']);renderConsent($('#ov-log'),rows.slice(0,5));renderConsent($('#full-log'),rows);$('#live-note').textContent='● Live data from cdn.gdrock.com';}
-}catch(e){}})();
+/* Every headline number is derived from a real response for the selected site.
+   These tiles previously shipped hardcoded values (97 / 12,840 / 3,201 / 2 min),
+   which meant a brand-new client site displayed someone else's metrics directly
+   above the words "no consent events recorded yet". */
+function relTime(iso){
+  var t=new Date(iso).getTime();
+  if(isNaN(t))return '—';
+  var mins=Math.round((Date.now()-t)/60000);
+  if(mins<1)return 'just now';
+  if(mins<60)return mins+' min ago';
+  var hrs=Math.round(mins/60);
+  if(hrs<24)return hrs+'h ago';
+  return Math.round(hrs/24)+'d ago';
+}
+
+(async function(){
+  var note=$('#live-note'),foot=$('#side-foot');
+  try{
+    const r=await fetch('https://cdn.gdrock.com/api/consent-logs?site_id='+encodeURIComponent(site),{headers:{'accept':'application/json'}});
+    if(!r.ok){
+      note.textContent='Could not reach the consent API just now — nothing is missing, this view fills in on reload.';
+      foot.textContent='Banner status unknown';
+      return;
+    }
+    const d=await r.json();
+    if(Array.isArray(d)&&d.length){
+      const rows=d.slice(0,20).map(x=>[
+        new Date(x.created_at).toLocaleTimeString(),
+        x.accepted?'Consent · accept':'Consent · reject',
+        x.source||'Banner','ok']);
+      renderConsent($('#ov-log'),rows.slice(0,5));
+      renderConsent($('#full-log'),rows);
+      note.textContent='● Live consent data for '+site+' · '+d.length+' event'+(d.length===1?'':'s')+' recorded';
+      $('#tv-consents').textContent=d.length.toLocaleString();
+      var newest=d.reduce(function(a,b){return new Date(b.created_at)>new Date(a.created_at)?b:a;});
+      $('#tv-sync').textContent=relTime(newest.created_at);
+      foot.innerHTML='Banner <span class="ok">● live</span><br>Last event '+relTime(newest.created_at);
+    }else{
+      note.textContent='Connected. No consent events for '+site+' yet — they appear here once the banner is live.';
+      $('#tv-consents').textContent='0';
+      $('#tv-sync').textContent='—';
+      foot.innerHTML='Banner <span style="color:var(--ink3)">not detected yet</span><br>Paste the script tag to begin';
+    }
+    /* Not exposed by this endpoint yet — better an em-dash than a number we
+       cannot source. */
+    $('#tv-blocked').title='Per-site blocking counts are not exposed by the consent API yet';
+  }catch(e){
+    note.textContent='Could not reach the consent API just now — nothing is missing, this view fills in on reload.';
+    foot.textContent='Banner status unknown';
+  }
+})();
+
+/* The compliance score is the same scan the public site runs, for this site. */
+(async function(){
+  var n=$('#tv-score'),l=$('#tv-score-l');
+  try{
+    const r=await fetch('https://cdn.gdrock.com/api/scan',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({url:'https://'+site})});
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    if(d&&typeof d.score==='number'&&d.is_real_site!==false){
+      n.textContent=d.score;l.textContent='Compliance score';
+    }else{
+      n.textContent='—';l.textContent='Site not reachable';
+    }
+  }catch(e){ n.textContent='—';l.textContent='Score unavailable'; }
+})();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>

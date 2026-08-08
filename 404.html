@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>Page not found — GDRock</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2308090c' stroke='%233b82f6' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%233b82f6' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -40,10 +41,59 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 .ck,.trust-icon{color:var(--ok)!important;}
 </style>
 <script src="/gdrock-chat.js" defer></script>
+<style id="gdrock-system-align">
+/* ---------------------------------------------------------------------------
+   Design-system alignment. These pages keep their own layout CSS but consumed
+   a retired palette (navy #04081a, twin teal/blue accents, greys below AA).
+   Remapping the custom properties they already read pulls them onto the one
+   system in assets/gdrock.css without touching any markup — and raises the
+   secondary greys to a contrast ratio that actually passes.
+   ------------------------------------------------------------------------ */
+:root{
+  /* surfaces */
+  --navy:#08090c!important; --navy2:#0e1015!important; --g700:#14161c!important;
+  --bg:#08090c!important;   --bg2:#0e1015!important;
+  --panel:#0e1015!important; --panel2:#14161c!important;
+
+  /* one accent, replacing the blue/teal pair */
+  --acc:#4f7dff!important;  --acc2:#3d6cf5!important;
+  --bright:#4f7dff!important; --blue:#4f7dff!important;
+  --teal:#4f7dff!important; --teal2:#4f7dff!important;
+  --acc-soft:rgba(79,125,255,.11)!important;
+  --acc-bright:#4f7dff!important;
+
+  /* ink scale — every step AA against #08090c */
+  --white:#f5f6f8!important; --ink:#f5f6f8!important;
+  --ink2:#a8afbd!important;  --g300:#a8afbd!important;
+  --ink3:#7c8494!important;  --g500:#7c8494!important; --mut:#7c8494!important;
+
+  /* hairlines */
+  --line:rgba(255,255,255,.09)!important;
+  --line2:rgba(255,255,255,.16)!important;
+
+  /* signal colours, one job each */
+  --red:#ff6b6b!important; --bad:#ff6b6b!important;
+  --ok:#3ddc97!important;  --green:#3ddc97!important;
+  --gold:#f5b84c!important; --warn:#f5b84c!important;
+
+  /* two faces, matching the rest of the site */
+  --D:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  --B:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  --M:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace!important;
+}
+/* Browser surfaces these pages never themed. */
+::selection{background:rgba(79,125,255,.32);color:#fff;}
+:focus-visible{outline:2px solid #4f7dff;outline-offset:3px;border-radius:4px;}
+*{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent;}
+::-webkit-scrollbar{width:11px;height:11px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px;border:3px solid #08090c;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.24);}
+</style>
 </head>
 <body>
 <div class="glow"></div>
-<a href="/" class="logo"><svg width="26" height="28" viewBox="0 0 30 34" fill="none"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="currentColor" stroke-width="2.5" fill="rgba(59,130,246,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>GDRock</a>
+<a href="/" class="logo"><img src="/assets/gdrock-mark-light.png" alt="" width="28" height="28" style="height:28px;width:auto;display:block;">GDRock</a>
 <div class="code">Error 404</div>
 <h1>This page slipped through the net.</h1>
 <p>The link is broken or the page was moved. Your compliance, however, is still very much our problem to solve.</p>

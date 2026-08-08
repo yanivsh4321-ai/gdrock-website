@@ -6,19 +6,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GDRock — Done-For-You GDPR Setup & Enterprise Infrastructure</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2308090c' stroke='%233b82f6' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%233b82f6' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <style>
 :root{--navy:#04081a;--blue:#0033aa;--bright:#1a6dff;--teal:#00a896;--teal2:#3b82f6;--white:#fff;--g300:#a5b1cc;--g500:#5b6a8a;--g700:#1c2640;--red:#e63946;--gold:#f5c842;--D:'Syne',sans-serif;--B:'DM Sans',sans-serif;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:var(--B);background:var(--navy);color:var(--white);overflow-x:hidden;}
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(4,8,26,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(8,9,12,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);}
 .nav-logo{font-family:var(--D);font-weight:800;font-size:20px;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:10px;}
 .nav-back{color:var(--g300);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;transition:color .2s;}
 .nav-back:hover{color:var(--white);}
 .hero{padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden;}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,51,153,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,51,153,.07) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,black,transparent);pointer-events:none;}
+.hero-grid{display:none;} /* decorative grid overlay removed */
 .orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
 .orb-1{width:400px;height:400px;background:radial-gradient(circle,rgba(0,51,153,.28),transparent 70%);top:-60px;left:-60px;}
 .orb-2{width:320px;height:320px;background:radial-gradient(circle,rgba(0,168,150,.18),transparent 70%);bottom:0;right:-40px;}
@@ -26,7 +27,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .badge-dot{width:6px;height:6px;background:var(--teal2);border-radius:50%;animation:pulse 2s ease infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .hero h1{font-family:var(--D);font-size:clamp(36px,6vw,72px);font-weight:800;line-height:1.02;letter-spacing:-.03em;max-width:780px;margin:0 auto;position:relative;z-index:1;}
-.accent{background:linear-gradient(135deg,var(--bright),var(--teal2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.accent{color:var(--teal2);}
 .hero-sub{font-size:clamp(15px,1.8vw,18px);color:var(--g300);max-width:540px;line-height:1.65;margin:20px auto 0;font-weight:300;position:relative;z-index:1;}
 .container{max-width:1020px;margin:0 auto;padding:0 32px;}
 .section-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:12px;}
@@ -74,7 +75,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .service-btn.outline{background:transparent;border:1px solid rgba(255,255,255,.2);}
 .service-btn.outline:hover{background:rgba(255,255,255,.08);}
 .service-btn.enterprise-btn{background:linear-gradient(135deg,#7c3aed,#a855f7);font-size:15px;padding:14px;}
-.service-btn.enterprise-btn:hover{background:linear-gradient(135deg,#6d28d9,#9333ea);box-shadow:0 8px 28px rgba(124,58,237,.4);}
+.service-btn.enterprise-btn:hover{background:linear-gradient(135deg,#6d28d9,#9333ea);box-shadow:0 10px 26px rgba(0,0,0,.45);}
 
 /* ENTERPRISE GRID */
 .enterprise-inner{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
@@ -112,7 +113,7 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .book-select:focus{border-color:var(--teal);}
 .book-select option{background:var(--navy);}
 .btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:var(--white);padding:14px 28px;border-radius:8px;font-size:15px;font-weight:500;text-decoration:none;border:none;cursor:pointer;transition:all .2s;font-family:var(--B);width:100%;justify-content:center;}
-.btn-primary:hover{background:var(--bright);transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,68,204,.4);}
+.btn-primary:hover{background:var(--bright);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.45);}
 .book-note{font-size:11px;color:var(--g500);margin-top:10px;}
 .faq{padding:72px 0;}
 .faq-list{display:flex;flex-direction:column;gap:10px;margin-top:40px;max-width:700px;}
@@ -121,8 +122,11 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-co
 .faq-q:hover{background:rgba(255,255,255,.03);}
 .faq-icon{font-size:18px;flex-shrink:0;transition:transform .3s;color:var(--teal);}
 .faq-q.open .faq-icon{transform:rotate(45deg);}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 18px;}
-.faq-a.open{max-height:200px;padding:0 18px 16px;}
+/* grid-template-rows, not max-height: animating a layout property thrashes
+   layout every frame, and max-height caps tall answers at an arbitrary 200px. */
+.faq-a{display:grid;grid-template-rows:0fr;overflow:hidden;padding:0 18px;}
+.faq-a>*{min-height:0;}
+.faq-a.open{grid-template-rows:1fr;padding:0 18px 16px;}
 .faq-a p{color:var(--g300);font-size:13px;line-height:1.65;font-weight:300;}
 footer{border-top:1px solid rgba(255,255,255,.06);padding:32px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .footer-logo{font-family:var(--D);font-weight:800;font-size:17px;color:var(--white);display:flex;align-items:center;gap:8px;text-decoration:none;}
@@ -154,7 +158,7 @@ img,svg,canvas{max-width:100%;}
 .prod-card.feat{border-color:rgba(26,109,255,.4)!important;}
 /* ===== HERO DATA-GRID BACKDROP + FLOAT ===== */
 .hero{position:relative;}
-.hero::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 75% 70% at 62% 48%,#000 28%,transparent 78%);mask-image:radial-gradient(ellipse 75% 70% at 62% 48%,#000 28%,transparent 78%);}
+/* Decorative grid overlay removed. */
 @keyframes gdFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
 #hero-canvas{top:-20px!important;height:calc(100% + 40px)!important;animation:gdFloat 6s ease-in-out infinite;z-index:2;}
 .hero-content,.hero-grad,.scroll-hint{z-index:5;}
@@ -177,8 +181,8 @@ img,svg,canvas{max-width:100%;}
 /* GDROCK REDESIGN — single teal accent, de-slopped (matches homepage) */
 :root{--acc:#3b82f6;--acc-bright:#60a5fa;--acc-ink:#ffffff;--line:rgba(148,170,205,.12);--line-hi:rgba(59,130,246,.40);}
 .accent,.grad-text{-webkit-text-fill-color:var(--acc-bright)!important;background:none!important;color:var(--acc-bright)!important;}
-.btn-primary,.btn-nav,.prod-btn.pri{background:var(--acc)!important;color:var(--acc-ink)!important;border:none!important;box-shadow:0 1px 0 rgba(255,255,255,.18) inset,0 8px 24px -10px rgba(59,130,246,.6);}
-.btn-primary:hover,.btn-nav:hover,.prod-btn.pri:hover{background:var(--acc-bright)!important;transform:translateY(-2px);box-shadow:0 16px 36px -12px rgba(59,130,246,.75);}
+.btn-primary,.btn-nav,.prod-btn.pri{background:var(--acc)!important;color:var(--acc-ink)!important;border:none!important;box-shadow:0 1px 0 rgba(255,255,255,.18) inset;}
+.btn-primary:hover,.btn-nav:hover,.prod-btn.pri:hover{background:var(--acc-bright)!important;transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.45);}
 .btn-primary:active,.btn-nav:active,.btn-outline:active{transform:translateY(0) scale(.985);}
 .step-num{background:rgba(59,130,246,.08)!important;border-color:var(--line-hi)!important;color:var(--acc-bright)!important;}
 .bdot{background:var(--acc)!important;box-shadow:0 0 0 4px rgba(59,130,246,.14);}
@@ -199,12 +203,61 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 .ck,.trust-icon{color:var(--ok)!important;}
 </style>
 <script src="/gdrock-chat.js" defer></script>
+<style id="gdrock-system-align">
+/* ---------------------------------------------------------------------------
+   Design-system alignment. These pages keep their own layout CSS but consumed
+   a retired palette (navy #04081a, twin teal/blue accents, greys below AA).
+   Remapping the custom properties they already read pulls them onto the one
+   system in assets/gdrock.css without touching any markup — and raises the
+   secondary greys to a contrast ratio that actually passes.
+   ------------------------------------------------------------------------ */
+:root{
+  /* surfaces */
+  --navy:#08090c!important; --navy2:#0e1015!important; --g700:#14161c!important;
+  --bg:#08090c!important;   --bg2:#0e1015!important;
+  --panel:#0e1015!important; --panel2:#14161c!important;
+
+  /* one accent, replacing the blue/teal pair */
+  --acc:#4f7dff!important;  --acc2:#3d6cf5!important;
+  --bright:#4f7dff!important; --blue:#4f7dff!important;
+  --teal:#4f7dff!important; --teal2:#4f7dff!important;
+  --acc-soft:rgba(79,125,255,.11)!important;
+  --acc-bright:#4f7dff!important;
+
+  /* ink scale — every step AA against #08090c */
+  --white:#f5f6f8!important; --ink:#f5f6f8!important;
+  --ink2:#a8afbd!important;  --g300:#a8afbd!important;
+  --ink3:#7c8494!important;  --g500:#7c8494!important; --mut:#7c8494!important;
+
+  /* hairlines */
+  --line:rgba(255,255,255,.09)!important;
+  --line2:rgba(255,255,255,.16)!important;
+
+  /* signal colours, one job each */
+  --red:#ff6b6b!important; --bad:#ff6b6b!important;
+  --ok:#3ddc97!important;  --green:#3ddc97!important;
+  --gold:#f5b84c!important; --warn:#f5b84c!important;
+
+  /* two faces, matching the rest of the site */
+  --D:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  --B:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  --M:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace!important;
+}
+/* Browser surfaces these pages never themed. */
+::selection{background:rgba(79,125,255,.32);color:#fff;}
+:focus-visible{outline:2px solid #4f7dff;outline-offset:3px;border-radius:4px;}
+*{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent;}
+::-webkit-scrollbar{width:11px;height:11px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px;border:3px solid #08090c;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.24);}
+</style>
 </head>
 <body>
 
 <nav>
   <a href="/" class="nav-logo">
-    <svg width="20" height="23" viewBox="0 0 30 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(59,130,246,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <img src="/assets/gdrock-mark-light.png" alt="" width="23" height="23" style="height:23px;width:auto;display:block;">
     GDRock
   </a>
   <a href="/" class="nav-back">← Back to gdrock.com</a>
@@ -258,7 +311,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
       <div class="service-card blue">
         <div class="service-tag blue">Basic setup</div>
         <div class="service-name">Essential</div>
-        <div class="service-price">€199 <span>/ one-time</span></div>
+        <div class="service-price">€249 <span>/ one-time</span></div>
         <p class="service-desc">Our team deploys all core GDRock components your website needs. Every script installed, every template configured, and everything tested before handover.</p>
         <ul class="service-includes">
           <li><span class="check">✓</span>Automated GDPR site scan to baseline your setup</li>
@@ -275,7 +328,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
       <div class="service-card teal">
         <div class="service-tag teal">Shopify full setup</div>
         <div class="service-name">Shopify Pro</div>
-        <div class="service-price">€499 <span>/ one-time</span></div>
+        <div class="service-price">€599 <span>/ one-time</span></div>
         <p class="service-desc">Full GDRock deployment for Shopify stores — including cookie consent configuration, privacy template setup, and consent mode integration for ad and analytics scripts.</p>
         <ul class="service-includes">
           <li><span class="check">✓</span>Everything in Essential</li>
@@ -292,7 +345,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
       <div class="service-card gold">
         <div class="service-tag gold">SaaS / full component setup</div>
         <div class="service-name">SaaS Compliance</div>
-        <div class="service-price">€999 <span>/ one-time</span></div>
+        <div class="service-price">€1,500 <span>/ one-time</span></div>
         <p class="service-desc">Complete GDRock deployment for SaaS products and digital businesses with complex data flows. We configure every pre-built template for your specific setup.</p>
         <ul class="service-includes">
           <li><span class="check">✓</span>Everything in Shopify Pro</li>
@@ -312,7 +365,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
           <div class="enterprise-left">
             <div class="service-tag enterprise-tag">★ Enterprise &amp; Custom Infrastructure</div>
             <div class="service-name">Enterprise / Custom<br>Infrastructure</div>
-            <div class="service-price" style="background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Custom<span style="-webkit-text-fill-color:var(--g300);"> / scoped per project</span></div>
+            <div class="service-price" style="color:#c084fc;">Custom<span style="-webkit-text-fill-color:var(--g300);"> / scoped per project</span></div>
             <p class="service-desc" style="margin-top:12px;">Built for international AI SaaS companies, high-volume platforms, and businesses handling cross-border EU data flows. We deploy dedicated Supabase data-consent vaults, custom automated compliance tracking scripts, and tailored framework implementations — backed by priority SLA support and liability-shield documentation.</p>
             <ul class="service-includes">
               <li><span class="check check-purple">✓</span>Everything in SaaS Compliance</li>
@@ -428,9 +481,9 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
         <input type="text" class="book-input" placeholder="Your website URL" id="bf-url">
         <select class="book-select" id="bf-service">
           <option value="">Select a service...</option>
-          <option value="Essential — €199">Essential Setup — €199</option>
-          <option value="Shopify Pro — €499">Shopify Pro Setup — €499</option>
-          <option value="SaaS Compliance — €999">SaaS Compliance — €999</option>
+          <option value="Essential — €249">Essential Setup — €249</option>
+          <option value="Shopify Pro — €599">Shopify Pro Setup — €599</option>
+          <option value="SaaS Compliance — €1,500">SaaS Compliance — €1,500</option>
           <option value="Scale Tier — €2,500–€5,000 setup + €299/mo">Enterprise Scale Tier — €2,500–€5,000 + €299/mo</option>
           <option value="Custom Enterprise — €5,000–€15,000 setup + €999/mo">Custom Enterprise Architecture — €5,000–€15,000 + €999/mo</option>
           <option value="Not sure yet">Not sure yet — just want to talk</option>
@@ -454,7 +507,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 
 <footer>
   <a href="/" class="footer-logo">
-    <svg width="20" height="23" viewBox="0 0 30 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(59,130,246,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <img src="/assets/gdrock-mark-light.png" alt="" width="23" height="23" style="height:23px;width:auto;display:block;">
     GDrock
   </a>
   <ul class="footer-links">

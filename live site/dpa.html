@@ -7,7 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Data Processing Agreement — GDRock Ltd</title>
 <meta name="description" content="GDRock Ltd Data Processing Agreement (DPA) — GDPR Article 28 terms covering processing scope, sub-processors, security, and data subject rights.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cpath d='M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z' fill='%2308090c' stroke='%233b82f6' stroke-width='2.5'/%3E%3Cpath d='M10 16.5L13.5 20L20 13' stroke='%233b82f6' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
@@ -15,7 +16,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:var(--B);background:var(--navy);color:var(--white);line-height:1.7;}
-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(4,8,26,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:100;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(8,9,12,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:100;}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1060px;margin:0 auto;}
 .logo{font-family:var(--D);font-weight:800;font-size:19px;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:9px;}
 .back-btn{color:var(--teal2);text-decoration:none;font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;border:1px solid rgba(0,201,177,.2);padding:7px 14px;border-radius:6px;transition:all .2s;}
@@ -66,13 +67,62 @@ h1,h2,h3{font-weight:700!important;}
 .card{border-radius:12px!important;}
 </style>
 <script src="/gdrock-chat.js" defer></script>
+<style id="gdrock-system-align">
+/* ---------------------------------------------------------------------------
+   Design-system alignment. These pages keep their own layout CSS but consumed
+   a retired palette (navy #04081a, twin teal/blue accents, greys below AA).
+   Remapping the custom properties they already read pulls them onto the one
+   system in assets/gdrock.css without touching any markup — and raises the
+   secondary greys to a contrast ratio that actually passes.
+   ------------------------------------------------------------------------ */
+:root{
+  /* surfaces */
+  --navy:#08090c!important; --navy2:#0e1015!important; --g700:#14161c!important;
+  --bg:#08090c!important;   --bg2:#0e1015!important;
+  --panel:#0e1015!important; --panel2:#14161c!important;
+
+  /* one accent, replacing the blue/teal pair */
+  --acc:#4f7dff!important;  --acc2:#3d6cf5!important;
+  --bright:#4f7dff!important; --blue:#4f7dff!important;
+  --teal:#4f7dff!important; --teal2:#4f7dff!important;
+  --acc-soft:rgba(79,125,255,.11)!important;
+  --acc-bright:#4f7dff!important;
+
+  /* ink scale — every step AA against #08090c */
+  --white:#f5f6f8!important; --ink:#f5f6f8!important;
+  --ink2:#a8afbd!important;  --g300:#a8afbd!important;
+  --ink3:#7c8494!important;  --g500:#7c8494!important; --mut:#7c8494!important;
+
+  /* hairlines */
+  --line:rgba(255,255,255,.09)!important;
+  --line2:rgba(255,255,255,.16)!important;
+
+  /* signal colours, one job each */
+  --red:#ff6b6b!important; --bad:#ff6b6b!important;
+  --ok:#3ddc97!important;  --green:#3ddc97!important;
+  --gold:#f5b84c!important; --warn:#f5b84c!important;
+
+  /* two faces, matching the rest of the site */
+  --D:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  --B:'Geist',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;
+  --M:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace!important;
+}
+/* Browser surfaces these pages never themed. */
+::selection{background:rgba(79,125,255,.32);color:#fff;}
+:focus-visible{outline:2px solid #4f7dff;outline-offset:3px;border-radius:4px;}
+*{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.16) transparent;}
+::-webkit-scrollbar{width:11px;height:11px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px;border:3px solid #08090c;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.24);}
+</style>
 </head>
 <body>
 
 <nav>
   <div class="nav-inner">
     <a href="index.html" class="logo">
-      <svg width="22" height="24" viewBox="0 0 30 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" stroke="#3b82f6" stroke-width="2.5" fill="rgba(59,130,246,.12)" stroke-linejoin="round"/><path d="M10 16.5L13.5 20L20 13" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <img src="/assets/gdrock-mark-light.png" alt="" width="24" height="24" style="height:24px;width:auto;display:block;">
       GDRock
     </a>
     <a href="index.html" class="back-btn">← Back to site</a>
@@ -81,7 +131,6 @@ h1,h2,h3{font-weight:700!important;}
 
 <section class="hero">
   <div class="container">
-    <div class="badge">GDPR Article 28</div>
     <h1>Data Processing Agreement</h1>
     <p>This Data Processing Agreement (DPA) governs how GDRock Ltd processes personal data on behalf of its customers, in accordance with Article 28 of the GDPR.</p>
   </div>
