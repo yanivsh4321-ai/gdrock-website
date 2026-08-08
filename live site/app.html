@@ -84,6 +84,20 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
 .sw.off{background:rgba(255,255,255,.12)}
 .sw::after{content:'';position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
 .sw.off::after{right:auto;left:2px}
+/* visual customizer controls (Cookie banner tab) */
+.mk-cap{font-family:var(--M);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.mk-val{font-family:var(--M);font-size:10px;color:var(--ink2);letter-spacing:0;text-transform:none}
+.mk-presets{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:14px}
+.mk-pre{aspect-ratio:1;border-radius:6px;border:2px solid transparent;padding:0;cursor:pointer;transition:transform .15s,border-color .15s}
+.mk-pre:hover{transform:scale(1.08)}
+.mk-pre.on{border-color:var(--ink)}
+.mk-color{width:28px;height:28px;border-radius:6px;border:1px solid var(--line2);background:none;cursor:pointer;padding:0;margin-bottom:14px}
+.mk-color::-webkit-color-swatch-wrapper{padding:0}
+.mk-color::-webkit-color-swatch{border:none;border-radius:4px}
+.mk-color::-moz-color-swatch{border:none;border-radius:4px}
+.mk-range{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:3px;background:var(--line2);outline:none;cursor:pointer;margin:2px 0 14px;display:block}
+.mk-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2);cursor:pointer}
+.mk-range::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid var(--bg2);cursor:pointer}
 .code{font-family:var(--M);font-size:12px;background:#0b0d12;border:1px solid var(--line);border-radius:10px;padding:14px;color:var(--ink2);overflow-x:auto;white-space:pre;line-height:1.6}
 .doc{font-size:13.5px;color:var(--ink2);line-height:1.7;max-width:62ch}
 .doc h3{color:var(--ink);font-size:15px;margin:18px 0 6px}
@@ -170,10 +184,28 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;" class="bn-grid">
         <div>
           <div class="sec-h" style="margin-top:0">Live preview</div>
-          <div class="bn">
+          <div class="bn" id="bn-preview">
             <h4>We value your privacy</h4>
             <p>We use cookies to improve your experience and analyse traffic. You choose what loads.</p>
-            <div class="bn-btns"><span class="g">Reject</span><span class="g">Customize</span><span class="p">Accept all</span></div>
+            <div class="bn-btns"><span class="g">Reject</span><span class="g">Customize</span><span class="p" id="bn-accept">Accept all</span></div>
+          </div>
+          <div class="sec-h">Appearance</div>
+          <div class="card">
+            <div class="mk-cap">Presets</div>
+            <div class="mk-presets" id="bn-presets">
+              <button class="mk-pre" data-acc="#3b82f6" style="background:linear-gradient(135deg,#3b82f6,#0a1020)" aria-label="Blue preset"></button>
+              <button class="mk-pre" data-acc="#4f7dff" style="background:linear-gradient(135deg,#4f7dff,#0a1020)" aria-label="Indigo preset"></button>
+              <button class="mk-pre" data-acc="#8b5cf6" style="background:linear-gradient(135deg,#8b5cf6,#0f0a1e)" aria-label="Violet preset"></button>
+              <button class="mk-pre" data-acc="#3ddc97" style="background:linear-gradient(135deg,#3ddc97,#03140d)" aria-label="Green preset"></button>
+              <button class="mk-pre" data-acc="#f43f5e" style="background:linear-gradient(135deg,#f43f5e,#1a0408)" aria-label="Rose preset"></button>
+              <button class="mk-pre" data-acc="#f5b84c" style="background:linear-gradient(135deg,#f5b84c,#1a1200)" aria-label="Amber preset"></button>
+            </div>
+            <div class="mk-cap">Accent <span class="mk-val" id="bn-acc-hex">#3B82F6</span></div>
+            <input type="color" id="bn-acc" value="#3b82f6" class="mk-color" aria-label="Accent color">
+            <div class="mk-cap">Radius <span class="mk-val" id="bn-rad-val">16px</span></div>
+            <input type="range" id="bn-rad" class="mk-range" min="0" max="22" value="16" aria-label="Corner radius">
+            <div class="mk-cap">Logo size <span class="mk-val" id="bn-logo-val">32px</span></div>
+            <input type="range" id="bn-logo" class="mk-range" min="14" max="48" value="32" aria-label="Logo size">
           </div>
         </div>
         <div>
@@ -183,9 +215,19 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
             <div class="toggle-row">Log every consent with timestamp <span class="sw"></span></div>
             <div class="toggle-row">Granular categories <span class="sw"></span></div>
             <div class="toggle-row">Auto-update on EU law changes <span class="sw"></span></div>
-            <div class="toggle-row">Respect Global Privacy Control <span class="sw off"></span></div>
+            <div class="toggle-row" style="border-bottom:0">Respect Global Privacy Control <span class="sw off"></span></div>
           </div>
-          <div style="margin-top:14px"><a class="btn ghost" href="https://cdn.gdrock.com/customize" target="_blank" rel="noopener">Open visual customizer →</a></div>
+          <p style="color:var(--ink3);font-size:11.5px;margin:8px 0 0;">Built into every install and always on — there's nothing to toggle here.</p>
+
+          <div class="sec-h">Publish to your live site</div>
+          <div class="card">
+            <p style="font-size:12.5px;color:var(--ink2);line-height:1.6;margin-bottom:12px;">Changes above preview instantly. They only go live on <b class="mono" id="bn-site-label">gdrock.com</b> once you save with that site's access code.</p>
+            <label style="display:block;font-size:11px;color:var(--ink3);margin-bottom:6px;">Access code</label>
+            <input type="text" id="bn-code" placeholder="GDR-XXXX-XXXX" autocomplete="off" style="width:100%;background:var(--bg,#0b0d12);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-family:var(--M);font-size:13px;margin-bottom:12px;box-sizing:border-box;">
+            <button class="btn" id="bn-save" style="width:100%;justify-content:center;">Save &amp; publish</button>
+            <p id="bn-status" style="font-size:12px;margin-top:10px;"></p>
+          </div>
+          <div style="margin-top:14px"><a class="btn ghost" href="https://cdn.gdrock.com/customize" target="_blank" rel="noopener">Open full visual customizer →</a></div>
         </div>
       </div>
       <div class="sec-h">Your install script</div>
@@ -401,6 +443,93 @@ function relTime(iso){
       n.textContent='—';l.textContent='Site not reachable';
     }
   }catch(e){ n.textContent='—';l.textContent='Score unavailable'; }
+})();
+
+/* Cookie banner customizer — live preview + real save to cdn.gdrock.com.
+   Loads the site's actual saved config (public, no code needed) so the
+   preview never shows someone else's colors; only the save is gated on the
+   site's access code, same rule the worker enforces server-side. */
+(function(){
+  var preview=$('#bn-preview');if(!preview)return;
+  var accInput=$('#bn-acc'),accHex=$('#bn-acc-hex'),
+      rad=$('#bn-rad'),radVal=$('#bn-rad-val'),
+      logo=$('#bn-logo'),logoVal=$('#bn-logo-val'),
+      accept=$('#bn-accept'),btns=preview.querySelectorAll('.bn-btns span'),
+      pres=$$('#bn-presets .mk-pre'),status=$('#bn-status'),
+      codeInput=$('#bn-code'),saveBtn=$('#bn-save');
+  $('#bn-site-label').textContent=site;
+
+  var loaded=null; // raw config from the server, kept so save doesn't clobber fields this tab has no UI for
+
+  function applyAccent(hex){
+    if(!hex)return;
+    accept.style.background=hex;
+    accHex.textContent=hex.toUpperCase();
+    if(accInput.value.toLowerCase()!==hex.toLowerCase())accInput.value=hex;
+    pres.forEach(function(p){p.classList.toggle('on',(p.getAttribute('data-acc')||'').toLowerCase()===hex.toLowerCase());});
+  }
+  function applyRadius(v){
+    var r=+v;preview.style.borderRadius=r+'px';
+    var b=Math.max(3,Math.round(r*0.65));
+    btns.forEach(function(x){x.style.borderRadius=b+'px';});
+    radVal.textContent=r+'px';
+  }
+  function applyLogo(v){ logoVal.textContent=(+v)+'px'; } // no logo glyph in this preview yet; stored for save
+
+  accInput.addEventListener('input',function(){applyAccent(accInput.value);});
+  rad.addEventListener('input',function(){applyRadius(rad.value);});
+  logo.addEventListener('input',function(){applyLogo(logo.value);});
+  pres.forEach(function(p){p.addEventListener('click',function(){applyAccent(p.getAttribute('data-acc'));});});
+
+  (async function(){
+    try{
+      var r=await fetch('https://cdn.gdrock.com/api/banner-config/'+encodeURIComponent(site));
+      var d=await r.json();
+      loaded=d||{};
+      if(d&&!d.blocked){
+        applyAccent(d.primary||d.accentBtn||'#3b82f6');
+        applyRadius(d.radius??16);
+        logo.value=d.logoSize??32;applyLogo(logo.value);
+      }else{
+        status.textContent=d&&d.reason==='unauthorized_domain'
+          ?'Loaded defaults — this console is running from a domain '+site+' hasn’t authorized yet.'
+          :'Loaded defaults — no saved config for '+site+' yet.';
+        status.style.color='var(--ink3)';
+      }
+    }catch(e){
+      applyAccent('#3b82f6');applyRadius(16);logo.value=32;applyLogo(32);
+      status.textContent='Could not reach the config API — showing defaults, not this site’s real settings.';
+      status.style.color='var(--warn)';
+    }
+  })();
+
+  saveBtn.addEventListener('click',async function(){
+    var code=(codeInput.value||'').trim();
+    if(!code){status.textContent='Enter this site’s access code to publish.';status.style.color='var(--warn)';return;}
+    saveBtn.disabled=true;var was=saveBtn.textContent;saveBtn.textContent='Saving…';
+    status.textContent='';
+    try{
+      var body={
+        site_id:site, accessCode:code,
+        accent:accInput.value, radius:+rad.value, logoSize:+logo.value,
+        // Pass through whatever this tab doesn't edit so save can't silently erase it.
+        bg:(loaded&&loaded.bg)||null, fg:(loaded&&loaded.fg)||null,
+        theme:(loaded&&loaded.theme)||'auto', customLogoB64:(loaded&&loaded.customLogoB64)||null,
+      };
+      var r=await fetch('https://cdn.gdrock.com/api/banner-config/save',{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      var d=await r.json().catch(function(){return{};});
+      if(r.ok&&d.ok){
+        status.textContent='Saved — '+site+'’s live banner now uses this look.';status.style.color='var(--ok,#3ddc97)';
+      }else{
+        status.textContent=d.error||'Could not save — check the access code and try again.';status.style.color='var(--bad)';
+      }
+    }catch(e){
+      status.textContent='Could not reach the save API — nothing was published.';status.style.color='var(--bad)';
+    }finally{
+      saveBtn.disabled=false;saveBtn.textContent=was;
+    }
+  });
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

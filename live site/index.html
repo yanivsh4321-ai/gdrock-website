@@ -509,7 +509,66 @@
 
 <hr class="rule">
 
-<!-- ============ 7 · FAQ ============ -->
+<!-- ============ 7 · CUSTOMIZE ============ -->
+<section id="customize">
+  <div class="shell">
+    <div class="mk-grid">
+      <div>
+        <h2 class="t2">A cookie banner that looks 100% your brand.</h2>
+        <p class="lede" style="margin-bottom:22px;">Care subscribers get a live visual customizer. Change your accent color, corner radius and logo size &mdash; no code, instant preview, deploys to your live site the moment you save.</p>
+        <ul class="plan-feats" style="margin-bottom:28px;">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Match your exact brand color</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Adjust corner radius and logo size</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>6 ready-made palettes, one click to apply</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Live preview &mdash; what you see is what ships</li>
+        </ul>
+        <a href="https://cdn.gdrock.com/customize" target="_blank" rel="noopener" class="btn btn-1">Open the customizer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="card term">
+        <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>cdn.gdrock.com/customize</b></div>
+        <div class="mk-body">
+          <div class="mk-controls">
+            <div class="mk-cap">Presets</div>
+            <div class="mk-presets" id="mk-presets">
+              <button class="mk-pre" data-acc="#4f7dff" style="background:linear-gradient(135deg,#4f7dff,#0a1020);" aria-label="Blue preset"></button>
+              <button class="mk-pre" data-acc="#6366f1" style="background:linear-gradient(135deg,#6366f1,#0b0e24);" aria-label="Indigo preset"></button>
+              <button class="mk-pre" data-acc="#8b5cf6" style="background:linear-gradient(135deg,#8b5cf6,#0f0a1e);" aria-label="Violet preset"></button>
+              <button class="mk-pre" data-acc="#3ddc97" style="background:linear-gradient(135deg,#3ddc97,#03140d);" aria-label="Green preset"></button>
+              <button class="mk-pre" data-acc="#f43f5e" style="background:linear-gradient(135deg,#f43f5e,#1a0408);" aria-label="Rose preset"></button>
+              <button class="mk-pre" data-acc="#f5b84c" style="background:linear-gradient(135deg,#f5b84c,#1a1200);" aria-label="Amber preset"></button>
+            </div>
+            <div class="mk-cap">Accent <span class="mk-val" id="mk-acc-hex">#4F7DFF</span></div>
+            <div class="mk-row"><input type="color" id="mk-acc" value="#4f7dff" class="mk-color" aria-label="Accent color"></div>
+            <div class="mk-cap">Radius <span class="mk-val" id="mk-rad-val">14px</span></div>
+            <input type="range" id="mk-rad" class="mk-range" min="0" max="22" value="14" aria-label="Corner radius">
+            <div class="mk-cap">Logo size <span class="mk-val" id="mk-logo-val">22px</span></div>
+            <input type="range" id="mk-logo" class="mk-range" min="14" max="36" value="22" aria-label="Logo size">
+          </div>
+          <div class="mk-stage">
+            <div id="mk-banner" class="mk-banner">
+              <div class="mk-banner-top">
+                <svg id="mk-logo-svg" width="22" height="24" viewBox="0 0 30 34" fill="none" style="flex:none;"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" fill="rgba(79,125,255,.14)" stroke="#4f7dff" stroke-width="2.5"/><path d="M10 16.5L13.5 20L20 13" stroke="#4f7dff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                <span>We value your privacy</span>
+              </div>
+              <p>We use cookies to improve your experience and personalize content.</p>
+              <div class="mk-banner-btns">
+                <span class="mk-bbtn">Reject</span>
+                <span class="mk-bbtn">Customize</span>
+                <span class="mk-bbtn" id="mk-accept">Accept all</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ 8 · FAQ ============ -->
 <section id="faq">
   <div class="shell">
     <div class="faq-top"><h2 class="t1">Questions, answered.</h2></div>
@@ -811,6 +870,33 @@
     es.forEach(function(e){if(e.isIntersecting&&!ran){ran=true;compute();}});
   },{threshold:.25}).observe(document.getElementById('estimate'));
   compute();
+})();
+
+/* ===================== CUSTOMIZE preview (mirrors cdn.gdrock.com/customize) ===================== */
+(function(){
+  var banner=document.getElementById('mk-banner'); if(!banner)return;
+  var accInput=document.getElementById('mk-acc'),accHex=document.getElementById('mk-acc-hex'),
+      rad=document.getElementById('mk-rad'),radVal=document.getElementById('mk-rad-val'),
+      logo=document.getElementById('mk-logo'),logoVal=document.getElementById('mk-logo-val'),
+      logoSvg=document.getElementById('mk-logo-svg'),accept=document.getElementById('mk-accept'),
+      btns=banner.querySelectorAll('.mk-bbtn'),pres=document.querySelectorAll('#mk-presets .mk-pre'),
+      body=banner.closest('.mk-body');
+  function rgba(hex,a){hex=(hex||'').replace('#','');if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');}
+    var n=parseInt(hex,16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+  function applyAccent(hex){if(!hex)return;accept.style.background=hex;
+    logoSvg.querySelectorAll('path').forEach(function(p){p.setAttribute('stroke',hex);});
+    logoSvg.querySelector('path').setAttribute('fill',rgba(hex,.14));
+    accHex.textContent=hex.toUpperCase();if(body)body.style.setProperty('--mk-acc',hex);
+    if(accInput.value.toLowerCase()!==hex.toLowerCase())accInput.value=hex;
+    pres.forEach(function(p){p.classList.toggle('on',(p.getAttribute('data-acc')||'').toLowerCase()===hex.toLowerCase());});}
+  function applyRadius(v){var r=+v;banner.style.borderRadius=r+'px';var b=Math.max(3,Math.round(r*0.55));
+    btns.forEach(function(x){x.style.borderRadius=b+'px';});radVal.textContent=r+'px';}
+  function applyLogo(v){var s=+v;logoSvg.setAttribute('width',s);logoSvg.setAttribute('height',Math.round(s*34/30));logoVal.textContent=s+'px';}
+  accInput.addEventListener('input',function(){applyAccent(accInput.value);});
+  rad.addEventListener('input',function(){applyRadius(rad.value);});
+  logo.addEventListener('input',function(){applyLogo(logo.value);});
+  pres.forEach(function(p){p.addEventListener('click',function(){applyAccent(p.getAttribute('data-acc'));});});
+  applyAccent('#4f7dff');applyRadius(rad.value);applyLogo(logo.value);
 })();
 </script>
 
