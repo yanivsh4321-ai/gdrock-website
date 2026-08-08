@@ -110,7 +110,14 @@ body{background:var(--bg);color:var(--ink);font-family:var(--D);font-size:14px;l
 .dl-ok{font-size:12px;color:var(--acc);align-self:center;opacity:0;transition:opacity .2s}
 .dl-ok.show{opacity:1}
 .banner-top{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);color:var(--acc);font-size:12px;border-radius:10px;padding:9px 14px;margin-bottom:18px;font-family:var(--M)}
-@media(max-width:760px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line)}.side-foot{display:none}.r-top{grid-template-columns:1fr}.tiles{grid-template-columns:1fr 1fr}.t-consent,.t-dsr{grid-template-columns:120px 1fr 90px}.t-consent .src,.t-dsr .em{display:none}}
+@media(max-width:760px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line)}.side-foot{display:none}.r-top{grid-template-columns:1fr}.tiles{grid-template-columns:1fr 1fr}.t-consent,.t-dsr{grid-template-columns:120px 1fr 90px}.t-consent .src,.t-dsr .em{display:none}
+  /* .bn-grid (Cookie banner tab) never had a mobile rule -- two 1fr columns
+     on a 375px screen squeezed the preview, presets and controls down to
+     unusable/untappable sizes. Long-logged bug (Active Priorities, 2026-07-24),
+     now compounded by the appearance controls added 2026-08-08. */
+  .bn-grid{grid-template-columns:1fr!important;}
+  .mk-presets{grid-template-columns:repeat(6,1fr);}
+}
 </style>
 <style id="gdrock-brand-sync">
 /* Brand consistency + Stitch polish — matches gdrock.com index.html. Reversible: delete this block. */
