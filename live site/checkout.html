@@ -337,7 +337,7 @@ function taxFor(net){
      GDROCK_VAT_NUMBER is set, and it belongs on the invoice regardless. */
   if(!vatRegistered()){
     return {rate:0,vat:0,total:net,label:'VAT',amount:money(0),
-            note:'No VAT is charged. GDRock Ltd is not yet VAT-registered, so the price you see is the price you pay. If that changes, VAT will be shown here before you pay, never added afterwards.',
+            note:'No VAT is charged. GDRock is not currently VAT-registered, so the price you see is the price you pay. If that changes, VAT will be shown here before you pay, never added afterwards.',
             ready:true,unregistered:true};
   }
 
