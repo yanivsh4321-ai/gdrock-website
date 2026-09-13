@@ -73,8 +73,31 @@ rerun_batch4_log.txt
 .impeccable/
 skills-lock.json
 
-# LinkedIn comment agent (2026-09-12) - session profile, fetched posts, logs
+# LinkedIn outreach tooling, prospect lists and the comment agent (2026-09-12).
+# Internal only: these hold real people's names and profile URLs, so they must
+# never reach the public repo, and Vercel would serve anything committed.
+linkedin/
+linkedin_comment_agent.py
+linkedin_fetch_posts.js
+run_linkedin_comments*.bat
 .li-profile/
-linkedin/comment_queue/
-linkedin/comment_log.csv
-linkedin/comment_agent.log
+
+# Daily outreach agent + free-install proof kit (2026-08/09). Queue files, reports
+# and state hold lead email addresses and full email bodies; the repo is public.
+agent_queue/
+agent_reports/
+proof/
+alerted_leads.json
+free_install_verified.json
+_namefix.json
+daily_agent.py*
+run_daily_agent.bat
+send_scheduled_batch.py
+build_alreadypaying_batch.py
+build_todays_batches.py
+zoho_check.py.bak
+offers/free-install-playbook.md
+
+# Every CSV export and log at the repo root so far has been lead data, and none is tracked
+*.csv
+*.log
