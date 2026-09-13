@@ -236,20 +236,19 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 </div>
 </div>
 <script>
-/* ================== ZOHO PAYMENT LINKS — paste your hosted payment page URLs ==================
-   Create one Payment Page (Zoho Checkout) or Payment Link (Zoho Billing) per plan,
-   then paste each hosted URL below. The button redirects the customer straight to it.
-   Until a real URL is pasted, the button gracefully falls back to an email prompt. */
-var ZOHO_LINKS = {
-  core:   "https://zspay.co/ftTD9",   /* Core Pack — €29 one-time   */
-  care:   "https://zspay.co/VTcdY",   /* Care      -> €15/mo         */
-  pro:    "https://zspay.co/U1hDv",   /* Pro       -> retired        */
-  agency: "https://zspay.co/3nrQp"    /* Agency    -> from €299/mo  */
+/* ================== WHOP CHECKOUT LINKS ==================
+   Used when the Worker can't create a checkout (for example before the Whop
+   routes are deployed to cdn.gdrock.com). These go straight to Whop's hosted
+   checkout, but they don't carry the buyer's site URL, so a purchase made
+   through them is provisioned by hand until the Worker route is live. */
+var HOSTED_LINKS = {
+  core:   "https://whop.com/checkout/plan_gWq2g08EUZLAg/",   /* Core Pack — €29 one-time        */
+  care:   "https://whop.com/checkout/plan_Hzt8oE2YfKseZ/",   /* Care      — €15/mo              */
+  agency: "https://whop.com/checkout/plan_U4vLK0OIvMmrR/"    /* Portfolio — €299/mo, 25 sites   */
 };
-/* ============================================================================================ */
-function zohoLinkFor(plan){
-  var u = ZOHO_LINKS[plan];
-  return (u && u.indexOf("PASTE_") === -1) ? u : null;
+/* ========================================================== */
+function hostedLinkFor(plan){
+  return HOSTED_LINKS[plan] || null;
 }
 </script>
 <script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
@@ -431,7 +430,7 @@ function handleCheckout(){
   function releaseBtn(){btn.disabled=false;btn.style.opacity='';btn.style.cursor='';lbl.innerHTML=restore;}
 
   function goHostedLink(){
-    var link=zohoLinkFor(d.plan);
+    var link=hostedLinkFor(d.plan);
     if(!link){captureOnly();return;}
     /* Prefill what the hosted page accepts. The gross figure travels too so the
        hosted page and the on-page total cannot silently disagree; extra params

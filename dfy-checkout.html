@@ -100,11 +100,11 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
   <div id="content"></div>
 </div>
 <script>
-/* ===== ZOHO PAYMENT LINKS (DFY) — paste your hosted payment page URL per tier ===== */
+/* ===== WHOP CHECKOUT LINKS (DFY) — prices must match dfy.html and the homepage ===== */
 var PLANS={
-  basic:{name:"DFY — Basic Setup",price:"199",zoho:"https://zspay.co/Es5GZ",desc:"We install your cookie banner and configure your privacy policy directly on your store. Live within 48 hours.",feats:["Cookie consent banner installed","Privacy policy configured","Live in 48 hours","14-day money-back guarantee"]},
-  shopify:{name:"DFY — Shopify Full Setup",price:"499",zoho:"https://zspay.co/ZHTdt",desc:"Complete done-for-you Shopify GDPR setup — banner, policy, consent logging, and full compliance verification.",feats:["Full Shopify cookie & consent setup","Privacy policy + retention table","Consent logging configured","Compliance verified across store","Live in 48 hours","14-day money-back guarantee"]},
-  saas:{name:"DFY — SaaS Compliance",price:"999",zoho:"https://zspay.co/k7y3g",desc:"Full SaaS compliance deployment — banner, policy, DPAs, consent logging, and breach response setup.",feats:["Cookie banner + privacy policy","Data Processing Agreements","Consent logging + breach response","Configured for your platform","Priority delivery","14-day money-back guarantee"]}
+  basic:{name:"Essential Setup",price:"249",link:"https://whop.com/checkout/plan_rDl4G6eAcftqC/",desc:"We deploy the core GDRock components on your website: every script installed, every template configured, and everything tested before handover. Live within 48 hours.",feats:["Automated GDPR site scan to baseline your setup","Cookie consent banner script installed and tested","Privacy policy template deployed","Data retention table template completed","GDRock Core Pack included (&euro;29 value)","14-day money-back guarantee"]},
+  shopify:{name:"Shopify Pro Setup",price:"599",link:"https://whop.com/checkout/plan_MuD4rYDQxu5MD/",desc:"Full GDRock deployment for Shopify stores, including cookie consent configuration, privacy template setup, and consent mode for your ad and analytics scripts.",feats:["Everything in Essential Setup","Shopify privacy settings configured","Checkout privacy policy link added","Customer data deletion process set up","Meta Pixel and GA4 consent mode configured","14-day money-back guarantee"]},
+  saas:{name:"SaaS Compliance",price:"1,500",link:"https://whop.com/checkout/plan_sgmAIlHhbMpuu/",desc:"Complete GDRock deployment for SaaS products and digital businesses with complex data flows. Every pre-built template configured for your setup.",feats:["Everything in Shopify Pro Setup","Data mapping and Record of Processing Activities (RoPA)","Legitimate Interests Assessment template configured","DPA templates configured for your processors","Staff data protection briefing document","14-day money-back guarantee"]}
 };
 /* ================================================================================= */
 var key=new URLSearchParams(location.search).get('plan');
@@ -128,7 +128,7 @@ if(!P){
     if(!n){alert('Please enter your name.');return;}
     if(!e||!e.includes('@')){alert('Please enter a valid email.');return;}
     fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'dfy-checkout',name:n,email:e,website_url:u,plan:P.name})}).catch(function(){});
-    var link=(P.zoho&&P.zoho.indexOf('PASTE_')===-1)?P.zoho:null;
+    var link=P.link||null;
     if(link){var sep=link.indexOf('?')===-1?'?':'&';window.location.href=link+sep+'email='+encodeURIComponent(e);}
     else{alert('Secure payment is being finalised — email office@gdrock.com and we will send your payment link within minutes. Your details are saved.');}
   };
