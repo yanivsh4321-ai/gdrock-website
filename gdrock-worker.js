@@ -428,6 +428,8 @@ export default {
       }
       if (!result || typeof result.score !== "number") result = signalScan(domain, scraped);
       result.legal_disclaimer = result.legal_disclaimer || SCAN_DISCLAIMER;
+      // Appended after either path (LLM or signal fallback) so the GTM caveat is always in the report
+      if (scraped.gtm) result.issues = [...(Array.isArray(result.issues) ? result.issues : []), { severity: "warning", text: GTM_NOTICE }];
 
       // Persist scan result for funnel analytics (best-effort)
       if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
@@ -654,6 +656,7 @@ async function supabasePatch(env, siteId, data) {
 }
 
 const SCAN_DISCLAIMER = "This report is generated automatically by an AI text analysis tool for informational purposes only. It does not constitute legal advice, a formal compliance audit, or a guarantee of regulatory immunity. Users should consult qualified legal counsel for actual GDPR compliance verification.";
+const GTM_NOTICE = "Google Tag Manager container detected - may load additional trackers beyond those individually identified. Static analysis cannot enumerate GTM's configured tags; manual review of the GTM container recommended.";
 
 // Fetch a site and extract clean visible text + privacy/terms links + trackers/CMPs
 async function scrapeSite(url) {
@@ -675,12 +678,17 @@ async function scrapeSite(url) {
       if (/privacy|datenschutz|confidential|terms|agb|conditions|impressum|cookie|legal/.test(blob)) links.add((m[1] || "").slice(0, 140));
     }
     const trackers = [];
-    const tsig = { "Google Analytics/GA4": /gtag\(|googletagmanager|google-analytics/, "Meta Pixel": /fbq\(|connect\.facebook\.net/, "Hotjar": /static\.hotjar|hotjar\.com/, "Microsoft Clarity": /clarity\.ms/, "TikTok Pixel": /analytics\.tiktok|tiktok[^"]*pixel/, "Google Ads": /googleadservices|googlesyndication/ };
+    // GA4 = the gtag.js loader or gtag() calls. Not bare "googletagmanager": that host also serves GTM, flagged on its own below.
+    const tsig = { "Google Analytics/GA4": /gtag\(|gtag\\?\/js|google-analytics/, "Meta Pixel": /fbq\(|connect\.facebook\.net/, "Hotjar": /static\.hotjar|hotjar\.com/, "Microsoft Clarity": /clarity\.ms/, "TikTok Pixel": /analytics\.tiktok|tiktok[^"]*pixel/, "Google Ads": /googleadservices|googlesyndication/ };
     for (const [n, rx] of Object.entries(tsig)) if (rx.test(low)) trackers.push(n);
+    // GTM container, matched on the whole source (Google's standard snippet has no <script src>): the gtm.js loader or
+    // noscript iframe, a first-party / server-side gtm.js?id= loader, or the 'gtm.start' event every GTM snippet pushes.
+    const gtm = /googletagmanager\.com\/(?:gtm\.js|ns\.html)|\/gtm\.js\?id=|gtm\.start\b/.test(low);
+    if (gtm) trackers.push("Google Tag Manager");
     const cmps = [];
     const csig = { Cookiebot: /cookiebot/, OneTrust: /onetrust|optanon/, Usercentrics: /usercentrics/, CookieYes: /cookieyes/, Iubenda: /iubenda/, Complianz: /complianz/, Borlabs: /borlabs/, Termly: /termly/, "GDRock": /gdrock\.js|data-site-id/ };
     for (const [n, rx] of Object.entries(csig)) if (rx.test(low)) cmps.push(n);
-    return { ok: true, text, links: [...links].slice(0, 12), trackers, cmps, low };
+    return { ok: true, text, links: [...links].slice(0, 12), trackers, cmps, gtm, low };
   } catch (e) { return { ok: false }; }
 }
 
