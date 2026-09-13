@@ -482,6 +482,101 @@ export default {
       return json({ ok: true, skipped: true });
     }
 
+    // -- POST /api/whop-checkout ---------------------------------
+    // The checkout is created server-side so the buyer's site URL rides along
+    // as metadata and comes back on the webhook that provisions the banner.
+    // The Whop API key never leaves the Worker.
+    if (path === "/api/whop-checkout" && request.method === "POST") {
+      const b = await request.json().catch(() => ({}));
+      const plan   = String(b.plan || "").toLowerCase();
+      const email  = String(b.email || "").trim();
+      const siteId = normDomain(b.website_url);
+      const planId = whopPlanId(env, plan);
+
+      if (!env.WHOP_API_KEY || !planId) return json({ error: "whop_not_configured" }, 503);
+      if (!email || !email.includes("@")) return json({ error: "Valid email required" }, 400);
+      if (!siteId) return json({ error: "Website URL required" }, 400);
+
+      try {
+        const r = await fetch("https://api.whop.com/api/v1/checkout_configurations", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${env.WHOP_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mode: "payment",
+            plan_id: planId,
+            redirect_url: "https://gdrock.com/thank-you.html",
+            metadata: {
+              gdrock_plan: plan,
+              website_url: siteId,
+              email,
+              name:       String(b.name || "").slice(0, 120),
+              country:    String(b.country || "").slice(0, 2),
+              vat_number: String(b.vat_number || "").slice(0, 20),
+            },
+          }),
+        });
+        const data = await r.json().catch(() => ({}));
+        const pu = data.purchase_url || "";
+        if (!r.ok || !pu) return json({ error: "whop_error", status: r.status }, 502);
+        return json({ url: pu.startsWith("http") ? pu : `https://whop.com${pu}` });
+      } catch (e) {
+        return json({ error: "whop_unreachable" }, 502);
+      }
+    }
+
+    // -- POST /api/whop-webhook ----------------------------------
+    // Provisioning happens here, not on the redirect back: the customer's
+    // browser never has to survive the round trip for access to be granted.
+    if (path === "/api/whop-webhook" && request.method === "POST") {
+      const raw = await request.text();
+      if (!(await verifyWhopWebhook(env, request, raw))) return json({ error: "bad_signature" }, 401);
+
+      let body = {};
+      try { body = JSON.parse(raw); } catch (e) { return json({ error: "bad_json" }, 400); }
+
+      // Whop has shipped the event name under a few keys across API versions.
+      const event  = String(body.type || body.action || body.event || "");
+      const d      = body.data || {};
+      const meta   = d.metadata || (d.checkout_configuration && d.checkout_configuration.metadata) || {};
+      const email  = (d.user && d.user.email) || d.email || meta.email || "";
+      const siteId = normDomain(meta.website_url || "");
+      const plan   = meta.gdrock_plan || whopPlanName(env, (d.plan && d.plan.id) || d.plan_id) || "care";
+
+      // Access revoked — cancellation, refund, chargeback or failed renewal.
+      if (event === "membership.went_invalid" || event === "membership.cancelled" ||
+          event === "membership.canceled"     || event === "payment.refunded") {
+        if (siteId) await supabasePatch(env, siteId, { active: false });
+        return json({ ok: true, revoked: siteId });
+      }
+
+      // Access granted or renewed.
+      if (event === "payment.succeeded" || event === "membership.went_valid" ||
+          event === "membership.activated") {
+        if (!siteId || !email) return json({ ok: true, note: "missing siteId or email" });
+
+        // A renewal must not mint a new access code — the customer already
+        // installed the old one. Only a site we have never seen gets one.
+        const existing = await supabaseGetSite(env, siteId);
+        if (existing) {
+          await supabasePatch(env, siteId, { active: true, plan });
+          return json({ ok: true, renewed: siteId });
+        }
+
+        const code = generateCode();
+        await supabaseUpsert(env, siteId, plan, true, code);
+        await sendAccessCodeEmail(env, email, siteId, plan, code);
+        if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+          await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: `*New Whop Sale*\n\n${email}\n${siteId}\n${plan}\nCode: ${code}`, parse_mode: "Markdown" }),
+          }).catch(() => {});
+        }
+        return json({ ok: true, provisioned: siteId });
+      }
+
+      return json({ ok: true, skipped: event });
+    }
+
     // -- GET /customize  � proxy (URL stays cdn.gdrock.com/customize) --------
     if (path === "/customize.html" || path === "/customize" || path === "/customize/") {
       try {
@@ -653,6 +748,99 @@ async function supabasePatch(env, siteId, data) {
     headers: { "Content-Type": "application/json", apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`, Prefer: "return=minimal" },
     body: JSON.stringify(data),
   }).catch(() => {});
+}
+
+// -- Whop ----------------------------------------------------------
+// Plan ids live in Worker vars so prices can be re-pointed without a deploy.
+function whopPlanId(env, plan) {
+  return { core: env.WHOP_PLAN_CORE, care: env.WHOP_PLAN_CARE, agency: env.WHOP_PLAN_AGENCY }[plan] || "";
+}
+function whopPlanName(env, planId) {
+  if (!planId) return "";
+  if (planId === env.WHOP_PLAN_CORE)   return "core";
+  if (planId === env.WHOP_PLAN_CARE)   return "care";
+  if (planId === env.WHOP_PLAN_AGENCY) return "agency";
+  return "";
+}
+
+// Whop signs webhooks with the Standard Webhooks scheme: HMAC-SHA256 over
+// "{webhook-id}.{webhook-timestamp}.{raw body}", base64-encoded and sent as
+// "v1,<sig>" in webhook-signature — which may carry several space-separated
+// signatures while a secret is being rotated, so every one is checked.
+//
+// An unverified webhook here would let anyone grant themselves a paid banner
+// by POSTing a fake payment, so this fails closed: no secret, no access.
+async function verifyWhopWebhook(env, request, raw) {
+  const secret = env.WHOP_WEBHOOK_SECRET;
+  if (!secret) return false;
+
+  const id = request.headers.get("webhook-id") || "";
+  const ts = request.headers.get("webhook-timestamp") || "";
+  const sigHeader = request.headers.get("webhook-signature") || "";
+  if (!id || !ts || !sigHeader) return false;
+
+  // Replay guard — reject anything more than five minutes from now.
+  const skew = Math.abs(Date.now() / 1000 - Number(ts));
+  if (!Number.isFinite(skew) || skew > 300) return false;
+
+  const signed = new TextEncoder().encode(`${id}.${ts}.${raw}`);
+  const sent = sigHeader.split(" ").map(s => s.split(",").pop()).filter(Boolean);
+  if (!sent.length) return false;
+
+  // Whop's docs say to hand the verifier the secret exactly as issued, ws_
+  // prefix included. The Standard Webhooks reference implementation instead
+  // strips the prefix and base64-decodes it. Both derivations are tried so a
+  // change on their side can't silently start rejecting real payments — the
+  // attacker still needs the secret either way.
+  const keys = [new TextEncoder().encode(secret)];
+  const tail = secret.includes("_") ? secret.slice(secret.indexOf("_") + 1) : secret;
+  try { keys.push(Uint8Array.from(atob(tail), c => c.charCodeAt(0))); } catch (e) {}
+
+  for (const keyBytes of keys) {
+    try {
+      const key = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+      const mac = await crypto.subtle.sign("HMAC", key, signed);
+      const expected = btoa(String.fromCharCode(...new Uint8Array(mac)));
+      for (const s of sent) if (timingSafeEqual(s, expected)) return true;
+    } catch (e) {}
+  }
+  return false;
+}
+
+function timingSafeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+async function supabaseGetSite(env, siteId) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return null;
+  try {
+    const r = await fetch(
+      `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(siteId)}&select=site_id,access_code`,
+      { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
+    );
+    const rows = await r.json();
+    return Array.isArray(rows) && rows.length ? rows[0] : null;
+  } catch (e) { return null; }
+}
+
+async function sendAccessCodeEmail(env, email, siteId, plan, code) {
+  const planLabel = { core: "Core Pack", care: "Care", agency: "Agency" }[plan] || plan;
+  const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#0f172a;">
+  <h1 style="font-size:22px;margin:0 0 8px;">You're live, and thank you.</h1>
+  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 24px;">Your GDRock <strong>${planLabel}</strong> plan is active for <strong>${siteId}</strong>.</p>
+  <div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:24px;">
+    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:8px;">Your access code</div>
+    <div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:700;letter-spacing:.06em;">${code}</div>
+  </div>
+  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 12px;"><strong>Install — one line, before &lt;/body&gt;:</strong></p>
+  <pre style="background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;font-size:12px;overflow-x:auto;margin:0 0 24px;">&lt;script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="${siteId}"&gt;&lt;/script&gt;</pre>
+  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 24px;">Customise the banner at <a href="https://cdn.gdrock.com/customize" style="color:#1a6dff;">cdn.gdrock.com/customize</a> using the code above.</p>
+  <p style="font-size:13px;line-height:1.6;color:#64748b;margin:0;">Questions, or want us to install it for you? Just reply to this email — it reaches a person. You're covered by our 14-day money-back guarantee.</p>
+</div>`;
+  try { return await sendEmail(env, email, `Your GDRock access code — ${siteId}`, html); } catch (e) { return null; }
 }
 
 const SCAN_DISCLAIMER = "This report is generated automatically by an AI text analysis tool for informational purposes only. It does not constitute legal advice, a formal compliance audit, or a guarantee of regulatory immunity. Users should consult qualified legal counsel for actual GDPR compliance verification.";

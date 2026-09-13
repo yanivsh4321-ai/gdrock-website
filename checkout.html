@@ -186,9 +186,9 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 <div>
 <div class="panel" style="margin-bottom:24px;">
 <div class="panel-label">1 &middot; Choose your plan</div>
-<div class="plan-card selected" data-plan="core" data-name="Core Pack" data-sub="One-time purchase &middot; yours to keep" data-price="29" data-billing="one-time" data-paddle="YOUR_PADDLE_PRODUCT_ID_CORE" data-features="White-label privacy policy,Cookie banner script,Data retention table,Breach response pack,Shopify setup guide,Yours to keep" onclick="selectPlan(this)">
+<div class="plan-card selected" data-plan="core" data-name="Core Pack" data-sub="One-time purchase &middot; yours to keep" data-price="29" data-billing="one-time" data-features="White-label privacy policy,Cookie banner script,Data retention table,Breach response pack,Shopify setup guide,Yours to keep" onclick="selectPlan(this)">
 <div class="plan-radio"></div><div class="plan-info"><div class="plan-title">Core Pack</div><div class="plan-sub">Everything to get compliant in 10 min</div></div><div class="plan-price">&euro;29<span> once</span></div></div>
-<div class="plan-card" data-plan="care" data-name="Care" data-sub="Monthly subscription &middot; cancel anytime" data-price="15" data-billing="monthly" data-paddle="YOUR_PADDLE_PRODUCT_ID_CARE" data-features="Everything in Core Pack,Hosted banner &ndash; one script tag,Auto-updates when EU law changes,Timestamped consent logs,Extra sites &euro;9/mo each" onclick="selectPlan(this)">
+<div class="plan-card" data-plan="care" data-name="Care" data-sub="Monthly subscription &middot; cancel anytime" data-price="15" data-billing="monthly" data-features="Everything in Core Pack,Hosted banner &ndash; one script tag,Auto-updates when EU law changes,Timestamped consent logs,Extra sites &euro;9/mo each" onclick="selectPlan(this)">
 <div class="plan-radio"></div><div class="plan-info"><div class="plan-title">Care <span class="plan-tag">Recommended</span></div><div class="plan-sub">Hosted banner, always maintained</div></div><div class="plan-price">&euro;15<span>/mo</span></div></div>
 </div>
 <div class="panel">
@@ -263,15 +263,15 @@ function selectPlan(card){document.querySelectorAll('.plan-card').forEach(functi
    *** READ THIS BEFORE CHANGING ANYTHING BELOW ***
 
    You cannot lawfully charge VAT until you are VAT-registered and have a number
-   to charge it under. Company registration is still pending, so this checkout
-   adds NO VAT by default and says so on the page.
+   to charge it under. GDRock is a registered Israeli sole proprietor that does
+   not charge VAT, so this checkout adds NO VAT by default and says so on the page.
 
    To switch VAT on, set GDROCK_VAT_NUMBER to your real registration number
    (and GDROCK_VAT_SCHEME to how you are registered). That single edit turns the
    whole rate table, the reverse-charge rule and the invoice wording on at once.
    Nothing else needs touching.
 
-   Once registered:
+   Once VAT-registered:
      - EU consumer (no VAT ID)   -> destination-country rate (OSS non-Union scheme)
      - EU business (valid VAT ID)-> reverse charge, 0% (customer accounts for VAT)
      - United Kingdom            -> UK VAT
@@ -402,7 +402,7 @@ function handleCheckout(){
   if(!first){alert('Please enter your first name.');return;}
   if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
   /* Country is required for the invoice record, and it decides the VAT rate the
-     moment registration completes. */
+     moment a VAT registration exists. */
   if(!country){
     alert(vatRegistered()
       ? 'Please select your country so we can apply the correct VAT.'
@@ -417,21 +417,36 @@ function handleCheckout(){
     country:country,vat_number:vatId,net:parseFloat(d.price),vat_rate:t.rate,vat_amount:+t.vat.toFixed(2),
     gross:+t.total.toFixed(2),reverse_charge:t.rate===0&&isEU(country)&&!!vatId
   })}).catch(function(){});
-  var link=zohoLinkFor(d.plan);
-  if(link){
+  /* Payment routing. Whop is asked first: the Worker creates the checkout
+     server-side so the buyer's site URL travels with the payment as metadata
+     and comes back on the webhook that provisions the banner — no reliance on
+     the customer's browser surviving the round trip. If Whop isn't configured
+     yet (or is unreachable) the existing hosted link still works, and if
+     neither is live the order is captured and confirmed inline. */
+  var btn=document.getElementById('cta-btn'),lbl=document.getElementById('cta-label');
+  var restore=lbl.innerHTML;
+  btn.disabled=true;btn.style.opacity='.7';btn.style.cursor='progress';
+  lbl.innerHTML='Opening secure checkout&hellip;';
+
+  function releaseBtn(){btn.disabled=false;btn.style.opacity='';btn.style.cursor='';lbl.innerHTML=restore;}
+
+  function goHostedLink(){
+    var link=zohoLinkFor(d.plan);
+    if(!link){captureOnly();return;}
     /* Prefill what the hosted page accepts. The gross figure travels too so the
-       Zoho page and the on-page total cannot silently disagree; extra params
+       hosted page and the on-page total cannot silently disagree; extra params
        are ignored by pages that don't read them. */
     var sep=link.indexOf('?')===-1?'?':'&';
     window.location.href=link+sep+'email='+encodeURIComponent(email)
       +'&country='+encodeURIComponent(country)
       +'&amount='+encodeURIComponent(t.total.toFixed(2))
       +(vatId?'&vat='+encodeURIComponent(vatId):'');
-  } else {
+  }
+
+  function captureOnly(){
     /* no live payment link yet — capture the lead and confirm inline (no alert) */
-    var btn=document.getElementById('cta-btn');
     btn.disabled=true;btn.style.opacity='.6';btn.style.cursor='default';
-    document.getElementById('cta-label').innerHTML='Details saved &check;';
+    lbl.innerHTML='Details saved &check;';
     var sumEl=document.querySelector('.summary');
     if(sumEl&&!document.getElementById('checkout-note')){
       var note=document.createElement('div');
@@ -441,6 +456,21 @@ function handleCheckout(){
       sumEl.appendChild(note);
     }
   }
+
+  /* Don't leave the button spinning forever if the network stalls. */
+  var settled=false;
+  var giveUp=setTimeout(function(){if(!settled){settled=true;releaseBtn();goHostedLink();}},8000);
+
+  fetch('https://cdn.gdrock.com/api/whop-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    plan:d.plan,email:email,website_url:url,name:first+(last?' '+last:''),country:country,vat_number:vatId
+  })}).then(function(r){return r.ok?r.json():null;}).then(function(j){
+    if(settled)return;settled=true;clearTimeout(giveUp);
+    if(j&&j.url){window.location.href=j.url;return;}
+    releaseBtn();goHostedLink();
+  }).catch(function(){
+    if(settled)return;settled=true;clearTimeout(giveUp);
+    releaseBtn();goHostedLink();
+  });
 }
 updateSummary();
 </script>

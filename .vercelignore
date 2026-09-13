@@ -1,0 +1,18 @@
+# Vercel serves every committed file at gdrock.com. Anything listed here stays
+# in the repo but is not deployed, so it can't be downloaded from the site.
+
+# Internal notes, sales playbooks, automation
+*.md
+offers/
+n8n/
+
+# Database schema and infrastructure
+*.sql
+wrangler.toml
+gdrock-worker.js
+tests/
+.gitignore
+.gitattributes
+
+# Paid products — deliver these through the checkout, never by public URL
+products/

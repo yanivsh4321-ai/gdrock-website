@@ -147,11 +147,10 @@ h1,h2,h3{font-weight:700!important;}
       <p>This DPA forms part of the agreement between you (the Controller) and GDRock (the Processor) and takes effect on acceptance of our Terms or use of the Services. A countersigned copy is available on request — see section 9 below.</p>
     </div>
 
-    <!-- TODO(company-details): "sole trader based in Israel" is a placeholder pending confirmation of business registration status (see 2026-08-08 note) — replace with the real registered business name/number once that's resolved. -->
     <h3>1. Parties</h3>
     <ul>
       <li><strong>Controller:</strong> The customer (the GDRock subscriber).</li>
-      <li><strong>Processor:</strong> Yaniv Shashua, trading as GDRock, a sole trader based in Israel.</li>
+      <li><strong>Processor:</strong> Yaniv Shashua, trading as GDRock, a sole proprietor registered with the Israel Tax Authority.</li>
     </ul>
 
     <h3>2. Subject Matter</h3>
@@ -178,20 +177,19 @@ h1,h2,h3{font-weight:700!important;}
     </ul>
 
     <h3>7. Approved Sub-Processors</h3>
-    <!-- TODO(sub-processors): replace "[EMAIL PROVIDER PLACEHOLDER]" with the actual email/delivery provider (e.g. Zoho Mail, Postmark, Resend) once confirmed. -->
     <ul>
-      <li>Supabase (data storage) — EU region</li>
-      <li>Vercel (hosting and infrastructure) — EU region where available</li>
+      <li>Supabase (database and consent-log storage) — EU region</li>
+      <li>Cloudflare (CDN and edge compute serving the consent banner and consent API)</li>
+      <li>Vercel (website hosting and infrastructure) — EU region where available</li>
       <li>Zoho (payment processing)</li>
-      <li>[EMAIL PROVIDER PLACEHOLDER]</li>
+      <li>ZeptoMail, a Zoho service (transactional email delivery)</li>
     </ul>
 
     <h3>8. Controller Obligations</h3>
     <p>Controller warrants it has lawful basis to instruct processing and will not instruct GDRock to process data in violation of applicable law.</p>
 
     <h3>9. Contact</h3>
-    <!-- TODO(legal-email): legal@gdrock.com must be live as a monitored mailbox/alias before publishing publicly. -->
-    <p>To request a countersigned DPA, email <a href="mailto:legal@gdrock.com">legal@gdrock.com</a> with subject line "DPA Request — [your company name]". We will return a signed copy within 5 business days.</p>
+    <p>To request a countersigned DPA, email <a href="mailto:office@gdrock.com">office@gdrock.com</a> with subject line "DPA Request — [your company name]". We will return a signed copy within 5 business days.</p>
   </div>
 
 </div>
@@ -209,7 +207,6 @@ h1,h2,h3{font-weight:700!important;}
       <a href="#" onclick="if(window.GDRock&&window.GDRock.show){window.GDRock.show();}return false;">Manage cookies</a> ·
       <a href="mailto:office@gdrock.com">office@gdrock.com</a>
     </p>
-    <!-- TODO(company-details): "operated by Yaniv Shashua, Israel" is a placeholder pending confirmation of business registration status (see 2026-08-08 note) — replace with the real registered business name/number once that's resolved. -->
     <p>GDRock · operated by Yaniv Shashua, Israel · Secure payments processed by Zoho.<br>© 2026 GDRock. All rights reserved.</p>
   </div>
 </div>

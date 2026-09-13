@@ -72,3 +72,9 @@ rerun_batch4_log.txt
 .agents/
 .impeccable/
 skills-lock.json
+
+# LinkedIn comment agent (2026-09-12) - session profile, fetched posts, logs
+.li-profile/
+linkedin/comment_queue/
+linkedin/comment_log.csv
+linkedin/comment_agent.log
