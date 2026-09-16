@@ -46,11 +46,12 @@ afterEach(() => { globalThis.fetch = realFetch; });
 // `llmStatus` is not 200, returns `llm` as the API error body) and its prompt is captured; otherwise the
 // deterministic signalScan fallback builds the report.
 async function scan(snippet, { env = {}, llm, llmStatus = 200 } = {}) {
-  let prompt = null;
+  let prompt = null, llmHeaders = null;
   globalThis.fetch = async (input, init = {}) => {
     const url = typeof input === "string" ? input : input.url;
     if (url.startsWith("https://api.anthropic.com/")) {
       prompt = JSON.parse(init.body).messages[0].content;
+      llmHeaders = init.headers;
       if (llmStatus !== 200) return Response.json(llm, { status: llmStatus });
       return Response.json({ content: [{ type: "text", text: JSON.stringify(llm) }] });
     }
@@ -62,7 +63,7 @@ async function scan(snippet, { env = {}, llm, llmStatus = 200 } = {}) {
     body: JSON.stringify({ url: "https://test-shop.example" }),
   }), env);
   assert.equal(res.status, 200);
-  return { report: await res.json(), prompt };
+  return { report: await res.json(), prompt, llmHeaders };
 }
 
 // The fallback report lists every detected tracker in its "Trackers detected (...)" finding.
@@ -112,6 +113,15 @@ test("an AI API error falls back to the rule-based report and logs why, never th
   assert.equal(logged.length, 1);
   assert.match(logged[0], /Anthropic API 401 authentication_error: invalid x-api-key/);
   assert.doesNotMatch(logged[0], /sk-ant-test-key/);
+});
+
+test("the Anthropic workspace id is sent only when ANTHROPIC_WORKSPACE_ID is set", async () => {
+  const llm = { score: 80, is_real_site: true, summary: "stub", issues: [] };
+  const withId = await scan(META_PIXEL, { env: { ANTHROPIC_API_KEY: "k", ANTHROPIC_WORKSPACE_ID: "wrkspc_test" }, llm });
+  assert.equal(withId.report.score, 80);
+  assert.equal(withId.llmHeaders["anthropic-workspace-id"], "wrkspc_test");
+  const withoutId = await scan(META_PIXEL, { env: { ANTHROPIC_API_KEY: "k" }, llm });
+  assert.equal("anthropic-workspace-id" in withoutId.llmHeaders, false);
 });
 
 // Regression: detection on pages without GTM is unchanged.
