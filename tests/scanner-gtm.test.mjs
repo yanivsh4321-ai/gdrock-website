@@ -1,4 +1,4 @@
-// GDPR scanner: Google Tag Manager container flagging + GA4 / Meta Pixel regression checks.
+// GDPR scanner: Google Tag Manager container flagging, GA4 / Meta Pixel regression checks, and the AI-report fallback.
 // Run from the repo root: node --test tests/scanner-gtm.test.mjs
 // Drives the real POST /api/scan handler with fetch stubbed: no network, LLM, Supabase or email calls.
 import { test, afterEach } from "node:test";
@@ -42,14 +42,16 @@ const page = (snippet) => `<!doctype html><html><head><title>Test Shop</title></
 const realFetch = globalThis.fetch;
 afterEach(() => { globalThis.fetch = realFetch; });
 
-// Scans `snippet` through the worker. With env.ANTHROPIC_API_KEY set, the LLM call answers with `llm` and its
-// prompt is captured; otherwise the deterministic signalScan fallback builds the report.
-async function scan(snippet, { env = {}, llm } = {}) {
+// Scans `snippet` through the worker. With env.ANTHROPIC_API_KEY set, the LLM call answers with `llm` (or, when
+// `llmStatus` is not 200, returns `llm` as the API error body) and its prompt is captured; otherwise the
+// deterministic signalScan fallback builds the report.
+async function scan(snippet, { env = {}, llm, llmStatus = 200 } = {}) {
   let prompt = null;
   globalThis.fetch = async (input, init = {}) => {
     const url = typeof input === "string" ? input : input.url;
     if (url.startsWith("https://api.anthropic.com/")) {
       prompt = JSON.parse(init.body).messages[0].content;
+      if (llmStatus !== 200) return Response.json(llm, { status: llmStatus });
       return Response.json({ content: [{ type: "text", text: JSON.stringify(llm) }] });
     }
     return new Response(page(snippet), { status: 200, headers: { "Content-Type": "text/html" } });
@@ -98,6 +100,18 @@ test("GTM caveat is also added when the LLM writes the report", async () => {
   assert.match(prompt, /Active Cookies\/Trackers Detected: Google Tag Manager$/m);
   assert.equal(report.issues.length, 2);
   assert.match(report.issues[1].text, GTM_NOTICE_RE);
+});
+
+test("an AI API error falls back to the rule-based report and logs why, never the key", async (t) => {
+  const logged = [];
+  t.mock.method(console, "error", (...args) => { logged.push(args.join(" ")); });
+  const apiError = { type: "error", error: { type: "authentication_error", message: "invalid x-api-key" } };
+  const { report } = await scan(GTM_INSTALLS["<script src> from googletagmanager.com"], { env: { ANTHROPIC_API_KEY: "sk-ant-test-key" }, llm: apiError, llmStatus: 401 });
+  assert.match(report.summary, /^Automated signal scan/);
+  assert.equal(gtmNotices(report).length, 1); // the GTM caveat survives the fallback
+  assert.equal(logged.length, 1);
+  assert.match(logged[0], /Anthropic API 401 authentication_error: invalid x-api-key/);
+  assert.doesNotMatch(logged[0], /sk-ant-test-key/);
 });
 
 // Regression: detection on pages without GTM is unchanged.

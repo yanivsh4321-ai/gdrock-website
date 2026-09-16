@@ -424,7 +424,7 @@ export default {
       let result;
       if (env.OPENAI_API_KEY || env.ANTHROPIC_API_KEY) {
         try { result = await llmScan(env, buildScanPrompt(fullUrl, scraped)); }
-        catch (e) { result = null; }
+        catch (e) { console.error("scan: AI report failed, using rule-based fallback -", e.message); result = null; }
       }
       if (!result || typeof result.score !== "number") result = signalScan(domain, scraped);
       result.legal_disclaimer = result.legal_disclaimer || SCAN_DISCLAIMER;
@@ -936,6 +936,8 @@ async function llmScan(env, prompt) {
     body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 900, system: "Respond with valid JSON only, no markdown.", messages: [{ role: "user", content: prompt }] }),
   });
   const d = await r.json();
+  // Status + Anthropic's own message only (e.g. "invalid x-api-key", low credit); the key never appears in it
+  if (!r.ok) throw new Error(`Anthropic API ${r.status} ${d.error?.type || ""}: ${d.error?.message || ""}`);
   const raw = d.content?.[0]?.text || "";
   const a = raw.indexOf("{"), b = raw.lastIndexOf("}");
   return JSON.parse(raw.slice(a, b + 1));
