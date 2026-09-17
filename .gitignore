@@ -46,6 +46,8 @@ reply_seen.json
 # Before-consent verification rig (internal) + its evidence output (prospect data)
 verify_consent.js
 verify_blocker.js
+verify_*
+rig-tests/
 verification/
 package.json
 package-lock.json
@@ -101,3 +103,8 @@ offers/free-install-playbook.md
 # Every CSV export and log at the repo root so far has been lead data, and none is tracked
 *.csv
 *.log
+
+# scan-portfolio output + prospect workbooks (2026-09-14): real client domains, screenshots, prospect names
+reports/
+workbooks/
+scan-portfolio/input/
