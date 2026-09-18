@@ -707,20 +707,24 @@ async function sendScanReport(env, email, domain, result) {
   const issues = (result.issues || []).map(i => {
     const c = i.severity === "critical" ? "#e63946" : i.severity === "good" ? "#00a896" : "#f5c842";
     const mark = i.severity === "critical" ? "✗" : i.severity === "good" ? "✓" : "!";
-    return `<tr><td style="padding:8px 12px;border-left:3px solid ${c};background:#0a1020;color:#cfd8ea;font-size:14px;border-radius:6px;">${mark} ${i.text}</td></tr><tr><td style="height:8px"></td></tr>`;
+    // Everything site-derived is escaped: the domain, the evidence and the AI-written summary all come from outside.
+    const ev = i.evidence ? `<div style="margin-top:6px;font-family:Consolas,Menlo,monospace;font-size:11px;color:#7c8494;word-break:break-all;">${escHtml(String(i.evidence).slice(0, 200))}</div>` : "";
+    return `<tr><td style="padding:8px 12px;border-left:3px solid ${c};background:#0a1020;color:#cfd8ea;font-size:14px;border-radius:6px;">${mark} ${escHtml(i.text)}${ev}</td></tr><tr><td style="height:8px"></td></tr>`;
   }).join("");
+  const limits = (result.limits || []).map((l) => `<li style="margin:0 0 6px;">${escHtml(l)}</li>`).join("");
 
   const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;background:#04081a;padding:32px;border-radius:16px;">
     <div style="text-align:center;margin-bottom:24px;"><span style="font-size:22px;font-weight:800;color:#fff;">GDRock</span><div style="color:#5b6a8a;font-size:12px;">GDPR Compliance</div></div>
-    <h1 style="color:#fff;font-size:22px;text-align:center;margin:0 0 8px;">Your Compliance Score</h1>
-    <p style="text-align:center;color:#9CA3AF;font-size:14px;margin:0 0 20px;">for ${domain}</p>
+    <h1 style="color:#fff;font-size:22px;text-align:center;margin:0 0 8px;">Your source scan</h1>
+    <p style="text-align:center;color:#9CA3AF;font-size:14px;margin:0 0 20px;">for ${escHtml(domain)}</p>
     <div style="text-align:center;font-size:48px;font-weight:800;color:${color};margin-bottom:8px;">${score}/100</div>
-    <p style="color:#9CA3AF;font-size:14px;text-align:center;line-height:1.6;margin:0 0 24px;">${result.summary || ""}</p>
+    <p style="color:#9CA3AF;font-size:14px;text-align:center;line-height:1.6;margin:0 0 24px;">${escHtml(result.summary || "")}</p>
     <table style="width:100%;border-collapse:collapse;">${issues}</table>
+    ${limits ? `<div style="margin-top:18px;padding:14px 16px;border-radius:10px;background:#0a1020;"><p style="color:#cfd8ea;font-size:13px;font-weight:700;margin:0 0 8px;">What this scan can't see</p><ul style="color:#9CA3AF;font-size:12.5px;line-height:1.55;margin:0;padding-left:18px;">${limits}</ul></div>` : ""}
     <div style="background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.25);border-radius:12px;padding:18px;margin-top:24px;">
-      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 4px;text-align:center;">Stay compliant automatically — Care, €39/mo</p>
-      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0 0 14px;text-align:center;">GDPR rules change. Care is a hosted banner (one script tag) that <b style="color:#fff;">auto-updates when the law changes</b>, plus monthly compliance alerts and support. Fix it once, never worry again.</p>
-      <div style="text-align:center;"><a href="https://www.gdrock.com/checkout.html?plan=care" style="display:inline-block;background:#00a896;color:#fff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:10px;">Get Care — €39/mo →</a></div>
+      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 4px;text-align:center;">Stay covered — Care, €15/mo</p>
+      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0 0 14px;text-align:center;">GDPR rules change. Care is a hosted banner (one script tag) that <b style="color:#fff;">auto-updates when the law changes</b>, and holds known analytics and ad scripts until a visitor opts in.</p>
+      <div style="text-align:center;"><a href="https://www.gdrock.com/checkout.html?plan=care" style="display:inline-block;background:#00a896;color:#fff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:10px;">Get Care — €15/mo →</a></div>
     </div>
     <div style="text-align:center;margin-top:14px;">
       <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#9CA3AF;font-size:13px;text-decoration:underline;">Or just the DIY templates — Core Pack €29 one-time →</a>
@@ -1289,7 +1293,7 @@ function buildReport(domain, s) {
   if (s.fonts.length) {
     deduct("third_party_fonts", names(s.fonts));
     add("warning",
-      names(s.fonts) + " " + (s.fonts.length === 1 ? "is" : "are") + " linked directly in the homepage source, so a visitor's browser requests " + (s.fonts.length === 1 ? "it" : "them") + " from that server, disclosing their IP address, as the page parses. A German court awarded damages over exactly this (LG Munchen I, 20.01.2022, 3 O 17493/20). Self-hosting the font files removes it.",
+      names(s.fonts) + " " + (s.fonts.length === 1 ? "is" : "are") + " linked directly in the homepage source, so a visitor's browser requests " + (s.fonts.length === 1 ? "it" : "them") + " from that server, disclosing their IP address, as the page parses. A German court awarded damages over exactly this (LG München I, 20.01.2022, 3 O 17493/20). Self-hosting the font files removes it.",
       "observed", s.fonts[0].evidence);
   }
   const cookieEmbeds = s.embeds.filter((e) => !e.cookieless);

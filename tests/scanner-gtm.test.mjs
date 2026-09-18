@@ -322,3 +322,13 @@ test("scanner leads are not announced twice on Telegram", async () => {
   await lead("dfy_booking");
   assert.equal(telegram.length, 1);
 });
+
+test("the emailed report escapes site-derived text, carries evidence and limits, and quotes Care at €15", async () => {
+  const { emails } = await scan(`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter&x=<b>">`, { env: ALERT_ENV, body: { email: "owner@shop.example" } });
+  const report = emails.find((e) => e.to[0].email_address.address === "owner@shop.example");
+  assert.ok(report);
+  assert.match(report.htmlbody, /fonts\.googleapis\.com/);   // evidence line
+  assert.match(report.htmlbody, /What this scan can't see/);  // limits
+  assert.match(report.htmlbody, /€15\/mo/);
+  assert.doesNotMatch(report.htmlbody, /€39/);
+});
