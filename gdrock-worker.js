@@ -12,6 +12,7 @@
  *   TELEGRAM_CHAT_ID      your Telegram user ID (from @userinfobot)
  *   ANTHROPIC_API_KEY     your Anthropic API key (for scanner)
  *   RESEND_API_KEY        (optional) resend.com for email alerts
+ *   OWNER_EMAIL           (optional) where scan alerts go, default office@gdrock.com
  */
 
 // -- Embedded script-blocking engine (gdrock-blocker.js v1.0.0, rig-verified 29/29) --
@@ -228,7 +229,7 @@ function hostAuthorized(request, siteId, allowedDomains) {
 
 // -- Router --------------------------------------------------------
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url  = new URL(request.url);
     const path = url.pathname;
 
@@ -388,8 +389,9 @@ export default {
         }).catch(() => {});
       }
 
-      // Telegram alert
-      if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+      // Telegram alert. Scanner leads are skipped: /api/scan already sent one alert
+      // for that scan with the email and opt-in on it, and two pings per lead is noise.
+      if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID && source !== "scanner") {
         const label = SOURCE_LABELS[source] || `?? ${source}`;
         const lines = [`${label}`, "", `?? ${name || "(no name)"}`, `?? ${email}`, website_url && `?? ${website_url}`, plan && `?? ${plan}`, service && `?? ${service}`, notes && `?? ${notes.slice(0, 200)}`].filter(Boolean).join("\n");
         await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -410,26 +412,35 @@ export default {
       const domain = rawUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "").trim().toLowerCase();
       const fullUrl = "https://" + domain;
 
-      // 1) SCRAPE the real site (clean text + links + trackers)
-      const scraped = await scrapeSite(fullUrl);
+      // 1) Read the homepage source once, from wherever this Worker is running.
+      const vantage = readVantage(request);
+      const scraped = await scrapeSite(fullUrl, vantage);
       if (!scraped.ok || (scraped.text || "").length < 80) {
-        return json({ score: 0, is_real_site: false,
+        later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, failed: scraped.status ? "HTTP " + scraped.status : (scraped.error || "no readable content") }));
+        return json({ score: null, is_real_site: false, scan_method: "source",
           site_description: "Could not load this site.",
-          summary: "The site did not respond or returned no readable homepage content.",
+          summary: "The site did not respond, or returned no readable homepage content, so there is nothing to report on.",
           legal_disclaimer: SCAN_DISCLAIMER,
-          issues: [{ severity: "warning", text: "Site could not be reached or has no readable homepage content. Check the URL and that the site is live." }] });
+          issues: [{ severity: "warning", confidence: "observed", text: "The homepage could not be read" + (scraped.status ? " (HTTP " + scraped.status + ")" : "") + ". Check the address and that the site is live. Sites behind a bot check often refuse an automated request while working normally in a browser." }] });
       }
 
-      // 2) Analyse with LLM on REAL scraped data (objective, no favoritism)
-      let result;
+      // 2) Findings and score come from the rules, every time, for every domain.
+      //    A language model cannot add a finding or move the number: that is what
+      //    stopped the same site scoring 82 one day and 98 the next.
+      const result = buildReport(domain, scraped);
+
+      // 3) The AI writes prose only, and only prose that stays inside what a
+      //    source scan can honestly claim (PROSE_OUT_OF_BOUNDS). Anything else
+      //    is dropped and the rule-written sentence stands.
       if (env.OPENAI_API_KEY || env.ANTHROPIC_API_KEY) {
-        try { result = await llmScan(env, buildScanPrompt(fullUrl, scraped)); }
-        catch (e) { console.error("scan: AI report failed, using rule-based fallback -", e.message); result = null; }
+        try {
+          const written = await llmScan(env, buildScanPrompt(fullUrl, scraped, result));
+          const desc = acceptProse(written.site_description, 200);
+          const sum  = acceptProse(written.summary, 400);
+          if (desc) result.site_description = desc;
+          if (sum)  result.summary = sum + " " + result.limits[1];
+        } catch (e) { console.error("scan: AI wording failed, keeping rule-written copy -", e.message); }
       }
-      if (!result || typeof result.score !== "number") result = signalScan(domain, scraped);
-      result.legal_disclaimer = result.legal_disclaimer || SCAN_DISCLAIMER;
-      // Appended after either path (LLM or signal fallback) so the GTM caveat is always in the report
-      if (scraped.gtm) result.issues = [...(Array.isArray(result.issues) ? result.issues : []), { severity: "warning", text: GTM_NOTICE }];
 
       // Persist scan result for funnel analytics (best-effort)
       if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
@@ -440,10 +451,11 @@ export default {
         }).catch(() => {});
       }
 
-      // Email the report to the visitor + notify office@gdrock.com (best-effort, never blocks the response)
-      if (email && email.includes("@")) {
-        try { await sendScanReport(env, email, domain, result); } catch (e) {}
-      }
+      // Every scan pings the owner (Telegram + email), anonymous or not, and the
+      // report goes to the visitor when they asked for it. Both run after the
+      // response is sent, so neither can slow the scan down or break it.
+      later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, result }));
+      if (email && email.includes("@")) later(ctx, sendScanReport(env, email, domain, result).catch(() => {}));
 
       return json(result);
     }
@@ -716,13 +728,55 @@ async function sendScanReport(env, email, domain, result) {
     <p style="color:#5b6a8a;font-size:12px;text-align:center;margin-top:20px;line-height:1.6;">Both include the 14-day money-back guarantee.<br>Questions? Just reply to this email.</p>
   </div>`;
 
-  // 1) send report to the visitor
-  await sendEmail(env, email, `Your GDPR compliance score for ${domain}: ${score}/100`, html).catch(() => {});
-  // 2) notify the business owner
-  if (env.MAIL_FROM) {
-    await sendEmail(env, env.MAIL_FROM, `New scan lead: ${email} (${domain}) — ${score}/100`,
-      `<p>New scanner lead.</p><p><b>Email:</b> ${email}<br><b>Site:</b> ${domain}<br><b>Score:</b> ${score}/100</p>`).catch(() => {});
+  // The owner hears about this scan from alertScan, which fires for every scan.
+  await sendEmail(env, email, `Your GDPR source scan for ${domain}: ${score}/100`, html).catch(() => {});
+}
+
+// Run work after the response is sent when the runtime allows it (ctx.waitUntil),
+// otherwise just let the promise run. Never throws into the request.
+function later(ctx, promise) {
+  const p = Promise.resolve(promise).catch((e) => console.error("background task failed -", e && e.message));
+  if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(p);
+  return p;
+}
+
+const escHtml = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+// One alert per scan, to Telegram and to the owner's inbox. Anonymous scans are
+// the warmest signal on the site — someone typed their own store in — so they
+// alert too, not only the ones that left an email.
+//   TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID  → Telegram
+//   OWNER_EMAIL (default office@gdrock.com) via ZEPTO_TOKEN or RESEND_API_KEY → email
+async function alertScan(env, { domain, email, optin, vantage, result, failed }) {
+  const hasEmail = Boolean(email && String(email).includes("@"));
+  const where = vantage && vantage.country ? vantage.country + (vantage.colo ? " / " + vantage.colo : "") : "unknown";
+  const headline = failed ? "Scan failed to load" : hasEmail ? "Scan + email captured" : "Anonymous scan";
+  const worst = result ? (result.issues || []).filter((i) => i.severity !== "good").slice(0, 3).map((i) => "- " + String(i.text).slice(0, 140)) : [];
+  const lines = [
+    "GDRock scanner: " + headline,
+    "",
+    "Site: " + domain,
+    failed ? "Could not read: " + failed : "Score: " + result.score + "/100" + (result.platform ? " (" + result.platform.name + ")" : ""),
+    hasEmail ? "Email: " + email + (optin ? " (opted in to alerts + news)" : " (no marketing opt-in)") : "Email: none given",
+    "Visitor location: " + where,
+    worst.length ? "" : null,
+    ...worst,
+  ].filter((l) => l !== null);
+  const text = lines.join(String.fromCharCode(10));
+
+  const jobs = [];
+  if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+    // Plain text: a domain or email with an underscore breaks Telegram's Markdown parser and the alert is lost.
+    jobs.push(fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text, disable_web_page_preview: true }),
+    }));
   }
+  const owner = env.OWNER_EMAIL || "office@gdrock.com";
+  const subject = `[GDRock scan] ${domain}` + (failed ? " - failed" : ` - ${result.score}/100`) + (hasEmail ? ` - ${email}` : " - anonymous");
+  jobs.push(Promise.resolve(sendEmail(env, owner, subject, `<pre style="font:14px/1.6 ui-monospace,Menlo,monospace;white-space:pre-wrap;">${escHtml(text)}</pre>`)));
+  const settled = await Promise.allSettled(jobs);
+  for (const r of settled) if (r.status === "rejected") console.error("scan alert failed -", r.reason && r.reason.message);
 }
 
 function generateCode() {
@@ -843,14 +897,273 @@ async function sendAccessCodeEmail(env, email, siteId, plan, code) {
   try { return await sendEmail(env, email, `Your GDRock access code — ${siteId}`, html); } catch (e) { return null; }
 }
 
-const SCAN_DISCLAIMER = "This report is generated automatically by an AI text analysis tool for informational purposes only. It does not constitute legal advice, a formal compliance audit, or a guarantee of regulatory immunity. Users should consult qualified legal counsel for actual GDPR compliance verification.";
+/* ===========================================================================
+   GDPR SCANNER  —  what this thing can and cannot see
+   ===========================================================================
+   The scanner runs inside this Worker. It performs exactly one anonymous GET
+   of the homepage and reads the bytes that come back. It does not run a
+   browser and it does not execute JavaScript, and that fixes the boundary of
+   every claim it is allowed to make:
+
+   OBSERVABLE
+     - the HTML the server returns to a cookie-less, consent-less request
+     - that response's headers (status, Set-Cookie, platform headers)
+     - every third-party host referenced in the markup and in inline scripts
+     - inline Consent Mode defaults, and consent-gating attributes on tags
+     - which consent-tool LOADER is present, by its URL / markup signature
+     - links to privacy, terms, imprint and cookie pages
+     - the Cloudflare location this fetch left from
+
+   NOT OBSERVABLE
+     - request order or timing, so never "fired BEFORE consent"
+     - cookies written by JavaScript (only the document's own Set-Cookie)
+     - whether a banner actually renders, or renders for an EU visitor
+     - whether a consent tool blocks anything at runtime
+     - Consent Mode gcs/gcd signals on the wire, Shopify's customerPrivacy
+       region, Cookiebot/OneTrust country — all JS-runtime APIs
+     - anything GTM injects, and any page other than the homepage
+
+   So every finding below is phrased as a fact about the SOURCE, carries the
+   evidence string that produced it, and a confidence:
+     observed  — it is in the bytes we fetched
+     inferred  — a judgement drawn from what is and isn't in those bytes
+   Absence is reported as absence ("no X found in the homepage source"),
+   never as a finding that X does not exist.
+
+   The score is rule-based (SOURCE_SCORE_RULES) and deterministic. The AI is
+   allowed to write prose only — the description and the summary — and can
+   neither add a finding nor move the number.
+   ======================================================================== */
+
+const SCAN_DISCLAIMER = "This report is generated automatically from the homepage source code, for information only. It is not legal advice, a formal audit, or a guarantee of compliance. GDRock provides software and templates, not legal services.";
 const GTM_NOTICE = "Google Tag Manager container detected - may load additional trackers beyond those individually identified. Static analysis cannot enumerate GTM's configured tags; manual review of the GTM container recommended.";
 
-// Fetch a site and extract clean visible text + privacy/terms links + trackers/CMPs
-async function scrapeSite(url) {
+// EU/EEA + UK, for saying honestly where this scan looked from.
+const EU_EEA_UK = new Set("AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE IS LI NO GB".split(" "));
+
+// --- Signature tables ------------------------------------------------------
+// Every signature matches a RESOURCE URL, an inline script body, or markup with
+// anchors stripped — never the page's prose and never an <a href>. Matching
+// bare product names against the whole document is what made gdrock.com's own
+// "vs cookiebot / vs iubenda / vs termly" footer links register as installed
+// consent tools; on a prospect's site the same bug would hide the real finding
+// behind a comparison blog post.
+const CMP_SIGNATURES = [
+  { name: "Cookiebot",        url: /consent\.cookiebot\.(?:com|eu)\/|\/uc\.js\?cbid=/i, dom: /id=["']Cybot(?:CookiebotDialog|CookiebotDialogBodyContent)|data-cbid=/i },
+  { name: "OneTrust",         url: /cdn\.cookielaw\.org\/|cdn-(?:apac|ukwest)\.onetrust\.com\/|otSDKStub\.js|otBannerSdk\.js/i, dom: /id=["']onetrust-(?:banner-sdk|consent-sdk)|class=["'][^"']*optanon-/i },
+  { name: "Usercentrics",     url: /(?:app|web\.cmp|privacy-proxy)\.usercentrics\.eu\/|usercentrics\.eu\/(?:browser-ui|latest)/i, dom: /id=["']usercentrics-(?:root|cmp)|data-usercentrics=/i },
+  { name: "CookieYes",        url: /cdn(?:-cookieyes|\.cookieyes)\.com\//i, dom: /id=["']cookieyes|class=["'][^"']*cky-consent/i },
+  { name: "Iubenda",          url: /cdn\.iubenda\.com\/cs\/|cs\.iubenda\.com\//i, dom: /id=["']iubenda-cs-banner/i },
+  { name: "Complianz",        url: /\/complianz(?:-gdpr)?\/[^"']*\.js|\/cmplz-/i, dom: /id=["']cmplz-cookiebanner|class=["'][^"']*cmplz-/i },
+  { name: "Borlabs Cookie",   url: /borlabs-cookie[^"']*\.js/i, dom: /id=["']BorlabsCookieBox|data-borlabs-cookie-/i },
+  { name: "Termly",           url: /app\.termly\.io\/(?:embed|resource-blocker)/i, dom: /data-termly|id=["']termly-code-snippet/i },
+  { name: "Cookie Script",    url: /cdn\.cookie-script\.com\//i, dom: /id=["']cookiescript_injected/i },
+  { name: "CookieFirst",      url: /consent\.cookiefirst\.com\//i, dom: /id=["']cookiefirst-root|data-cookiefirst-/i },
+  { name: "CookieHub",        url: /cookiehub\.(?:net|eu)\//i, dom: /id=["']ch2(?:-dialog)?["']/i },
+  { name: "Didomi",           url: /sdk\.privacy-center\.org\/|api\.privacy-center\.org\//i, dom: /id=["']didomi-(?:host|notice)/i },
+  { name: "Axeptio",          url: /static\.axept\.io\//i, dom: /id=["']axeptio_(?:overlay|main_button)/i },
+  { name: "Osano",            url: /cmp\.osano\.com\//i, dom: /class=["'][^"']*osano-cm-(?:window|dialog)/i },
+  { name: "TrustArc",         url: /consent\.trustarc\.com\/|trustarc\.com\/notice/i, dom: /id=["']truste-consent-(?:track|button)/i },
+  { name: "Consentmanager",   url: /(?:cdn|delivery)\.consentmanager\.net\//i, dom: /id=["']cmpbox["']/i },
+  { name: "Sourcepoint",      url: /sp-prod\.net\/|sourcepoint\.mgr\.consensu\.org/i, dom: /id=["']sp_message_container/i },
+  { name: "Quantcast Choice", url: /quantcast\.mgr\.consensu\.org|cmp\.quantcast\.com\//i, dom: /id=["']qc-cmp2-container/i },
+  { name: "Klaro",            url: /klaro(?:\.min)?\.js/i, dom: /id=["']klaro["']|class=["'][^"']*klaro["' ]/i },
+  { name: "Pandectes",        url: /pandectes\.io\/|extensions\/[^"']*pandectes/i, dom: /id=["']pandectes-(?:banner|root)/i },
+  { name: "Consentmo",        url: /consentmo|isenselabs[^"']*gdpr/i, dom: /id=["']consentmo-|class=["'][^"']*isenselabs-gdpr/i },
+  { name: "Shopify privacy banner", url: /shopifycloud\/privacy-banner\/|consent-tracking-api/i, dom: /shopify-pc__banner/i },
+  { name: "Shopware cookie bar",    url: /cookie-permission[^"']*\.js/i, dom: /class=["'][^"']*cookie-permission-content/i },
+  { name: "Real Cookie Banner",     url: /real-cookie-banner\/[^"']*\.js/i, dom: /class=["'][^"']*rcb-banner/i },
+  { name: "GDRock",           url: /cdn\.gdrock\.com\/gdrock(?:-blocker)?(?:\.min)?\.js/i, dom: /id=["']gdrock-banner/i },
+];
+
+const TRACKER_SIGNATURES = [
+  { name: "Google Analytics 4", url: /googletagmanager\.com\/gtag\/js\?[^"']*id=G-/i, js: /gtag\(\s*["']config["']\s*,\s*["']G-/i },
+  { name: "Google Analytics (Universal)", url: /google-analytics\.com\/(?:analytics|ga)\.js/i, js: /ga\(\s*["']create["']/i },
+  { name: "Google Ads / remarketing", url: /googleadservices\.com\/|googlesyndication\.com\/|googletagmanager\.com\/gtag\/js\?[^"']*id=AW-/i, js: /gtag\(\s*["']config["']\s*,\s*["']AW-/i },
+  { name: "Meta Pixel",       url: /connect\.facebook\.net\/[^"']*\/fbevents\.js/i, js: /fbq\(\s*["']init["']/i },
+  { name: "TikTok Pixel",     url: /analytics\.tiktok\.com\//i, js: /ttq\.(?:load|page)\(/i },
+  { name: "Hotjar",           url: /static\.hotjar\.com\/|script\.hotjar\.com\//i, js: /\bhjid\s*[:=]/i },
+  { name: "Microsoft Clarity", url: /clarity\.ms\//i, js: /clarity\(\s*["']/i },
+  { name: "LinkedIn Insight", url: /snap\.licdn\.com\//i, js: /_linkedin_partner_id/i },
+  { name: "Pinterest Tag",    url: /s\.pinimg\.com\/ct\//i, js: /pintrk\(/i },
+  { name: "Snap Pixel",       url: /sc-static\.net\/scevent/i, js: /snaptr\(/i },
+  { name: "X / Twitter Ads",  url: /static\.ads-twitter\.com\//i, js: /twq\(/i },
+  { name: "Klaviyo",          url: /static\.klaviyo\.com\/onsite\//i },
+  { name: "Criteo",           url: /static\.criteo\.net\//i },
+  { name: "Taboola",          url: /cdn\.taboola\.com\//i },
+  { name: "Outbrain",         url: /outbrain\.com\/outbrain\.js/i },
+  { name: "Amazon Ads",       url: /amazon-adsystem\.com\//i },
+  { name: "Reddit Pixel",     url: /redditstatic\.com\/ads\//i },
+  { name: "Yandex Metrica",   url: /mc\.yandex\.ru\//i },
+  { name: "Bing / Microsoft Ads", url: /bat\.bing\.com\//i, js: /uetq\b/i },
+  { name: "Mouseflow",        url: /cdn\.mouseflow\.com\//i },
+  { name: "FullStory",        url: /edge\.fullstory\.com\//i },
+];
+
+// Fonts and embeds behave the same for every visitor in every country, which
+// makes them the only findings here that a scan's location cannot undermine.
+const FONT_SIGNATURES = [
+  { name: "Google Fonts", url: /fonts\.(?:googleapis|gstatic)\.com\//i },
+  { name: "Adobe Fonts",  url: /use\.typekit\.net\/|p\.typekit\.net\//i },
+];
+const EMBED_SIGNATURES = [
+  { name: "YouTube",             url: /(?:www\.)?youtube\.com\/(?:embed|iframe_api)/i },
+  { name: "YouTube (no-cookie)", url: /youtube-nocookie\.com\//i, cookieless: true },
+  { name: "Vimeo",               url: /player\.vimeo\.com\//i },
+  { name: "Google Maps",         url: /(?:www\.)?google\.com\/maps\/embed|maps\.googleapis\.com\//i },
+  { name: "Google reCAPTCHA",    url: /(?:www\.)?google\.com\/recaptcha\/|recaptcha\.net\//i },
+];
+
+const PLATFORM_SIGNATURES = [
+  { name: "Shopify",     header: "x-shopid", url: /cdn\.shopify\.com\//i, js: /Shopify\.shop\s*=/i },
+  { name: "Shopware",    url: /\/bundles\/storefront\/|\/theme\/[a-f0-9]{32}\/(?:css|js|assets)\//i, js: /window\.router\[["']frontend\.|window\.salesChannelId\b/i, dom: /content=["']Shopware/i },
+  { name: "WooCommerce", url: /\/plugins\/woocommerce\//i, dom: /class=["'][^"']*woocommerce["' ]/i },
+  { name: "WordPress",   url: /\/wp-(?:content|includes)\//i, dom: /content=["']WordPress/i },
+  { name: "Magento",     url: /\/static\/version\d+\/frontend\//i, js: /require\.config[\s\S]{0,200}mage\//i },
+  { name: "PrestaShop",  dom: /content=["']PrestaShop/i },
+  { name: "BigCommerce", url: /cdn\d*\.bigcommerce\.com\//i },
+  { name: "Wix",         url: /static\.parastorage\.com\//i, dom: /content=["']Wix\.com/i },
+  { name: "Squarespace", url: /static1\.squarespace\.com\//i, dom: /content=["']Squarespace/i },
+  { name: "Webflow",     url: /(?:assets|cdn\.prod)\.website-files\.com\//i, dom: /data-wf-(?:page|site)=/i },
+];
+
+// Cookie names a browser would treat as tracking, matched against the document
+// response's own Set-Cookie. JS-set cookies are invisible here by definition.
+const TRACKING_COOKIE_PREFIXES = ["_ga", "_gid", "_gat", "_gcl_", "_fbp", "_fbc", "_hj", "_clck", "_clsk", "_uetsid", "_uetvid", "_ttp", "_tt_", "_scid", "_pin_unauth", "_rdt_uuid", "_pk_", "__kla_id", "IDE", "muc_ads", "personalization_id", "MUID", "NID"];
+
+// Deterministic score. Every rule keys off something observed; nothing here can
+// move because a language model felt differently about a site today.
+const SOURCE_SCORE_RULES = {
+  trackers_no_consent_tool:    { points: -30, label: "Marketing or analytics tags in the source with no consent tool alongside them" },
+  consent_mode_granted:        { points: -15, label: "Consent Mode declares storage granted by default" },
+  third_party_fonts:           { points: -10, label: "Fonts loaded from a third-party server" },
+  cookie_setting_embed:        { points: -10, label: "An embed that sets cookies on load" },
+  no_privacy_link:             { points: -25, label: "No privacy policy link on the homepage" },
+  no_terms_link:               { points:  -5, label: "No terms or imprint link on the homepage" },
+  tracking_cookie_on_document: { points: -15, label: "The homepage response itself set a tracking cookie" },
+};
+
+// --- Source extraction -----------------------------------------------------
+
+// Pull the page apart into the three things signatures may be matched against,
+// keeping <a> elements out of all of them. Anchors are used for one purpose
+// only: finding the policy links.
+function dissect(html) {
+  const scriptBodies = [];
+  const reInline = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+  let m;
+  while ((m = reInline.exec(html)) && scriptBodies.length < 200) {
+    if (!/\bsrc\s*=/i.test(m[1] || "")) scriptBodies.push(m[2] || "");
+  }
+  const inlineJs = scriptBodies.join("\n").slice(0, 200000);
+
+  const urls = new Set();
+  const reRes = /<(?:script|link|iframe|img|source|embed)\b[^>]*?\b(?:src|href|data-src)\s*=\s*["']([^"']+)["']/gi;
+  while ((m = reRes.exec(html)) && urls.size < 400) urls.add(m[1]);
+  // URLs a tag builds in JavaScript (Google's own GTM snippet does exactly this).
+  const reJsUrl = /["'](https?:\/\/[^"'\s]{6,300})["']/gi;
+  while ((m = reJsUrl.exec(inlineJs)) && urls.size < 800) urls.add(m[1]);
+
+  // Markup with anchors removed, for banner and platform markers in the DOM.
+  const markup = html.replace(/<a\b[^>]*>[\s\S]*?<\/a>/gi, " ").replace(/<a\b[^>]*>/gi, " ");
+
+  const anchors = [];
+  const reA = /<a\b[^>]+href\s*=\s*["']([^"']+)["'][^>]*>([\s\S]{0,120}?)<\/a>/gi;
+  while ((m = reA.exec(html)) && anchors.length < 400) anchors.push({ href: m[1], text: (m[2] || "").replace(/<[^>]+>/g, " ").trim() });
+
+  return { inlineJs, resourceUrls: [...urls], markup, anchors };
+}
+
+const trimEvidence = (s) => String(s || "").replace(/\s+/g, " ").trim().slice(0, 160);
+
+function firstMatchContext(text, re) {
+  const m = new RegExp(re.source, re.flags.replace("g", "")).exec(text);
+  if (!m) return "";
+  return text.slice(Math.max(0, m.index - 20), m.index + m[0].length + 40);
+}
+
+// Run one signature table over the dissected page. Each hit carries the string
+// that produced it, so no claim in the report is unfalsifiable.
+function matchSignatures(table, d, headers) {
+  const hits = [];
+  for (const sig of table) {
+    let evidence = null;
+    if (sig.header && headers && headers.get(sig.header)) evidence = sig.header + " response header";
+    if (!evidence && sig.url) { const u = d.resourceUrls.find((x) => sig.url.test(x)); if (u) evidence = trimEvidence(u); }
+    if (!evidence && sig.js && sig.js.test(d.inlineJs)) evidence = trimEvidence(firstMatchContext(d.inlineJs, sig.js));
+    if (!evidence && sig.dom && sig.dom.test(d.markup)) evidence = trimEvidence(firstMatchContext(d.markup, sig.dom));
+    if (evidence) hits.push({ name: sig.name, evidence, cookieless: sig.cookieless === true });
+  }
+  return hits;
+}
+
+// Does the source show any tag handed to a consent tool to hold back? Every
+// mainstream CMP gates a tag the same way: neutralise the type attribute, or
+// tag it with the tool's own data-attribute.
+function findGatedTags(html) {
+  const out = [];
+  const re = /<script\b([^>]*)>/gi;
+  let m;
+  while ((m = re.exec(html)) && out.length < 20) {
+    const attrs = m[1] || "";
+    if (/\btype\s*=\s*["'](?:text\/plain|javascript\/blocked|text\/x-cookie)/i.test(attrs) ||
+        /\bdata-(?:cookieconsent|cookiecategory|cookie-consent|cmp-ab|borlabs-cookie|cmplz-src|usercentrics|gdrock-category|ot-ignore|cookiefirst-category|cookieyes|iub-purposes|klaro-config)\b/i.test(attrs)) {
+      out.push(trimEvidence("<script" + attrs + ">"));
+    }
+  }
+  return out;
+}
+
+// gtag("consent","default",{...}) is declared in the initial HTML, so it is one
+// of the very few consent behaviours a source scan can read honestly.
+function readConsentMode(inlineJs) {
+  const m = /gtag\s*\(\s*["']consent["']\s*,\s*["']default["']\s*,\s*(\{[\s\S]{0,600}?\})\s*\)/i.exec(inlineJs);
+  if (!m) return null;
+  const states = {};
+  for (const key of ["ad_storage", "analytics_storage", "ad_user_data", "ad_personalization", "functionality_storage", "personalization_storage", "security_storage"]) {
+    const km = new RegExp(key + "\\s*:\\s*[\"'](granted|denied)[\"']", "i").exec(m[1]);
+    if (km) states[key] = km[1].toLowerCase();
+  }
+  const consentKeys = ["ad_storage", "analytics_storage", "ad_user_data", "ad_personalization"].filter((k) => k in states);
+  return {
+    states,
+    evidence: trimEvidence(m[0]),
+    grantsByDefault: consentKeys.some((k) => states[k] === "granted"),
+    deniesByDefault: consentKeys.length > 0 && consentKeys.every((k) => states[k] === "denied"),
+  };
+}
+
+function hostOf(u) {
+  try { return new URL(u, "https://relative.invalid").hostname.toLowerCase(); } catch (e) { return ""; }
+}
+
+// Where this Worker's fetch left from. A Worker subrequest egresses from the
+// Cloudflare location running the Worker, which Cloudflare picks by proximity
+// to the VISITOR — not to the site being scanned. So a scan run from Tel Aviv
+// leaves from Tel Aviv, and a site that serves EU visitors different markup may
+// not have shown us what it shows them. The report says so rather than pretending.
+function readVantage(request) {
+  const country = (request && request.cf && request.cf.country) || (request && request.headers.get("cf-ipcountry")) || null;
+  const colo = (request && request.cf && request.cf.colo) || null;
+  return {
+    country: country || null,
+    colo: colo || null,
+    countryKnown: Boolean(country),
+    inEurope: country ? EU_EEA_UK.has(String(country).toUpperCase()) : false,
+    note: "A Cloudflare Worker's request leaves from the location nearest the visitor who started the scan, not from the country the site sells into.",
+  };
+}
+
+// --- The scan itself -------------------------------------------------------
+
+// One anonymous GET. Returns only what came back.
+async function scrapeSite(url, vantage) {
   try {
-    const r = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (compatible; GDRockScanner/1.0; +https://gdrock.com)" }, cf: { cacheTtl: 60 }, redirect: "follow" });
-    if (!r.ok) return { ok: false };
+    const r = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; GDRockScanner/2.0; +https://gdrock.com)", "Accept-Language": "en-GB,en;q=0.9,de;q=0.8" },
+      cf: { cacheTtl: 60 }, redirect: "follow",
+    });
+    if (!r.ok) return { ok: false, status: r.status };
     const html = (await r.text()) || "";
     const low = html.toLowerCase();
     const text = html
@@ -859,64 +1172,245 @@ async function scrapeSite(url) {
       .replace(/<[^>]+>/g, " ")
       .replace(/&[a-z#0-9]+;/gi, " ")
       .replace(/\s+/g, " ").trim().slice(0, 6000);
-    const links = new Set();
-    const re = /<a[^>]+href="([^"]+)"[^>]*>([^<]*)</gi; let m;
-    while ((m = re.exec(html)) && links.size < 20) {
-      const blob = ((m[1] || "") + " " + (m[2] || "")).toLowerCase();
-      if (/privacy|datenschutz|confidential|terms|agb|conditions|impressum|cookie|legal/.test(blob)) links.add((m[1] || "").slice(0, 140));
+
+    const d = dissect(html);
+    const finalUrl = r.url || url;
+    const finalHost = hostOf(finalUrl);
+
+    // Policy links come from anchors — the one place anchors are the right source.
+    const links = [];
+    for (const a of d.anchors) {
+      const blob = ((a.href || "") + " " + (a.text || "")).toLowerCase();
+      if (links.length < 12 && /privacy|datenschutz|confidential|privacybeleid|informativa|terms|agb|conditions|impressum|cookie|legal|mentions-legales/.test(blob)) links.push(a.href.slice(0, 140));
     }
-    const trackers = [];
-    // GA4 = the gtag.js loader or gtag() calls. Not bare "googletagmanager": that host also serves GTM, flagged on its own below.
-    const tsig = { "Google Analytics/GA4": /gtag\(|gtag\\?\/js|google-analytics/, "Meta Pixel": /fbq\(|connect\.facebook\.net/, "Hotjar": /static\.hotjar|hotjar\.com/, "Microsoft Clarity": /clarity\.ms/, "TikTok Pixel": /analytics\.tiktok|tiktok[^"]*pixel/, "Google Ads": /googleadservices|googlesyndication/ };
-    for (const [n, rx] of Object.entries(tsig)) if (rx.test(low)) trackers.push(n);
-    // GTM container, matched on the whole source (Google's standard snippet has no <script src>): the gtm.js loader or
-    // noscript iframe, a first-party / server-side gtm.js?id= loader, or the 'gtm.start' event every GTM snippet pushes.
+
+    const cmps     = matchSignatures(CMP_SIGNATURES, d, r.headers);
+    const trackers = matchSignatures(TRACKER_SIGNATURES, d, r.headers);
+    const fonts    = matchSignatures(FONT_SIGNATURES, d, r.headers);
+    const embeds   = matchSignatures(EMBED_SIGNATURES, d, r.headers);
+    const platform = matchSignatures(PLATFORM_SIGNATURES, d, r.headers)[0] || null;
+
+    // GTM is matched on the whole source: Google's standard snippet has no
+    // <script src>, so the loader URL only ever exists inside inline JS.
     const gtm = /googletagmanager\.com\/(?:gtm\.js|ns\.html)|\/gtm\.js\?id=|gtm\.start\b/.test(low);
-    if (gtm) trackers.push("Google Tag Manager");
-    const cmps = [];
-    const csig = { Cookiebot: /cookiebot/, OneTrust: /onetrust|optanon/, Usercentrics: /usercentrics/, CookieYes: /cookieyes/, Iubenda: /iubenda/, Complianz: /complianz/, Borlabs: /borlabs/, Termly: /termly/, "GDRock": /gdrock\.js|data-site-id/ };
-    for (const [n, rx] of Object.entries(csig)) if (rx.test(low)) cmps.push(n);
-    return { ok: true, text, links: [...links].slice(0, 12), trackers, cmps, gtm, low };
-  } catch (e) { return { ok: false }; }
+    if (gtm) {
+      const ev = /googletagmanager\.com\/(?:gtm\.js|ns\.html)[^"'\s]*/i.exec(html);
+      trackers.push({ name: "Google Tag Manager", evidence: trimEvidence(ev ? ev[0] : "gtm.start dataLayer push") });
+    }
+
+    // Set-Cookie on the document response: cookies this site handed to a
+    // visitor who had not interacted with anything at all.
+    const rawCookies = typeof r.headers.getSetCookie === "function"
+      ? r.headers.getSetCookie()
+      : (r.headers.get("set-cookie") ? [r.headers.get("set-cookie")] : []);
+    const setCookies = rawCookies.map((c) => String(c).split(";")[0].split("=")[0].trim()).filter(Boolean).slice(0, 40);
+    const trackingCookies = setCookies.filter((n) => TRACKING_COOKIE_PREFIXES.some((p) => n === p || n.startsWith(p)));
+
+    // Every third-party host the markup points at, for the "other" group.
+    const thirdPartyHosts = [...new Set(d.resourceUrls.map(hostOf).filter((h) => h && h !== "relative.invalid" && h !== finalHost && !h.endsWith("." + finalHost) && !finalHost.endsWith("." + h)))].slice(0, 40);
+
+    return {
+      ok: true, text, low, links, html, finalUrl,
+      cmps, trackers, fonts, embeds, platform, gtm,
+      gatedTags: findGatedTags(html),
+      consentMode: readConsentMode(d.inlineJs),
+      setCookies, trackingCookies, thirdPartyHosts,
+      vantage: vantage || readVantage(null),
+    };
+  } catch (e) { return { ok: false, error: e.message }; }
 }
 
-// Build the objective analysis prompt from REAL scraped data
-function buildScanPrompt(fullUrl, s) {
-  const discoveredLinks = s.links.length ? s.links.join(", ") : "None found";
-  const detectedCookies = ([...s.trackers, ...s.cmps.map(c => c + " (consent manager)")].join(", ")) || "None detected in page source";
-  return `You are an automated website text analyzer specializing in identifying privacy policy indicators and data tracking disclosures.
+// --- Findings and score ----------------------------------------------------
 
-Your task is to review the provided website metadata, visible page text, and cookie manifests to flag potential compliance risks. You are NOT providing legal advice or a definitive compliance audit; you are generating an informational risk report.
+// Turns the observations into findings and a score. Nothing in here asserts an
+// order of events, a rendered banner, or any runtime behaviour.
+function buildReport(domain, s) {
+  let score = 100;
+  const deductions = [];
+  const issues = [];
+  const deduct = (key, detail) => {
+    const rule = SOURCE_SCORE_RULES[key];
+    score += rule.points;
+    deductions.push({ rule: key, points: rule.points, label: rule.label, detail: detail || null });
+  };
+  const add = (severity, text, confidence, evidence) => issues.push({ severity, text, confidence, evidence: evidence || null });
+  const names = (list) => list.map((x) => x.name).join(", ");
 
-### INPUT DATA TO ANALYZE:
-- Target URL: ${fullUrl}
-- Scraped Homepage Text: ${s.text}
-- Privacy/Terms Links Discovered: ${discoveredLinks}
-- Active Cookies/Trackers Detected: ${detectedCookies}
+  const hasCMP = s.cmps.length > 0;
+  const hasTrk = s.trackers.length > 0;
+  const gated  = s.gatedTags.length > 0;
+  const cm     = s.consentMode;
 
-### SCORING METHODOLOGY (0-100):
-Base your score strictly on the evidence present in the input data. Do not assume backend processes exist unless explicitly documented in the scraped text (e.g., explicit mention of consent logging or specific payment processor DPAs like Paddle or Stripe).
-- 90-100: Excellent visibility of explicit consent mechanisms, clear vendor callouts, robust retention schedules, and easily accessible policies.
-- 70-89: Basic cookie banner and policies are present, but missing specific disclosures (e.g., explicit retention periods, explicit data processor lists, or clear withdrawal steps).
-- 40-69: Major gaps, such as tracking cookies firing without an obvious banner, or missing a clear privacy policy link.
-- Below 40: Critical risk or non-functional/placeholder site.
+  // 1. Tags vs consent tooling.
+  if (hasTrk && !hasCMP) {
+    deduct("trackers_no_consent_tool", names(s.trackers));
+    add("critical",
+      "The homepage source loads " + names(s.trackers) + ", and no consent tool we recognise appears anywhere in it. This scan reads source code only, so it cannot tell you whether those tags run before a visitor chooses — treat it as the first thing to check, not as a proven breach.",
+      "observed", s.trackers.map((t) => t.evidence).slice(0, 4).join(" | "));
+  } else if (hasTrk && hasCMP && !gated) {
+    // Informational only, no points. Shopware's cookie bar, Shopify's banner and
+    // most tag-manager setups hold tags back at runtime, which leaves no trace in
+    // the source; the local rig proved exactly that on vapor-handel.de.
+    add("warning",
+      names(s.cmps) + " is installed alongside " + names(s.trackers) + ", and no tag in the source carries the markup a consent tool uses to hold one back (no type=\"text/plain\", no consent data-attribute). Several tools block at runtime instead, which source code cannot show, so this is a prompt to check in a browser rather than a finding against you.",
+      "inferred", s.cmps.map((c) => c.evidence).slice(0, 2).join(" | "));
+  } else if (hasTrk && hasCMP && gated) {
+    add("good",
+      names(s.cmps) + " is installed, and " + s.gatedTags.length + " tag" + (s.gatedTags.length === 1 ? " is" : "s are") + " marked in the source for it to hold back until consent. Whether it holds every tag back is a runtime question this scan cannot answer.",
+      "observed", s.gatedTags[0]);
+  } else {
+    add("good",
+      "No third-party analytics or advertising tag was found in the homepage source. Tags injected later by a tag manager, by an app, or on another page would not appear here.",
+      "observed", null);
+  }
 
-### STRICT CONSTRAINTS:
-1. Treat ALL domains completely objectively based ONLY on the provided input data. Never hardcode, artificially inflate, or favor any specific domain or SaaS platform.
-2. If the input data is empty, generic, or a placeholder, set "is_real_site" to false and stop.
-3. Do not assume or hallucinate features that are not explicitly stated in the input text.
+  if (hasCMP) {
+    add("good", "Consent tool found in the source: " + names(s.cmps) + ".", "observed", s.cmps[0].evidence);
+  } else {
+    add("warning",
+      "No consent tool was found in the homepage source. That is not proof there is no banner — some are injected by a tag manager or a store app, and some are served only to visitors in certain countries. It means nothing in the page we fetched declares one.",
+      "observed", null);
+  }
 
-### OUTPUT FORMAT:
-Respond ONLY with a valid JSON object. No markdown, no commentary.
-{
-  "score": <number 0-100>,
-  "is_real_site": <boolean>,
-  "site_description": "objective description of the business/site based on the text.",
-  "summary": "2-sentence max overview of privacy indicators found or missing.",
-  "legal_disclaimer": "This report is generated automatically by an AI text analysis tool for informational purposes only. It does not constitute legal advice, a formal compliance audit, or a guarantee of regulatory immunity. Users should consult qualified legal counsel for actual GDPR compliance verification.",
-  "issues": [ { "severity": "critical|warning|good", "text": "Specific finding tied to the input data." } ]
+  // 2. Consent Mode defaults — declared in the initial HTML, so fair game.
+  if (cm && cm.grantsByDefault) {
+    deduct("consent_mode_granted", JSON.stringify(cm.states));
+    add("critical",
+      "Google Consent Mode is configured in the source with storage granted by default (" + Object.entries(cm.states).map(([k, v]) => k + ": " + v).join(", ") + "). That default permits Google's tags to store and send data without waiting for anyone to agree.",
+      "observed", cm.evidence);
+  } else if (cm && cm.deniesByDefault) {
+    add("good",
+      "Google Consent Mode is configured in the source with ad and analytics storage denied by default, which is the correct default.",
+      "observed", cm.evidence);
+  }
+
+  // 3. Fonts and embeds. These behave identically for every visitor in every
+  //    country, which is what makes them claimable from any vantage point.
+  if (s.fonts.length) {
+    deduct("third_party_fonts", names(s.fonts));
+    add("warning",
+      names(s.fonts) + " " + (s.fonts.length === 1 ? "is" : "are") + " linked directly in the homepage source, so a visitor's browser requests " + (s.fonts.length === 1 ? "it" : "them") + " from that server, disclosing their IP address, as the page parses. A German court awarded damages over exactly this (LG Munchen I, 20.01.2022, 3 O 17493/20). Self-hosting the font files removes it.",
+      "observed", s.fonts[0].evidence);
+  }
+  const cookieEmbeds = s.embeds.filter((e) => !e.cookieless);
+  if (cookieEmbeds.length) {
+    deduct("cookie_setting_embed", names(cookieEmbeds));
+    add("warning",
+      names(cookieEmbeds) + " " + (cookieEmbeds.length === 1 ? "is" : "are") + " embedded in the homepage source. Embeds like these set cookies on load unless a consent tool holds them back; YouTube's youtube-nocookie.com domain is the usual swap.",
+      "observed", cookieEmbeds[0].evidence);
+  }
+
+  // 4. The document's own Set-Cookie. Usually empty, because most tracking
+  //    cookies are written by JavaScript, which this scan never runs.
+  if (s.trackingCookies.length) {
+    deduct("tracking_cookie_on_document", s.trackingCookies.join(", "));
+    add("critical",
+      "The homepage response set " + (s.trackingCookies.length === 1 ? "a tracking cookie" : "tracking cookies") + " (" + s.trackingCookies.join(", ") + ") on a request that carried no cookies and no consent. This one is not a matter of interpretation: it is on the response we fetched.",
+      "observed", s.trackingCookies.join(", "));
+  }
+
+  // 5. Policies.
+  const hasPrivacy = s.links.some((l) => /privacy|datenschutz|confidential|privacybeleid|informativa/i.test(l));
+  const hasTerms   = s.links.some((l) => /terms|agb|conditions|impressum|legal|mentions/i.test(l));
+  if (!hasPrivacy) {
+    deduct("no_privacy_link");
+    add("critical", "No link to a privacy policy was found in the homepage markup. Art. 13 GDPR requires that information to be reachable from where data is collected.", "observed", null);
+  } else {
+    add("good", "A privacy policy link is present in the homepage markup.", "observed", null);
+  }
+  if (!hasTerms) {
+    deduct("no_terms_link");
+    add("warning", "No terms, legal or imprint link was found in the homepage markup.", "observed", null);
+  }
+
+  // 6. Things this scan cannot see, said out loud rather than scored.
+  if (s.gtm) add("warning", GTM_NOTICE, "observed", null);
+
+  score = Math.max(0, Math.min(100, score));
+
+  const band = score >= 90 ? "Nothing in the source stands out."
+    : score >= 70 ? "The basics are in the source, and the specific gaps are listed below."
+    : score >= 40 ? "Real gaps are visible in the source."
+    : "The source is missing core protections.";
+
+  return {
+    score,
+    is_real_site: true,
+    scan_method: "source",
+    site_description: "Website at " + domain + (s.platform ? " (" + s.platform.name + ")" : ""),
+    summary: "Read the homepage source of " + domain + ". " + band + " A source scan cannot see runtime behaviour, so the limits are listed with the findings.",
+    platform: s.platform ? { name: s.platform.name, evidence: s.platform.evidence } : null,
+    consent_tools: s.cmps.map((c) => ({ name: c.name, evidence: c.evidence })),
+    tags_found: s.trackers.map((t) => ({ name: t.name, evidence: t.evidence })),
+    third_party_hosts: s.thirdPartyHosts,
+    document_cookies: s.setCookies,
+    deductions,
+    limits: scanLimits(s),
+    vantage: s.vantage,
+    legal_disclaimer: SCAN_DISCLAIMER,
+    issues: orderIssues(issues),
+    checked_at: new Date().toISOString(),
+  };
 }
-Ensure "issues" contains between 5 and 8 highly specific points based directly on the provided input data.`;
+
+// The boundary, stated to the person reading the report instead of buried here.
+function scanLimits(s) {
+  const v = s.vantage || {};
+  return [
+    "One page was read: the homepage at " + s.finalUrl + ".",
+    "No JavaScript was executed, so nothing here describes what runs in a real browser — not whether a banner appears, not the order tags fire in, and not the cookies JavaScript writes.",
+    "A consent tool, banner or tag added by a tag manager, a store app or a server-side country rule is invisible to a source scan.",
+    v.countryKnown
+      ? "This request left a Cloudflare location in " + v.country + (v.inEurope
+          ? ", inside the EU/EEA/UK."
+          : ", outside the EU/EEA/UK, so markup this site serves only to European visitors may not be in what we read.")
+      : "We could not determine which Cloudflare location this request left from, so a site that serves different markup per country may have shown us something other than what it shows a European visitor.",
+  ];
+}
+
+// Worst first, so the panel opens on what matters.
+function orderIssues(issues) {
+  const rank = { critical: 0, warning: 1, good: 2 };
+  return issues.slice().sort((a, b) => (rank[a.severity] ?? 1) - (rank[b.severity] ?? 1)).slice(0, 10);
+}
+
+// --- AI: prose only --------------------------------------------------------
+// The model never sees the score and never returns one. It is handed the
+// observations and asked for two sentences of English. Findings, severities and
+// the number are settled by the rules above, which is what stops the same site
+// scoring 82 one day and 98 the next.
+function buildScanPrompt(fullUrl, s, report) {
+  const observations = {
+    url: fullUrl,
+    platform: report.platform ? report.platform.name : "unknown",
+    consent_tools_in_source: report.consent_tools.map((c) => c.name),
+    tags_in_source: report.tags_found.map((t) => t.name),
+    fonts_in_source: s.fonts.map((f) => f.name),
+    embeds_in_source: s.embeds.map((e) => e.name),
+    cookies_set_by_the_document: report.document_cookies,
+    policy_links_found: s.links.slice(0, 6),
+    homepage_text: s.text.slice(0, 2500),
+  };
+  return `You are writing two short pieces of copy for an automated report. The report's findings and its score are already fixed and are not your job.
+
+The only input is a static read of one page's HTML source. No browser ran. Nothing below describes runtime behaviour.
+
+OBSERVATIONS (the complete set — nothing else was seen):
+${JSON.stringify(observations, null, 1)}
+
+Write:
+1. "site_description": one clause naming what this business actually sells or does, drawn only from homepage_text. If the text does not say, write "Website at ${fullUrl.replace(/^https?:\/\//, "")}".
+2. "summary": at most two sentences describing what the source scan found. Name specific things from the observations.
+
+Hard rules:
+- Never state or imply WHEN anything happens: no "before consent", "fires first", "loads immediately", "on page load".
+- Never claim a banner does or does not appear, or that a consent tool does or does not block anything. Source code cannot show either.
+- Never state an absence as a fact about the site; at most say something was not found in the homepage source.
+- Never give a score, a grade, a percentage, or legal advice.
+- Plain, factual, British English. No marketing tone.
+
+Respond with only this JSON object:
+{"site_description": "...", "summary": "..."}`;
 }
 
 // Call OpenAI (gpt-4o-mini, JSON mode) if keyed, else Anthropic. Returns parsed JSON.
@@ -925,9 +1419,10 @@ async function llmScan(env, prompt) {
     const r = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + env.OPENAI_API_KEY },
-      body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, max_tokens: 900, temperature: 0.2 }),
+      body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" }, max_tokens: 400, temperature: 0.2 }),
     });
     const d = await r.json();
+    if (!r.ok) throw new Error(`OpenAI API ${r.status}: ${d.error?.message || ""}`);
     return JSON.parse(d.choices?.[0]?.message?.content || "{}");
   }
   const r = await fetch("https://api.anthropic.com/v1/messages", {
@@ -935,7 +1430,7 @@ async function llmScan(env, prompt) {
     // A key that isn't scoped to a workspace is rejected unless the request names one (ANTHROPIC_WORKSPACE_ID)
     headers: { "Content-Type": "application/json", "anthropic-version": "2023-06-01", "x-api-key": env.ANTHROPIC_API_KEY,
       ...(env.ANTHROPIC_WORKSPACE_ID ? { "anthropic-workspace-id": env.ANTHROPIC_WORKSPACE_ID } : {}) },
-    body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 900, system: "Respond with valid JSON only, no markdown.", messages: [{ role: "user", content: prompt }] }),
+    body: JSON.stringify({ model: "claude-haiku-4-5-20251001", max_tokens: 400, system: "Respond with valid JSON only, no markdown.", messages: [{ role: "user", content: prompt }] }),
   });
   const d = await r.json();
   // Status + Anthropic's own message only (e.g. "invalid x-api-key", low credit); the key never appears in it
@@ -945,26 +1440,16 @@ async function llmScan(env, prompt) {
   return JSON.parse(raw.slice(a, b + 1));
 }
 
-// Real signal-based fallback (no API key) — objective, varied, no favoritism
-function signalScan(domain, s) {
-  let score = 100; const issues = [];
-  const hasPrivacy = s.links.some(l => /privacy|datenschutz|confidential/.test(l.toLowerCase())) || /privacy policy|datenschutz/.test(s.low);
-  const hasTerms = s.links.some(l => /terms|agb|conditions|impressum/.test(l.toLowerCase())) || /\bterms\b|impressum/.test(s.low);
-  const hasCMP = s.cmps.length > 0;
-  const hasTrackers = s.trackers.length > 0;
-  if (hasTrackers && !hasCMP) { score -= 35; issues.push({ severity: "critical", text: "Trackers detected (" + s.trackers.join(", ") + ") with no recognised consent platform in the page source - a common GDPR risk. Static analysis cannot confirm firing order, and some banners are geo-served or client-side rendered; verify in a real browser from an EU location." }); }
-  else if (hasTrackers && hasCMP) { issues.push({ severity: "good", text: "Consent manager detected (" + s.cmps.join(", ") + ") alongside trackers. Note: a static scan cannot confirm the CMP actually blocks them before consent - only a real-browser timing check can." }); }
-  else if (!hasTrackers) { issues.push({ severity: "good", text: "No third-party trackers detected in the homepage source." }); }
-  if (!hasPrivacy) { score -= 25; issues.push({ severity: "critical", text: "No privacy policy link found on the homepage." }); }
-  else issues.push({ severity: "good", text: "Privacy policy link is present." });
-  if (!hasCMP && !hasTrackers) issues.push({ severity: "warning", text: "No recognised consent platform detected. If the site truly sets no non-essential cookies, none is legally required - but banners can be geo-served or client-side rendered, so verify in a real browser before relying on this." });
-  if (!hasTerms) { score -= 10; issues.push({ severity: "warning", text: "No terms/legal page link found on the homepage." }); }
-  else issues.push({ severity: "good", text: "Terms/legal page link is present." });
-  issues.push({ severity: "warning", text: "Verify your privacy policy names every processor (payments, email, analytics) with retention periods per data category." });
-  score = Math.max(15, Math.min(98, score));
-  return { score, is_real_site: true, site_description: "Website at " + domain,
-    summary: "Automated signal scan of the homepage source. " + (score >= 70 ? "Core privacy indicators are present." : "Several GDPR indicators appear to be missing."),
-    legal_disclaimer: SCAN_DISCLAIMER, issues: issues.slice(0, 8) };
+// The model's prose is accepted only if it stays inside the boundary. A sentence
+// that claims timing, a rendered banner, or blocking is dropped and the
+// rule-written one stands: bad copy must never become a bad claim.
+const PROSE_OUT_OF_BOUNDS = /\bbefore (?:you |a |any |the )?(?:consent|choice|click|accept|opt)|\bwithout (?:consent|asking)\b|\bfires?\b|\bfiring\b|\bon page load\b|\bimmediately\b|\bbanner (?:appears|is shown|is displayed|does not|doesn't|never)|\bblocks? (?:the |all |any )?(?:tracker|tag|script|cookie)|\bnon-?compliant\b|\bis not compliant\b|\bviolat/i;
+function acceptProse(value, maxLength) {
+  if (typeof value !== "string") return null;
+  const v = value.trim();
+  if (!v || v.length > maxLength) return null;
+  if (PROSE_OUT_OF_BOUNDS.test(v)) return null;
+  return v;
 }
 
 // Server-renders the GDPR privacy policy HTML from stored per-site config
