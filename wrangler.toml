@@ -18,3 +18,21 @@ name = "gdrock-cdn"
 main = "gdrock-worker.js"
 compatibility_date = "2025-06-01"
 keep_vars = true
+
+# --- Deep check queue (optional until the German VPS runs) ------------------------------------
+# Without this binding, /api/deep-scan keeps each request as a Supabase lead and pings Telegram
+# so it can be run by hand. To switch the queue on:
+#   wrangler kv namespace create DEEP_SCAN        -> paste the printed id below, uncomment, deploy
+#   wrangler secret put DEEP_SCAN_RUNNER_TOKEN    -> a long random string; the VPS runner uses the same
+# Jobs expire after 14 days (requesters' emails with them).
+# [[kv_namespaces]]
+# binding = "DEEP_SCAN"
+# id = "PASTE_THE_NAMESPACE_ID_HERE"
+
+# --- Scan rate limit (optional) -------------------------------------------------------------------
+# The worker already limits real scans per IP in memory (20 per 10 minutes per instance). This adds
+# Cloudflare's own counter across instances: 6 real scans per minute per IP.
+# [[ratelimits]]
+# name = "SCAN_LIMITER"
+# namespace_id = "1001"
+# simple = { limit = 6, period = 60 }

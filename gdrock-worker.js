@@ -321,14 +321,32 @@ export default {
       const body = await request.json().catch(() => ({}));
       const { url: rawUrl, email } = body;
       if (!rawUrl) return json({ error: "Missing url" }, 400);
-      const domain = rawUrl.replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "").trim().toLowerCase();
+      const domain = String(rawUrl).replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/[\/?#].*$/, "").replace(/:\d+$/, "").trim().toLowerCase();
+      if (!DOMAIN_RE.test(domain)) return json({ error: "Enter a website address like yourstore.com" }, 400);
       const fullUrl = "https://" + domain;
+      const ip = request.headers.get("CF-Connecting-IP") || "";
+      const wantsReport = typeof email === "string" && EMAIL_RE.test(email.trim());
+
+      // 0) The same domain within ~10 minutes: the stored result, no new scan. A visitor
+      //    asking for the report by email still gets it, and that request still alerts.
+      const cached = await scanCacheGet(domain);
+      if (cached) {
+        const out = { ...cached, cached: true };
+        if (wantsReport) {
+          later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage: readVantage(request), result: out, ip, cached: true }));
+          later(ctx, sendScanReport(env, email, domain, out).catch(() => {}));
+        }
+        return json(out);
+      }
+      if (!(await scanAllowed(env, ip))) {
+        return json({ error: "rate_limited", message: "Too many scans from your connection. Try again in a few minutes.", retry_after_seconds: Math.round(SCAN_LIMIT.windowMs / 1000) }, 429);
+      }
 
       // 1) Read the homepage source once, from wherever this Worker is running.
       const vantage = readVantage(request);
       const scraped = await scrapeSite(fullUrl, vantage);
       if (!scraped.ok || (scraped.text || "").length < 80) {
-        later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, failed: scraped.status ? "HTTP " + scraped.status : (scraped.error || "no readable content") }));
+        later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, ip, failed: scraped.status ? "HTTP " + scraped.status : (scraped.error || "no readable content") }));
         return json({ score: null, is_real_site: false, scan_method: "source",
           site_description: "Could not load this site.",
           summary: "The site did not respond, or returned no readable homepage content, so there is nothing to report on.",
@@ -366,11 +384,18 @@ export default {
       // Every scan pings the owner (Telegram + email), anonymous or not, and the
       // report goes to the visitor when they asked for it. Both run after the
       // response is sent, so neither can slow the scan down or break it.
-      later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, result }));
-      if (email && email.includes("@")) later(ctx, sendScanReport(env, email, domain, result).catch(() => {}));
+      scanCachePut(ctx, domain, result);
+      later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, result, ip }));
+      if (wantsReport) later(ctx, sendScanReport(env, email, domain, result).catch(() => {}));
 
       return json(result);
     }
+
+    // -- Deep check (queue + runner) -----------------------------
+    if (path === "/api/deep-scan" && request.method === "POST") return handleDeepScanRequest(request, env, ctx);
+    if (path === "/api/deep-scan/next" && request.method === "GET") return handleDeepScanNext(request, env);
+    if (path === "/api/deep-scan/result" && request.method === "POST") return handleDeepScanResult(request, env, ctx);
+    if (path === "/api/deep-scan/status" && request.method === "GET") return handleDeepScanStatus(url, env);
 
     // -- POST /api/paddle-webhook --------------------------------
     if (path === "/api/paddle-webhook" && request.method === "POST") {
@@ -603,8 +628,10 @@ export default {
 
 // Send transactional email via ZeptoMail (Zoho) — falls back to Resend if configured.
 // Env vars: ZEPTO_TOKEN + MAIL_FROM   (or)   RESEND_API_KEY + MAIL_FROM
-async function sendEmail(env, to, subject, html) {
+// attachments: [{ name, type, content (base64) }]
+async function sendEmail(env, to, subject, html, attachments) {
   const from = env.MAIL_FROM || "noreply@gdrock.com";
+  const files = Array.isArray(attachments) ? attachments : [];
   if (env.ZEPTO_TOKEN) {
     return fetch("https://api.zeptomail.com/v1.1/email", {
       method: "POST",
@@ -613,6 +640,7 @@ async function sendEmail(env, to, subject, html) {
         from: { address: from, name: "GDRock" },
         to: [{ email_address: { address: to } }],
         subject, htmlbody: html,
+        ...(files.length ? { attachments: files.map((f) => ({ name: f.name, mime_type: f.type, content: f.content })) } : {}),
       }),
     });
   }
@@ -620,7 +648,8 @@ async function sendEmail(env, to, subject, html) {
     return fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Authorization": "Bearer " + env.RESEND_API_KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: "GDRock <" + from + ">", to: [to], subject, html }),
+      body: JSON.stringify({ from: "GDRock <" + from + ">", to: [to], subject, html,
+        ...(files.length ? { attachments: files.map((f) => ({ filename: f.name, content: f.content })) } : {}) }),
     });
   }
   return null; // no email provider configured yet
@@ -671,6 +700,14 @@ function later(ctx, promise) {
   return p;
 }
 
+// Base64 of a UTF-8 string, in chunks (a report can be large).
+function base64Utf8(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+
 const escHtml = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 // One alert per scan, to Telegram and to the owner's inbox. Anonymous scans are
@@ -678,7 +715,9 @@ const escHtml = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ 
 // alert too, not only the ones that left an email.
 //   TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID  → Telegram
 //   OWNER_EMAIL (default office@gdrock.com) via ZEPTO_TOKEN or RESEND_API_KEY → email
-async function alertScan(env, { domain, email, optin, vantage, result, failed }) {
+async function alertScan(env, { domain, email, optin, vantage, result, failed, ip, cached }) {
+  const gate = alertGate(ip || "");
+  if (!gate.send) return; // a burst from one connection, or across all of them: held back and counted
   const hasEmail = Boolean(email && String(email).includes("@"));
   const where = vantage && vantage.country ? vantage.country + (vantage.colo ? " / " + vantage.colo : "") : "unknown";
   const headline = failed ? "Scan failed to load" : hasEmail ? "Scan + email captured" : "Anonymous scan";
@@ -690,6 +729,8 @@ async function alertScan(env, { domain, email, optin, vantage, result, failed })
     failed ? "Could not read: " + failed : "Score: " + result.score + "/100" + (result.platform ? " (" + result.platform.name + ")" : ""),
     hasEmail ? "Email: " + email + (optin ? " (opted in to alerts + news)" : " (no marketing opt-in)") : "Email: none given",
     "Visitor location: " + where,
+    cached ? "(result from the 10-minute cache: not a new scan)" : null,
+    gate.suppressed ? `(${gate.suppressed} alert${gate.suppressed === 1 ? "" : "s"} held back during a burst before this one)` : null,
     worst.length ? "" : null,
     ...worst,
   ].filter((l) => l !== null);
@@ -832,10 +873,11 @@ async function sendAccessCodeEmail(env, email, siteId, plan, code) {
 /* ===========================================================================
    GDPR SCANNER  —  what this thing can and cannot see
    ===========================================================================
-   The scanner runs inside this Worker. It performs exactly one anonymous GET
-   of the homepage and reads the bytes that come back. It does not run a
-   browser and it does not execute JavaScript, and that fixes the boundary of
-   every claim it is allowed to make:
+   The scanner runs inside this Worker. It performs one anonymous GET of the
+   homepage, then reads up to three of the site's own stylesheets and the
+   privacy policy page the homepage links to, and reads the bytes that come
+   back. It does not run a browser and it does not execute JavaScript, and
+   that fixes the boundary of every claim it is allowed to make:
 
    OBSERVABLE
      - the HTML the server returns to a cookie-less, consent-less request
@@ -844,6 +886,8 @@ async function sendAccessCodeEmail(env, email, siteId, plan, code) {
      - inline Consent Mode defaults, and consent-gating attributes on tags
      - which consent-tool LOADER is present, by its URL / markup signature
      - links to privacy, terms, imprint and cookie pages
+     - fonts the site's own stylesheets pull in (@import, url())
+     - whether the privacy policy's text mentions six things Art. 13 asks for
      - the Cloudflare location this fetch left from
 
    NOT OBSERVABLE
@@ -1086,6 +1130,405 @@ function readVantage(request) {
   };
 }
 
+// --- Second reads: stylesheets and the privacy policy -----------------------
+// Still source reads: bytes fetched without running anything. Each adds what it
+// read to the report's limits, and nothing it did not read becomes a claim.
+
+// Fetch one text resource with a timeout and a size cap. Returns null on any failure.
+async function fetchText(url, { timeoutMs = 4000, maxBytes = 400000, accept = "text/css,*/*;q=0.1" } = {}) {
+  const ctrl = typeof AbortController === "function" ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
+  try {
+    const r = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; GDRockScanner/2.0; +https://gdrock.com)", Accept: accept, "Accept-Language": "en-GB,en;q=0.9,de;q=0.8" },
+      redirect: "follow", signal: ctrl ? ctrl.signal : undefined, cf: { cacheTtl: 300 },
+    });
+    if (!r.ok) return { ok: false, status: r.status, url: r.url || url };
+    const text = (await r.text()).slice(0, maxBytes);
+    return { ok: true, status: r.status, url: r.url || url, text, type: r.headers.get("content-type") || "" };
+  } catch (e) {
+    return { ok: false, status: null, url, error: e && e.name === "AbortError" ? "timed out" : (e && e.message) || "failed" };
+  } finally { if (timer) clearTimeout(timer); }
+}
+
+const sameSite = (a, b) => a && b && (a === b || a.endsWith("." + b) || b.endsWith("." + a));
+const absUrl = (u, base) => { try { return new URL(u, base).href; } catch (e) { return null; } };
+
+// Every url() and @import in a stylesheet, resolved against where the sheet lives.
+function cssReferences(css, base) {
+  const out = [];
+  const re = /@import\s+(?:url\(\s*)?["']?([^"')\s;]+)["']?\s*\)?|url\(\s*["']?([^"')\s]+)["']?\s*\)/gi;
+  let m;
+  while ((m = re.exec(css)) && out.length < 400) {
+    const raw = m[1] || m[2];
+    if (!raw || /^data:/i.test(raw)) continue;
+    const abs = absUrl(raw, base);
+    if (abs) out.push({ url: abs, statement: trimEvidence(m[0]), isImport: !!m[1] });
+  }
+  return out;
+}
+
+// Up to 3 first-party stylesheets (in document order, then what they @import), plus
+// the page's own <style> blocks. vapor-handel.de loads Google Fonts from its theme
+// CSS by @import, which a read of the HTML alone never sees.
+const MAX_STYLESHEETS = 3;
+async function readStylesheetFonts(html, finalUrl, finalHost) {
+  const found = [], read = [], failed = [];
+  const seenFont = new Set();
+  const scan = (css, where, base) => {
+    for (const ref of cssReferences(css, base)) {
+      for (const sig of FONT_SIGNATURES) {
+        if (!sig.url.test(ref.url) || seenFont.has(sig.name)) continue;
+        seenFont.add(sig.name);
+        found.push({ name: sig.name, evidence: trimEvidence(where + ": " + ref.statement), stylesheet: where });
+      }
+    }
+  };
+  // Inline <style> blocks are part of the HTML we already have.
+  const reStyle = /<style\b[^>]*>([\s\S]*?)<\/style>/gi;
+  let m;
+  while ((m = reStyle.exec(html))) scan(m[1] || "", "inline <style> in the homepage", finalUrl);
+
+  const queue = [];
+  const reLink = /<link\b[^>]*>/gi;
+  while ((m = reLink.exec(html)) && queue.length < 20) {
+    const tag = m[0];
+    if (!/\brel\s*=\s*["']?[^"'>]*stylesheet/i.test(tag)) continue;
+    const href = (/\bhref\s*=\s*["']([^"']+)["']/i.exec(tag) || /\bhref\s*=\s*([^\s>]+)/i.exec(tag) || [])[1];
+    const abs = href ? absUrl(href.replace(/&amp;/g, "&"), finalUrl) : null;
+    if (abs && /^https?:/i.test(abs) && sameSite(hostOf(abs), finalHost)) queue.push(abs);
+  }
+  const tried = new Set();
+  while (queue.length && read.length + failed.length < MAX_STYLESHEETS) {
+    // Read what is queued in parallel, up to the cap.
+    const batch = [];
+    while (queue.length && batch.length + read.length + failed.length < MAX_STYLESHEETS) {
+      const u = queue.shift();
+      if (!tried.has(u)) { tried.add(u); batch.push(u); }
+    }
+    if (!batch.length) break;
+    const results = await Promise.all(batch.map((u) => fetchText(u)));
+    results.forEach((r, i) => {
+      if (!r.ok) { failed.push({ url: batch[i], reason: r.status ? "HTTP " + r.status : r.error }); return; }
+      read.push(batch[i]);
+      scan(r.text, batch[i], r.url);
+      // A first-party @import is another stylesheet of the same site: read it next.
+      for (const ref of cssReferences(r.text, r.url)) if (ref.isImport && sameSite(hostOf(ref.url), finalHost) && !tried.has(ref.url)) queue.push(ref.url);
+    });
+  }
+  return { found, read, failed };
+}
+
+// Privacy policy: the six things Art. 13 GDPR asks a policy to say, looked for in
+// EN / DE / FR / NL / ES / IT. A keyword read can miss wording it doesn't know, so
+// a miss is reported as "not found in the policy text we read" and never scored.
+const POLICY_CHECKS = [
+  { key: "controller", label: "who the controller is, with contact details",
+    re: /\b(data )?controller\b|responsible for (the )?processing|verantwortliche[rn]?\b|verantwortlich im sinne|responsable (du|de) (traitement|tratamiento)|verwerkingsverantwoordelijke|titolare del trattamento|impressum|\bwho we are\b|\bwer wir sind\b/i,
+    also: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}|\b(e-?mail|kontakt|contact|contatto|contacto)\b/i },
+  { key: "legalBasis", label: "the legal basis for each use of data",
+    re: /\blegal bas[ie]s\b|\blawful basis\b|art(icle|ikel|\.)?\s*6\s*(\(1\)|abs\.?\s*1)|rechtsgrundlage|base (légale|juridique|jurídica|legal|giuridica)|bases? legales?|rechtsgrond(slag)?|legittimo interesse|interés legítimo|berechtigte[sn]? interesse|legitimate interest/i },
+  { key: "rights", label: "the visitor's rights (access, erasure, objection…)",
+    // A rights section (heading or phrase), naming at least three of the rights, however it is worded.
+    re: /\b(your|data subject|gdpr)['’]?s? rights\b|\bright (of|to) (access|erasure|rectification|restriction|object|data portability)|betroffenenrechte|ihre rechte|recht auf (auskunft|löschung|berichtigung)|vos droits|droit d['’]?accès|uw rechten|recht op (inzage|verwijdering)|tus derechos|derechos? de acceso|i tuoi diritti|diritti dell['’]interessato|diritto di accesso/i,
+    terms: /\b(access|rectif(?:y|ication)|eras(?:e|ure)|delet(?:e|ion)|restrict(?:ion)?|port(?:ability)?|object(?:ion)?|auskunft|berichtigung|löschung|einschränkung|widerspruch|datenübertragbarkeit|accès|rectification|effacement|limitation|portabilité|opposition|inzage|rectificatie|verwijdering|beperking|overdraagbaarheid|bezwaar|acceso|rectificación|supresión|limitación|portabilidad|oposición|accesso|rettifica|cancellazione|limitazione|portabilità|opposizione)(?![a-zà-ü])/gi,
+    min: 3 },
+  { key: "retention", label: "how long data is kept",
+    re: /\bretention\b|\bretain(ed)?\b|stored (for|until)|kept (for|until)|speicherdauer|aufbewahr|gespeichert,? (bis|solange|für)|gelöscht, sobald|durée de conservation|conserv(é|e)es? (pendant|jusqu)|bewaartermijn|bewaren (wij|we)? ?(gegevens )?(niet langer|tot|gedurende)|plazo de conservaci|se conservar(á|a)n|periodo di conservazione|conservat[ie] per/i },
+  { key: "processors", label: "who the data is shared with (processors, recipients)",
+    re: /\b(sub-?)?processors?\b|\brecipients?\b|service providers?|third[- ]part(y|ies)|auftragsverarbeit|empfänger|dienstleister|sous-traitants?|destinataires?|verwerkers?\b|ontvangers?\b|encargados? del tratamiento|destinatarios?|responsabil[ei] del trattamento|destinatari/i },
+  { key: "complaint", label: "the right to complain to a supervisory authority",
+    re: /supervisory authority|lodge a complaint|data protection authority|aufsichtsbehörde|beschwerderecht|recht auf beschwerde|autorité de contrôle|\bcnil\b|réclamation|toezichthoudende autoriteit|autoriteit persoonsgegevens|\bklacht\b|autoridad de control|\baepd\b|reclamación|autorità di controllo|\bgarante\b|\breclamo\b|\bico\b|information commissioner/i },
+];
+
+function policyLinkFrom(anchors, finalUrl) {
+  let best = null, bestScore = 0;
+  for (const a of anchors) {
+    const href = String(a.href || ""), text = String(a.text || "");
+    if (!href || /^(mailto|tel|javascript):|^#/i.test(href)) continue;
+    const blob = (href + " " + text).toLowerCase();
+    let score = 0;
+    if (/privacy|datenschutz|confidentialit|privacidad|privacybeleid|informativa|privacyverklaring|protection-des-donnees|politique-de-confidentialite/.test(blob)) score += 2;
+    if (/polic|erklärung|erklaerung|beleid|verklaring|politica|pol[ií]tica/.test(blob)) score += 1;
+    if (/cookie/.test(blob) && !/privacy|datenschutz|confidentialit|privacidad|privacybeleid|informativa/.test(blob)) score = 0; // a cookie notice is not the policy
+    if (score > bestScore) { bestScore = score; best = href; }
+  }
+  if (!best || bestScore < 2) return null;
+  const abs = absUrl(best.replace(/&amp;/g, "&"), finalUrl);
+  return abs && /^https?:/i.test(abs) ? abs : null;
+}
+
+const htmlToText = (html) => String(html || "")
+  .replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+  .replace(/<br\s*\/?>|<\/(p|li|h[1-6]|div|tr|section)>/gi, "\n").replace(/<[^>]+>/g, " ")
+  .replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&auml;/g, "ä").replace(/&ouml;/g, "ö").replace(/&uuml;/g, "ü").replace(/&szlig;/g, "ß")
+  .replace(/&[a-z#0-9]+;/gi, " ").replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, "\n").trim();
+
+async function readPolicy(anchors, finalUrl) {
+  const url = policyLinkFrom(anchors, finalUrl);
+  if (!url) return { status: "no_link" };
+  const r = await fetchText(url, { timeoutMs: 5000, maxBytes: 600000, accept: "text/html,*/*;q=0.5" });
+  if (!r.ok) return { status: "unreadable", url, reason: r.status ? "HTTP " + r.status : r.error };
+  const text = htmlToText(r.text).slice(0, 200000);
+  // A policy page that is built by JavaScript returns next to no text to a source read.
+  if (text.length < 600) return { status: "too_little_text", url: r.url || url, chars: text.length };
+  const checks = POLICY_CHECKS.map((c) => {
+    const flags = "gi";
+    const hits = [];
+    const re = new RegExp(c.re.source, flags);
+    let m;
+    while ((m = re.exec(text)) && hits.length < 12) { hits.push({ i: m.index, w: m[0].toLowerCase() }); if (m[0] === "") re.lastIndex++; }
+    let found = hits.length > 0;
+    if (found && c.terms) found = new Set((text.match(c.terms) || []).map((w) => w.toLowerCase())).size >= c.min;
+    if (found && c.also) found = c.also.test(text);
+    const at = hits.length ? hits[0].i : -1;
+    return { key: c.key, label: c.label, found, evidence: found && at >= 0 ? trimEvidence("…" + text.slice(Math.max(0, at - 30), at + 110).replace(/\n/g, " ") + "…") : null };
+  });
+  return { status: "read", url: r.url || url, chars: text.length, checks };
+}
+
+// --- Scan cache, rate limits, alert flood control ----------------------------
+// A domain's result is kept ~10 minutes (Workers Cache API, per data centre: no
+// setup needed), so a double click, the "email me this report" call and a bot
+// looping on one site cost one real scan. Real scans are rate-limited per IP,
+// and the owner is alerted once per real scan, with a cap so a bot can't flood
+// Telegram. Rate limiting and the alert cap are per Worker instance, so they
+// are best-effort; env.SCAN_LIMITER (a Cloudflare rate-limit binding) is used
+// as well when it is bound.
+const SCAN_CACHE_SECONDS = 600;
+const SCAN_LIMIT = { perIp: 20, windowMs: 10 * 60 * 1000 };
+const ALERT_LIMIT = { perIp: 5, total: 30, windowMs: 10 * 60 * 1000 };
+const scanTimes = new Map();   // ip -> timestamps of real scans
+const alertTimes = new Map();  // ip -> timestamps of alerts sent
+const alertBurst = { start: 0, count: 0, suppressed: 0 };
+
+const scanCacheKey = (domain) => new Request("https://cdn.gdrock.com/__scan-cache/v3/" + encodeURIComponent(domain));
+async function scanCacheGet(domain) {
+  try {
+    if (typeof caches === "undefined" || !caches.default) return null;
+    const hit = await caches.default.match(scanCacheKey(domain));
+    return hit ? await hit.json() : null;
+  } catch (e) { return null; }
+}
+function scanCachePut(ctx, domain, result) {
+  try {
+    if (typeof caches === "undefined" || !caches.default) return;
+    const res = new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json", "Cache-Control": "public, max-age=" + SCAN_CACHE_SECONDS } });
+    later(ctx, caches.default.put(scanCacheKey(domain), res));
+  } catch (e) {}
+}
+
+function recent(map, key, windowMs) {
+  const now = Date.now();
+  const list = (map.get(key) || []).filter((t) => now - t < windowMs);
+  map.set(key, list);
+  if (map.size > 5000) map.clear(); // memory guard; a flood this wide resets the window
+  return list;
+}
+async function scanAllowed(env, ip) {
+  if (!ip) return true; // Cloudflare always sends CF-Connecting-IP; only local tools don't
+  if (env.SCAN_LIMITER && typeof env.SCAN_LIMITER.limit === "function") {
+    try { const { success } = await env.SCAN_LIMITER.limit({ key: ip }); if (!success) return false; } catch (e) { /* binding trouble: fall back */ }
+  }
+  const list = recent(scanTimes, ip, SCAN_LIMIT.windowMs);
+  if (list.length >= SCAN_LIMIT.perIp) return false;
+  list.push(Date.now());
+  return true;
+}
+// -> { send: boolean, suppressed: number of alerts held back since the last one sent }
+function alertGate(ip) {
+  if (!ip) return { send: true, suppressed: 0 };
+  const now = Date.now();
+  if (now - alertBurst.start > ALERT_LIMIT.windowMs) { alertBurst.start = now; alertBurst.count = 0; }
+  const mine = recent(alertTimes, ip, ALERT_LIMIT.windowMs);
+  if (mine.length >= ALERT_LIMIT.perIp || alertBurst.count >= ALERT_LIMIT.total) { alertBurst.suppressed++; return { send: false, suppressed: 0 }; }
+  mine.push(now);
+  alertBurst.count++;
+  const suppressed = alertBurst.suppressed;
+  alertBurst.suppressed = 0;
+  return { send: true, suppressed };
+}
+
+// --- Deep check: a real browser on a server in Germany -----------------------
+// The public scan reads source code. The deep check runs the before-consent
+// rig (verify_consent.js) on a VPS in Germany, so the site treats it as an EU
+// visitor, and emails the result. The Worker only brokers: it queues jobs in
+// KV (env.DEEP_SCAN, entries expire after 14 days, so requesters' emails do
+// too), hands one to the runner at a time, and sends the report the runner
+// posts back. The runner authenticates with DEEP_SCAN_RUNNER_TOKEN.
+const DEEP_TTL_SECONDS = 14 * 86400;
+const DEEP_PER_EMAIL_PER_DAY = 3;
+const DEEP_PER_IP_PER_HOUR = 3;
+const deepTimes = new Map();
+const EMAIL_RE = /^[^\s@<>"']+@[^\s@<>"']+\.[a-z]{2,}$/i;
+const DOMAIN_RE = /^(?=.{4,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i;
+
+async function sha256Hex(s) {
+  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function runnerAuthorized(env, request) {
+  const t = env.DEEP_SCAN_RUNNER_TOKEN;
+  return !!t && timingSafeEqual(request.headers.get("Authorization") || "", "Bearer " + t);
+}
+async function deepJob(env, id) {
+  if (!id || !/^[0-9a-f-]{36}$/i.test(id)) return null;
+  try { return JSON.parse((await env.DEEP_SCAN.get("job:" + id)) || "null"); } catch (e) { return null; }
+}
+const saveDeepJob = (env, job) => env.DEEP_SCAN.put("job:" + job.id, JSON.stringify(job), { expirationTtl: DEEP_TTL_SECONDS });
+async function deepQueuePosition(env, id) {
+  const list = await env.DEEP_SCAN.list({ prefix: "queue:", limit: 200 });
+  const i = list.keys.findIndex((k) => k.name.endsWith(":" + id));
+  return i === -1 ? null : i + 1;
+}
+async function telegram(env, text) {
+  if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) return;
+  await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text, disable_web_page_preview: true }),
+  }).catch(() => {});
+}
+
+async function handleDeepScanRequest(request, env, ctx) {
+  const b = await request.json().catch(() => ({}));
+  const email = String(b.email || "").trim().slice(0, 200);
+  const domain = normDomain(b.url);
+  if (!EMAIL_RE.test(email)) return json({ error: "Valid email required" }, 400);
+  if (!DOMAIN_RE.test(domain)) return json({ error: "Valid website address required" }, 400);
+  const ip = request.headers.get("CF-Connecting-IP") || "";
+  if (ip) {
+    const mine = recent(deepTimes, ip, 3600 * 1000);
+    if (mine.length >= DEEP_PER_IP_PER_HOUR) return json({ error: "rate_limited", message: "That's several deep checks from your connection in the last hour. Try again later, or email office@gdrock.com." }, 429);
+    mine.push(Date.now());
+  }
+  const vantage = readVantage(request);
+
+  // Before the VPS and its queue exist, a request is kept as a lead and the owner
+  // runs it by hand: nobody who asked is lost.
+  if (!env.DEEP_SCAN) {
+    if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
+      later(ctx, fetch(`${env.SUPABASE_URL}/rest/v1/leads`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`, Prefer: "return=minimal" },
+        body: JSON.stringify({ source: "deep_scan", email, website_url: domain, plan: "deep-check", notes: "Deep check requested; queue not configured, run it by hand" + (b.optin === true ? " | opted-in: alerts+news" : "") }),
+      }));
+    }
+    later(ctx, telegram(env, `GDRock deep check requested (no queue yet: run it by hand)\n\nSite: ${domain}\nEmail: ${email}\nVisitor location: ${vantage.country || "unknown"}\n\nnode verify_consent.js https://${domain} --geo=de`));
+    return json({ ok: true, queued: false, message: "Got it. We run this check by hand right now, from a connection in Germany, and email you the result within one working day." });
+  }
+
+  const ehash = (await sha256Hex(email.toLowerCase())).slice(0, 32);
+  const capKey = "cap:" + ehash;
+  const used = parseInt((await env.DEEP_SCAN.get(capKey)) || "0", 10) || 0;
+  if (used >= DEEP_PER_EMAIL_PER_DAY) return json({ error: "rate_limited", message: "That email has had " + DEEP_PER_EMAIL_PER_DAY + " deep checks today. Reply to one of the reports if you need more." }, 429);
+
+  // The same site for the same person within a day: point them at the job already running.
+  const dupKey = "dup:" + domain + ":" + ehash;
+  const dupId = await env.DEEP_SCAN.get(dupKey);
+  const dup = dupId ? await deepJob(env, dupId) : null;
+  if (dup && (dup.status === "queued" || dup.status === "running")) {
+    return json({ ok: true, queued: true, duplicate: true, id: dup.id, status: dup.status, position: dup.status === "queued" ? await deepQueuePosition(env, dup.id) : 0,
+      message: "That check is already " + (dup.status === "queued" ? "in the queue" : "running") + ". The result goes to " + email + "." });
+  }
+
+  const now = Date.now();
+  const job = { id: crypto.randomUUID(), domain, url: "https://" + domain, email, optin: b.optin === true, status: "queued",
+    created: new Date(now).toISOString(), requestedFrom: vantage.country || null };
+  await saveDeepJob(env, job);
+  await env.DEEP_SCAN.put("queue:" + String(now).padStart(15, "0") + ":" + job.id, job.id, { expirationTtl: 3 * 86400 });
+  await env.DEEP_SCAN.put(dupKey, job.id, { expirationTtl: 86400 });
+  await env.DEEP_SCAN.put(capKey, String(used + 1), { expirationTtl: 86400 });
+  const position = await deepQueuePosition(env, job.id);
+  later(ctx, telegram(env, `GDRock deep check queued\n\nSite: ${domain}\nEmail: ${email}${job.optin ? " (opted in)" : ""}\nPosition: ${position || "?"}`));
+  return json({ ok: true, queued: true, id: job.id, position,
+    message: "Queued" + (position > 1 ? " (" + position + " ahead of you, including yours)" : "") + ". A browser on a server in Germany is checking " + domain + " twice, without touching the banner. The result goes to " + email + ", usually within 15 minutes." });
+}
+
+async function handleDeepScanNext(request, env) {
+  if (!runnerAuthorized(env, request)) return json({ error: "unauthorized" }, 401);
+  if (!env.DEEP_SCAN) return json({ error: "deep_scan_not_configured" }, 503);
+  const list = await env.DEEP_SCAN.list({ prefix: "queue:", limit: 20 });
+  for (const k of list.keys) {
+    const id = await env.DEEP_SCAN.get(k.name);
+    await env.DEEP_SCAN.delete(k.name);
+    const job = await deepJob(env, id);
+    if (!job || job.status !== "queued") continue;
+    job.status = "running";
+    job.claimed = new Date().toISOString();
+    await saveDeepJob(env, job);
+    return json({ id: job.id, url: job.url, domain: job.domain });
+  }
+  return cors(null, 204);
+}
+
+async function handleDeepScanResult(request, env, ctx) {
+  if (!runnerAuthorized(env, request)) return json({ error: "unauthorized" }, 401);
+  if (!env.DEEP_SCAN) return json({ error: "deep_scan_not_configured" }, 503);
+  const r = await request.json().catch(() => null);
+  const job = r ? await deepJob(env, r.id) : null;
+  if (!job) return json({ error: "unknown job" }, 404);
+  if (job.status === "done" || job.status === "failed") return json({ ok: true, already: job.status });
+  const scored = r.ok !== false && typeof r.score === "number" && r.verdict !== "INCONCLUSIVE" && r.verdict !== "ERROR";
+  job.status = r.ok === false ? "failed" : "done";
+  job.finished = new Date().toISOString();
+  job.verdict = String(r.verdict || (r.ok === false ? "ERROR" : "")).slice(0, 20) || null;
+  job.score = scored ? r.score : null;
+  await saveDeepJob(env, job);
+  await sendDeepScanReport(env, job, r, scored);
+  later(ctx, telegram(env, `GDRock deep check finished\n\nSite: ${job.domain}\nEmail: ${job.email}\nResult: ${scored ? r.score + "/100 (" + job.verdict + ")" : job.verdict + (r.problem ? " - " + String(r.problem).slice(0, 160) : "")}`));
+  return json({ ok: true, status: job.status });
+}
+
+async function handleDeepScanStatus(url, env) {
+  if (!env.DEEP_SCAN) return json({ error: "deep_scan_not_configured" }, 503);
+  const job = await deepJob(env, url.searchParams.get("id"));
+  if (!job) return json({ error: "unknown job" }, 404);
+  return json({ status: job.status, domain: job.domain, position: job.status === "queued" ? await deepQueuePosition(env, job.id) : null,
+    verdict: job.status === "done" ? job.verdict : null, score: job.status === "done" ? job.score : null });
+}
+
+// The runner's result, as an email. Every statement comes from the rig's own
+// summary (what a real browser in Germany saw before anyone clicked the banner);
+// an inconclusive run claims nothing.
+async function sendDeepScanReport(env, job, r, scored) {
+  const e = escHtml;
+  const card = r.card || {};
+  const rows = Array.isArray(card.rows) ? card.rows.slice(0, 10) : [];
+  const deductions = Array.isArray(r.deductions) ? r.deductions.slice(0, 10) : [];
+  const net = r.network || {}, vis = r.visitor || {};
+  const color = !scored ? "#9CA3AF" : r.score >= 80 ? "#00a896" : r.score >= 60 ? "#f5c842" : "#e63946";
+  const checked = job.finished ? job.finished.slice(0, 10) : "";
+  const method = `Chrome on a server in Germany (the connection was seen as ${e(net.country || "unknown")}), ${e(vis.language || "German")} language and ${e(vis.timezone || "Berlin")} time, ${e(r.runs || 2)} separate visits, the cookie banner never clicked. Checked ${e(checked)}.`;
+  const head = card.headline ? `<p style="color:#fff;font-size:20px;font-weight:800;text-align:center;margin:0 0 4px;">${e(card.headline.line1 || "")}</p><p style="color:${card.headline.line2Color === "red" ? "#ff8a8a" : "#9CA3AF"};font-size:16px;text-align:center;margin:0 0 20px;">${e(card.headline.line2 || "")}</p>` : "";
+  const rowHtml = rows.map((x) => `<tr><td style="padding:8px 12px;border-left:3px solid ${x.ok ? "#00a896" : "#e63946"};background:#0a1020;color:#cfd8ea;font-size:14px;border-radius:6px;">${x.ok ? "✓" : "✗"} <b>${e(x.title || "")}</b>${x.sub ? `<div style="color:#9CA3AF;font-size:12.5px;margin-top:4px;">${e(x.sub)}</div>` : ""}</td></tr><tr><td style="height:8px"></td></tr>`).join("");
+  const dedHtml = deductions.length ? `<ul style="color:#cfd8ea;font-size:13px;line-height:1.6;padding-left:18px;margin:6px 0 0;">${deductions.map((d) => `<li>−${e(d.points)} ${e(d.short || d.text || "")}${d.detail ? `: <span style="color:#9CA3AF;">${e(String(d.detail).slice(0, 240))}</span>` : ""}</li>`).join("")}</ul>` : "";
+  const body = scored
+    ? `<div style="text-align:center;font-size:48px;font-weight:800;color:${color};margin-bottom:8px;">${e(r.score)}/100</div>${head}
+       ${r.safeClaim ? `<p style="color:#cfd8ea;font-size:14px;line-height:1.6;margin:0 0 16px;">${e(String(r.safeClaim).slice(0, 700))}</p>` : ""}
+       <table style="width:100%;border-collapse:collapse;">${rowHtml}</table>${dedHtml}`
+    : `<p style="color:#fff;font-size:18px;font-weight:700;text-align:center;margin:0 0 10px;">We couldn't settle this one</p>
+       <p style="color:#cfd8ea;font-size:14px;line-height:1.6;text-align:center;margin:0 0 10px;">${e(String(r.problem || r.error || "The check did not finish.").slice(0, 400))}</p>
+       <p style="color:#9CA3AF;font-size:13px;line-height:1.6;text-align:center;margin:0;">So nothing is claimed about your site from this run. Reply to this email and we'll look at it by hand.</p>`;
+  const html = `<div style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;background:#04081a;padding:32px;border-radius:16px;">
+    <div style="text-align:center;margin-bottom:22px;"><span style="font-size:22px;font-weight:800;color:#fff;">GDRock</span><div style="color:#5b6a8a;font-size:12px;">Deep check · what loads before anyone chooses</div></div>
+    <h1 style="color:#fff;font-size:22px;text-align:center;margin:0 0 6px;">Your deep check</h1>
+    <p style="text-align:center;color:#9CA3AF;font-size:14px;margin:0 0 22px;">for ${e(job.domain)}</p>
+    ${body}
+    <div style="margin-top:20px;padding:14px 16px;border-radius:10px;background:#0a1020;"><p style="color:#cfd8ea;font-size:13px;font-weight:700;margin:0 0 6px;">How this was checked</p><p style="color:#9CA3AF;font-size:12.5px;line-height:1.55;margin:0;">${method} The full report and the result card are attached. A site can change from day to day, so this is a snapshot.</p></div>
+    <div style="background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.25);border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
+      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Want it fixed, not just found?</p>
+      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0 0 14px;">We install the blocker and banner, re-run this exact check, and send you the clean result.</p>
+      <a href="https://www.gdrock.com/dfy.html" style="display:inline-block;background:#00a896;color:#fff;text-decoration:none;font-weight:700;padding:13px 26px;border-radius:10px;">See Done-For-You →</a>
+    </div>
+    <p style="color:#5b6a8a;font-size:11.5px;text-align:center;margin-top:18px;line-height:1.6;">Automated and informational, not legal advice or a compliance guarantee. We keep your email with this job for 14 days, then it is deleted.<br>Questions? Just reply.</p>
+  </div>`;
+  const attachments = [];
+  if (typeof r.card_png === "string" && /^[A-Za-z0-9+/=]+$/.test(r.card_png) && r.card_png.length < 4000000) attachments.push({ name: job.domain + "_GDRock-deep-check.png", type: "image/png", content: r.card_png });
+  if (typeof r.report === "string" && r.report.length) attachments.push({ name: job.domain + "_report.txt", type: "text/plain", content: base64Utf8(r.report.slice(0, 200000)) });
+  const subject = scored ? `Your GDRock deep check for ${job.domain}: ${r.score}/100` : `Your GDRock deep check for ${job.domain}: not conclusive`;
+  try { await sendEmail(env, job.email, subject, html, attachments); } catch (err) { console.error("deep check email failed -", err && err.message); }
+}
+
 // --- The scan itself -------------------------------------------------------
 
 // One anonymous GET. Returns only what came back.
@@ -1116,9 +1559,14 @@ async function scrapeSite(url, vantage) {
       if (links.length < 12 && /privacy|datenschutz|confidential|privacybeleid|informativa|terms|agb|conditions|impressum|cookie|legal|mentions-legales/.test(blob)) links.push(a.href.slice(0, 140));
     }
 
+    // Second reads, in parallel: the site's own stylesheets (fonts pulled in by
+    // @import or url()) and the privacy policy page the homepage links to.
+    const [css, policy] = await Promise.all([readStylesheetFonts(html, finalUrl, finalHost), readPolicy(d.anchors, finalUrl)]);
+
     const cmps     = matchSignatures(CMP_SIGNATURES, d, r.headers);
     const trackers = matchSignatures(TRACKER_SIGNATURES, d, r.headers);
     const fonts    = matchSignatures(FONT_SIGNATURES, d, r.headers);
+    for (const f of css.found) if (!fonts.some((x) => x.name === f.name)) fonts.push({ name: f.name, evidence: f.evidence, cookieless: false, via: "stylesheet" });
     const embeds   = matchSignatures(EMBED_SIGNATURES, d, r.headers);
     const platform = matchSignatures(PLATFORM_SIGNATURES, d, r.headers)[0] || null;
 
@@ -1147,6 +1595,7 @@ async function scrapeSite(url, vantage) {
       gatedTags: findGatedTags(html),
       consentMode: readConsentMode(d.inlineJs),
       setCookies, trackingCookies, thirdPartyHosts,
+      stylesheets: { read: css.read, failed: css.failed }, policy,
       vantage: vantage || readVantage(null),
     };
   } catch (e) { return { ok: false, error: e.message }; }
@@ -1220,9 +1669,12 @@ function buildReport(domain, s) {
   //    country, which is what makes them claimable from any vantage point.
   if (s.fonts.length) {
     deduct("third_party_fonts", names(s.fonts));
+    const inCss = s.fonts.filter((f) => f.via === "stylesheet").length, inHtml = s.fonts.length - inCss;
+    const where = inCss && inHtml ? "linked in the homepage source and imported by the site's own stylesheet"
+      : inCss ? "imported by the site's own stylesheet" : "linked directly in the homepage source";
     add("warning",
-      names(s.fonts) + " " + (s.fonts.length === 1 ? "is" : "are") + " linked directly in the homepage source, so a visitor's browser requests " + (s.fonts.length === 1 ? "it" : "them") + " from that server, disclosing their IP address, as the page parses. A German court awarded damages over exactly this (LG München I, 20.01.2022, 3 O 17493/20). Self-hosting the font files removes it.",
-      "observed", s.fonts[0].evidence);
+      names(s.fonts) + " " + (s.fonts.length === 1 ? "is" : "are") + " " + where + ", so a visitor's browser requests " + (s.fonts.length === 1 ? "it" : "them") + " from that server, disclosing their IP address, as the page " + (inCss && !inHtml ? "loads its styles" : "parses") + ". A German court awarded damages over exactly this (LG München I, 20.01.2022, 3 O 17493/20). Self-hosting the font files removes it.",
+      "observed", s.fonts.map((f) => f.evidence).slice(0, 2).join(" | "));
   }
   const cookieEmbeds = s.embeds.filter((e) => !e.cookieless);
   if (cookieEmbeds.length) {
@@ -1255,7 +1707,23 @@ function buildReport(domain, s) {
     add("warning", "No terms, legal or imprint link was found in the homepage markup.", "observed", null);
   }
 
-  // 6. Things this scan cannot see, said out loud rather than scored.
+  // 6. The privacy policy's contents. A keyword read in six languages can miss
+  //    wording it doesn't know, so what it doesn't find is said as exactly that and
+  //    never moves the score.
+  const pol = s.policy || { status: "no_link" };
+  if (pol.status === "read") {
+    const hit = pol.checks.filter((c) => c.found), miss = pol.checks.filter((c) => !c.found);
+    if (hit.length) add("good", "The privacy policy we read covers " + hit.map((c) => c.label).join("; ") + ".", "observed", hit[0].evidence ? pol.url + " " + hit[0].evidence : pol.url);
+    if (miss.length) add("warning",
+      "Not found in the policy text we read: " + miss.map((c) => c.label).join("; ") + ". This is a keyword read in six languages, so a section worded differently can be missed; check " + (miss.length === 1 ? "that part" : "those parts") + " of the policy by hand. Art. 13 GDPR asks a policy to cover all six.",
+      "inferred", pol.url);
+  } else if (pol.status === "unreadable" || pol.status === "too_little_text") {
+    add("warning",
+      "A privacy policy link was found, but " + (pol.status === "too_little_text" ? "the page returned too little text to check (it may be built by JavaScript)" : "the page could not be read (" + pol.reason + ")") + ", so its contents were not checked.",
+      "observed", pol.url);
+  }
+
+  // 7. Things this scan cannot see, said out loud rather than scored.
   if (s.gtm) add("warning", GTM_NOTICE, "observed", null);
 
   score = Math.max(0, Math.min(100, score));
@@ -1275,6 +1743,9 @@ function buildReport(domain, s) {
     consent_tools: s.cmps.map((c) => ({ name: c.name, evidence: c.evidence })),
     tags_found: s.trackers.map((t) => ({ name: t.name, evidence: t.evidence })),
     third_party_hosts: s.thirdPartyHosts,
+    stylesheets_read: (s.stylesheets && s.stylesheets.read) || [],
+    privacy_policy: pol.status === "read" ? { url: pol.url, status: "read", checks: pol.checks }
+      : pol.status === "no_link" ? { status: "no_link" } : { url: pol.url, status: pol.status },
     document_cookies: s.setCookies,
     deductions,
     limits: scanLimits(s),
@@ -1288,8 +1759,13 @@ function buildReport(domain, s) {
 // The boundary, stated to the person reading the report instead of buried here.
 function scanLimits(s) {
   const v = s.vantage || {};
+  const sheets = (s.stylesheets && s.stylesheets.read) || [];
+  const pol = s.policy || {};
+  const also = [];
+  if (sheets.length) also.push(sheets.length === 1 ? "one of the site's own stylesheets (for the fonts it imports)" : sheets.length + " of the site's own stylesheets (for the fonts they import)");
+  if (pol.status === "read") also.push("the privacy policy page it links to");
   return [
-    "One page was read: the homepage at " + s.finalUrl + ".",
+    "The homepage at " + s.finalUrl + " was read" + (also.length ? ", plus " + also.join(" and ") : "") + ". No other page was.",
     "No JavaScript was executed, so nothing here describes what runs in a real browser — not whether a banner appears, not the order tags fire in, and not the cookies JavaScript writes.",
     "A consent tool, banner or tag added by a tag manager, a store app or a server-side country rule is invisible to a source scan.",
     v.countryKnown
@@ -1303,7 +1779,7 @@ function scanLimits(s) {
 // Worst first, so the panel opens on what matters.
 function orderIssues(issues) {
   const rank = { critical: 0, warning: 1, good: 2 };
-  return issues.slice().sort((a, b) => (rank[a.severity] ?? 1) - (rank[b.severity] ?? 1)).slice(0, 10);
+  return issues.slice().sort((a, b) => (rank[a.severity] ?? 1) - (rank[b.severity] ?? 1)).slice(0, 12);
 }
 
 // --- AI: prose only --------------------------------------------------------

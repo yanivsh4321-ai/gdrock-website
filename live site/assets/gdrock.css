@@ -476,7 +476,8 @@ a.step:hover,a.step:hover i{color:var(--ink);}
 .mk-banner-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 .mk-banner-top span{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--ink);}
 .mk-banner p{font-size:11px;line-height:1.5;color:var(--ink-2);margin-bottom:12px;}
-.mk-banner-btns{display:flex;gap:6px;}
+.mk-banner-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mk-custom{display:block;margin-top:7px;text-align:center;font-size:10.5px;font-weight:600;color:var(--ink-2);text-decoration:underline;text-underline-offset:2px;}
 .mk-bbtn{flex:1;padding:8px;border-radius:8px;font-size:11px;font-weight:600;text-align:center;background:rgba(255,255,255,.08);color:var(--ink-2);transition:border-radius .15s var(--ease);}
 #mk-logo-svg{transition:width .15s var(--ease),height .15s var(--ease);}
 
@@ -549,3 +550,8 @@ footer{border-top:1px solid var(--line);padding:clamp(44px,5vw,64px) 0 40px;}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
 }
+
+/* Deep check offer under the scan result */
+.deep-box{margin-top:14px;}
+.deep-msg{margin:10px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-2);}
+.deep-msg:empty{display:none;}
