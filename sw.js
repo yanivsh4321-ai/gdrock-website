@@ -1,7 +1,7 @@
 /* GDRock Compliance Console — service worker.
    App-shell caching so the installed PWA opens offline. Live consent data
    (cdn.gdrock.com) is always network-first and never cached. */
-const VERSION = 'gdrock-app-v1';
+const VERSION = 'gdrock-app-v2'; // bump whenever app.html changes: the shell is served cache-first
 const SHELL = [
   '/app.html',
   '/manifest.webmanifest',

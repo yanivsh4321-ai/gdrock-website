@@ -63,10 +63,11 @@ footer a{color:var(--g500);}
     <h2>What happens next</h2>
     <ol>
       <li><strong>Check your inbox.</strong> Your access code arrives within a couple of minutes. If it isn't there, look in spam before anything else &mdash; it's almost always there.</li>
-      <li><strong>Add one line to your site,</strong> just before the closing <code>&lt;/body&gt;</code> tag. Your real site ID is in the email:
-        <pre>&lt;script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="yourstore.com"&gt;&lt;/script&gt;</pre>
+      <li><strong>Add one line to your site,</strong> as the first thing inside <code>&lt;head&gt;</code>, above every other script, with no <code>async</code>. It holds trackers until the visitor chooses, so it has to run before them. Your real site ID is in the email:
+        <pre>&lt;script src="https://cdn.gdrock.com/gdrock.js" data-site-id="yourstore.com"&gt;&lt;/script&gt;</pre>
+        On Shopify, use the ready-made <a href="https://github.com/yanivsh4321-ai/gdrock-website/blob/main/integrations/shopify/snippets/gdrock-blocker.liquid">theme snippet</a>. Then open your site, press F12 and run <code>GDRock.installFix()</code>: it lists anything left to change.
       </li>
-      <li><strong>Customise the banner</strong> at <a href="https://cdn.gdrock.com/customize">cdn.gdrock.com/customize</a> using your access code &mdash; colours, wording, and which cookies are blocked before consent.</li>
+      <li><strong>Customise the banner</strong> at <a href="https://cdn.gdrock.com/customize">cdn.gdrock.com/customize</a> using your access code: colours, corners, text size, logo and position.</li>
     </ol>
   </div>
 

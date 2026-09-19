@@ -238,8 +238,8 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
         </div>
       </div>
       <div class="sec-h">Your install script</div>
-      <p class="dl-hint">Paste this one tag into your site's <span class="mono">&lt;head&gt;</span>. It loads <b>your</b> GDRock cookie banner, blocks trackers pre-consent, and logs every consent — no other code needed.</p>
-      <div class="code" id="install-code">&lt;script async src="https://cdn.gdrock.com/gdrock.js"
+      <p class="dl-hint">Paste this one tag as the first line inside your site's <span class="mono">&lt;head&gt;</span>, above every other script, with no <span class="mono">async</span>. It loads <b>your</b> GDRock cookie banner, holds known trackers until the visitor chooses, and logs every choice. Then run <span class="mono">GDRock.installFix()</span> in the browser console on your site to see anything left to change.</p>
+      <div class="code" id="install-code">&lt;script src="https://cdn.gdrock.com/gdrock.js"
         data-site-id="gdrock.com"&gt;&lt;/script&gt;</div>
       <div class="dl-actions">
         <button class="btn" id="copy-script"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy script</button>
@@ -603,7 +603,7 @@ function relTime(iso){
 /* Install-script: build the customer's own snippet from their site id, copy + download. */
 (function(){
   function siteId(){ var el=document.getElementById('site-id'); return (el&&el.textContent.trim())||'gdrock.com'; }
-  function snippet(){ return '<script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="'+siteId()+'"><\/script>'; }
+  function snippet(){ return '<script src="https://cdn.gdrock.com/gdrock.js" data-site-id="'+siteId()+'"><\/script>'; }
   var codeEl=document.getElementById('install-code');
   function refresh(){ if(codeEl) codeEl.textContent=snippet(); }
   refresh();
