@@ -1,0 +1,25 @@
+{%- comment -%}
+  GDRock consent blocker + cookie banner for Shopify.
+
+  Install (Online Store > Themes > current theme > Edit code):
+    1. Add this file as snippets/gdrock-blocker.liquid.
+    2. In layout/theme.liquid, make this the FIRST line after <head>,
+       above {{ content_for_header }} and above every other script:
+         {% render 'gdrock-blocker' %}
+    3. Delete any older GDRock <script> tag from the theme.
+    4. Settings > Customer privacy: require consent for the regions you sell to.
+
+  Why first: Shopify writes app embeds, the pixel manager and window.Shopify
+  inside {{ content_for_header }}. Anything that runs before GDRock is not
+  blocked, and GDRock has to catch window.Shopify the moment it is created
+  to pass the visitor's choice to Shopify's Customer Privacy API.
+
+  No async or defer on the tag: it must run before the rest of <head>.
+  The site id is the shop's primary domain without "www."; if your GDRock
+  site id is different, type it in place of the Liquid below.
+
+  After installing, open the shop, press F12 and run GDRock.installFix()
+  in the console for anything left to change (for example an app embed,
+  such as Klaviyo's, that must be switched off and pasted in tagged).
+{%- endcomment -%}
+<script src="https://cdn.gdrock.com/gdrock.js" data-site-id="{{ shop.domain | remove_first: 'www.' }}"></script>
