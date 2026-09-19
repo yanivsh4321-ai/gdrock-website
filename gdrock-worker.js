@@ -555,10 +555,25 @@ export default {
       const plan   = meta.gdrock_plan || whopPlanName(env, (d.plan && d.plan.id) || d.plan_id) || "care";
 
       // Access revoked — cancellation, refund, chargeback or failed renewal.
-      if (event === "membership.went_invalid" || event === "membership.cancelled" ||
+      // membership.deactivated and refund.created are the names in Whop's
+      // webhook list as of 2026-09; the older names stay for safety.
+      if (event === "membership.deactivated" || event === "refund.created" ||
+          event === "membership.went_invalid" || event === "membership.cancelled" ||
           event === "membership.canceled"     || event === "payment.refunded") {
-        if (siteId) await supabasePatch(env, siteId, { active: false });
-        return json({ ok: true, revoked: siteId });
+        if (siteId) {
+          await supabasePatch(env, siteId, { active: false });
+          return json({ ok: true, revoked: siteId });
+        }
+        // A revoke that can't be matched to a site must never pass silently:
+        // the customer would keep a working banner they no longer pay for.
+        if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+          await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, disable_web_page_preview: true,
+              text: `Whop ${event} could not be matched to a website.\nEmail: ${email || "unknown"}\nSwitch their banner off by hand in Supabase (sites.active = false).` }),
+          }).catch(() => {});
+        }
+        return json({ ok: true, note: "revoke event without a website" });
       }
 
       // Access granted or renewed.
