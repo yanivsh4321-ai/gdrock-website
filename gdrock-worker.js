@@ -1658,7 +1658,8 @@ function buildReport(domain, s) {
     score += rule.points;
     deductions.push({ rule: key, points: rule.points, label: rule.label, detail: detail || null });
   };
-  const add = (severity, text, confidence, evidence) => issues.push({ severity, text, confidence, evidence: evidence || null });
+  // Each finding carries a stable id so a UI can map it to its own copy without reading the prose.
+  const add = (severity, text, confidence, evidence, id) => issues.push({ id: id || null, severity, text, confidence, evidence: evidence || null });
   const names = (list) => list.map((x) => x.name).join(", ");
 
   const hasCMP = s.cmps.length > 0;
@@ -1671,30 +1672,30 @@ function buildReport(domain, s) {
     deduct("trackers_no_consent_tool", names(s.trackers));
     add("critical",
       "The homepage source loads " + names(s.trackers) + ", and no consent tool we recognise appears anywhere in it. This scan reads source code only, so it cannot tell you whether those tags run before a visitor chooses — treat it as the first thing to check, not as a proven breach.",
-      "observed", s.trackers.map((t) => t.evidence).slice(0, 4).join(" | "));
+      "observed", s.trackers.map((t) => t.evidence).slice(0, 4).join(" | "), "tags_no_consent_tool");
   } else if (hasTrk && hasCMP && !gated) {
     // Informational only, no points. Shopware's cookie bar, Shopify's banner and
     // most tag-manager setups hold tags back at runtime, which leaves no trace in
     // the source; the local rig proved exactly that on vapor-handel.de.
     add("warning",
       names(s.cmps) + " is installed alongside " + names(s.trackers) + ", and no tag in the source carries the markup a consent tool uses to hold one back (no type=\"text/plain\", no consent data-attribute). Several tools block at runtime instead, which source code cannot show, so this is a prompt to check in a browser rather than a finding against you.",
-      "inferred", s.cmps.map((c) => c.evidence).slice(0, 2).join(" | "));
+      "inferred", s.cmps.map((c) => c.evidence).slice(0, 2).join(" | "), "tags_not_marked_for_consent");
   } else if (hasTrk && hasCMP && gated) {
     add("good",
       names(s.cmps) + " is installed, and " + s.gatedTags.length + " tag" + (s.gatedTags.length === 1 ? " is" : "s are") + " marked in the source for it to hold back until consent. Whether it holds every tag back is a runtime question this scan cannot answer.",
-      "observed", s.gatedTags[0]);
+      "observed", s.gatedTags[0], "tags_marked_for_consent");
   } else {
     add("good",
       "No third-party analytics or advertising tag was found in the homepage source. Tags injected later by a tag manager, by an app, or on another page would not appear here.",
-      "observed", null);
+      "observed", null, "no_tags_in_source");
   }
 
   if (hasCMP) {
-    add("good", "Consent tool found in the source: " + names(s.cmps) + ".", "observed", s.cmps[0].evidence);
+    add("good", "Consent tool found in the source: " + names(s.cmps) + ".", "observed", s.cmps[0].evidence, "consent_tool_found");
   } else {
     add("warning",
       "No consent tool was found in the homepage source. That is not proof there is no banner — some are injected by a tag manager or a store app, and some are served only to visitors in certain countries. It means nothing in the page we fetched declares one.",
-      "observed", null);
+      "observed", null, "no_consent_tool");
   }
 
   // 2. Consent Mode defaults — declared in the initial HTML, so fair game.
@@ -1702,11 +1703,11 @@ function buildReport(domain, s) {
     deduct("consent_mode_granted", JSON.stringify(cm.states));
     add("critical",
       "Google Consent Mode is configured in the source with storage granted by default (" + Object.entries(cm.states).map(([k, v]) => k + ": " + v).join(", ") + "). That default permits Google's tags to store and send data without waiting for anyone to agree.",
-      "observed", cm.evidence);
+      "observed", cm.evidence, "consent_mode_granted");
   } else if (cm && cm.deniesByDefault) {
     add("good",
       "Google Consent Mode is configured in the source with ad and analytics storage denied by default, which is the correct default.",
-      "observed", cm.evidence);
+      "observed", cm.evidence, "consent_mode_denied");
   }
 
   // 3. Fonts and embeds. These behave identically for every visitor in every
@@ -1718,14 +1719,14 @@ function buildReport(domain, s) {
       : inCss ? "imported by the site's own stylesheet" : "linked directly in the homepage source";
     add("warning",
       names(s.fonts) + " " + (s.fonts.length === 1 ? "is" : "are") + " " + where + ", so a visitor's browser requests " + (s.fonts.length === 1 ? "it" : "them") + " from that server, disclosing their IP address, as the page " + (inCss && !inHtml ? "loads its styles" : "parses") + ". A German court awarded damages over exactly this (LG München I, 20.01.2022, 3 O 17493/20). Self-hosting the font files removes it.",
-      "observed", s.fonts.map((f) => f.evidence).slice(0, 2).join(" | "));
+      "observed", s.fonts.map((f) => f.evidence).slice(0, 2).join(" | "), "third_party_fonts");
   }
   const cookieEmbeds = s.embeds.filter((e) => !e.cookieless);
   if (cookieEmbeds.length) {
     deduct("cookie_setting_embed", names(cookieEmbeds));
     add("warning",
       names(cookieEmbeds) + " " + (cookieEmbeds.length === 1 ? "is" : "are") + " embedded in the homepage source. Embeds like these set cookies on load unless a consent tool holds them back; YouTube's youtube-nocookie.com domain is the usual swap.",
-      "observed", cookieEmbeds[0].evidence);
+      "observed", cookieEmbeds[0].evidence, "cookie_setting_embed");
   }
 
   // 4. The document's own Set-Cookie. Usually empty, because most tracking
@@ -1734,7 +1735,7 @@ function buildReport(domain, s) {
     deduct("tracking_cookie_on_document", s.trackingCookies.join(", "));
     add("critical",
       "The homepage response set " + (s.trackingCookies.length === 1 ? "a tracking cookie" : "tracking cookies") + " (" + s.trackingCookies.join(", ") + ") on a request that carried no cookies and no consent. This one is not a matter of interpretation: it is on the response we fetched.",
-      "observed", s.trackingCookies.join(", "));
+      "observed", s.trackingCookies.join(", "), "tracking_cookie_on_document");
   }
 
   // 5. Policies.
@@ -1742,13 +1743,13 @@ function buildReport(domain, s) {
   const hasTerms   = s.links.some((l) => /terms|agb|conditions|impressum|legal|mentions/i.test(l));
   if (!hasPrivacy) {
     deduct("no_privacy_link");
-    add("critical", "No link to a privacy policy was found in the homepage markup. Art. 13 GDPR requires that information to be reachable from where data is collected.", "observed", null);
+    add("critical", "No link to a privacy policy was found in the homepage markup. Art. 13 GDPR requires that information to be reachable from where data is collected.", "observed", null, "no_privacy_link");
   } else {
-    add("good", "A privacy policy link is present in the homepage markup.", "observed", null);
+    add("good", "A privacy policy link is present in the homepage markup.", "observed", null, "privacy_link_found");
   }
   if (!hasTerms) {
     deduct("no_terms_link");
-    add("warning", "No terms, legal or imprint link was found in the homepage markup.", "observed", null);
+    add("warning", "No terms, legal or imprint link was found in the homepage markup.", "observed", null, "no_terms_link");
   }
 
   // 6. The privacy policy's contents. A keyword read in six languages can miss
@@ -1757,18 +1758,18 @@ function buildReport(domain, s) {
   const pol = s.policy || { status: "no_link" };
   if (pol.status === "read") {
     const hit = pol.checks.filter((c) => c.found), miss = pol.checks.filter((c) => !c.found);
-    if (hit.length) add("good", "The privacy policy we read covers " + hit.map((c) => c.label).join("; ") + ".", "observed", hit[0].evidence ? pol.url + " " + hit[0].evidence : pol.url);
+    if (hit.length) add("good", "The privacy policy we read covers " + hit.map((c) => c.label).join("; ") + ".", "observed", hit[0].evidence ? pol.url + " " + hit[0].evidence : pol.url, "policy_covers");
     if (miss.length) add("warning",
       "Not found in the policy text we read: " + miss.map((c) => c.label).join("; ") + ". This is a keyword read in six languages, so a section worded differently can be missed; check " + (miss.length === 1 ? "that part" : "those parts") + " of the policy by hand. Art. 13 GDPR asks a policy to cover all six.",
-      "inferred", pol.url);
+      "inferred", pol.url, "policy_gaps");
   } else if (pol.status === "unreadable" || pol.status === "too_little_text") {
     add("warning",
       "A privacy policy link was found, but " + (pol.status === "too_little_text" ? "the page returned too little text to check (it may be built by JavaScript)" : "the page could not be read (" + pol.reason + ")") + ", so its contents were not checked.",
-      "observed", pol.url);
+      "observed", pol.url, "policy_unreadable");
   }
 
   // 7. Things this scan cannot see, said out loud rather than scored.
-  if (s.gtm) add("warning", GTM_NOTICE, "observed", null);
+  if (s.gtm) add("warning", GTM_NOTICE, "observed", null, "gtm_container");
 
   score = Math.max(0, Math.min(100, score));
 

@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="/assets/fonts/geist.css">
 <script type="importmap">{"imports":{"gsap":"https://esm.sh/gsap@3.12.5","gsap/ScrollTrigger":"https://esm.sh/gsap@3.12.5/ScrollTrigger"}}</script>
 
-<link rel="stylesheet" href="/assets/gdrock.css">
+<link rel="stylesheet" href="/assets/gdrock.css?v=20261001b">
 
 <script type="application/ld+json">
 {
@@ -188,6 +188,9 @@
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Every finding shows the code it came from</li>
       </ul>
 
+    </div>
+
+    <aside class="band-side" aria-label="What the scan checks">
       <div class="checks-wrap">
         <p class="checks-h">What it checks</p>
         <div class="checks">
@@ -197,43 +200,52 @@
         </div>
         <p class="band-foot">It reads source code, so it can't see what runs in a browser before a visitor chooses. That needs a real browser: after your result you can ask for a free deep check, run from a server in Germany.</p>
       </div>
-    </div>
+    </aside>
 
-    <div class="rc" id="rc" aria-live="polite" aria-busy="false">
-      <div class="rc-head">
-        <span class="rc-tag" id="rc-tag">Sample &middot; real result</span>
-        <span class="rc-site num" id="rc-site">gdrock.com</span>
-      </div>
-      <div class="rc-score rc-a" style="--i:0">
-        <div class="rc-num"><b class="num" id="rc-score" style="color:var(--ok)">100</b><span class="num" id="rc-of">/100</span></div>
-        <div>
-          <p class="rc-verdict" id="rc-verdict">Nothing in the source to fix.</p>
-          <p class="rc-kind"><span id="rc-kindlab">Source score</span> &middot; <span id="rc-platform">rules-based</span></p>
+  </div>
+</section>
+
+<!-- ============ 2b · THE REPORT ============
+     Rendered by the scanner script below from the scanner's own result (scan
+     API -> normalizeScan -> renderReport). The sample is a real gdrock.com
+     result, run through the same path. No text here is written at runtime by
+     a language model: titles and short lines are fixed copy keyed by finding
+     id, everything else is the scanner's rule-written output. -->
+<section class="report-sec" id="report" aria-labelledby="rp-headline">
+  <div class="shell">
+    <article class="rp" id="rc" aria-live="polite" aria-busy="false">
+      <header class="rp-head">
+        <div class="rp-id">
+          <img class="rp-logo" src="/assets/gdrock-mark-light.png" alt="" width="28" height="28">
+          <span class="rp-word">GDRock</span>
+          <span class="rp-rule" aria-hidden="true"></span>
+          <span class="rp-kind" id="rp-kind">Privacy scan &middot; Sample result</span>
         </div>
+        <div class="rp-meta">
+          <span class="rp-domain" id="rp-domain">gdrock.com</span>
+          <time class="rp-time" id="rp-time"></time>
+        </div>
+      </header>
+      <div class="rp-body">
+        <div class="rp-score">
+          <p class="rp-num" id="rp-num"><b id="rp-score">100</b><span>/100</span></p>
+          <div>
+            <h2 class="rp-headline" id="rp-headline">No issues found in the source.</h2>
+            <p class="rp-explain" id="rp-explain">Everything this scan can check came back clean. What it can&rsquo;t see is listed below.</p>
+            <p class="rp-basis" id="rp-basis">Source score &middot; rules-based</p>
+          </div>
+        </div>
+        <ul class="rp-list" id="rp-list" aria-label="Findings"></ul>
+        <noscript><p class="rp-explain">Turn on JavaScript to see the findings.</p></noscript>
+        <section class="rp-limits" aria-labelledby="rp-limits-h">
+          <h3 class="rp-limits-h" id="rp-limits-h">What this scan can&rsquo;t see</h3>
+          <ul id="rp-limits"></ul>
+        </section>
       </div>
-      <p class="rc-tags rc-a" id="rc-tags" style="--i:1" hidden></p>
-      <p class="rc-sum rc-a" id="rc-sum" style="--i:1" hidden></p>
-      <ul class="rc-list" id="rc-list">
-        <li class="fd good rc-a" style="--i:1"><p>No third-party analytics or advertising tag was found in the homepage source. Tags injected later by a tag manager, by an app, or on another page would not appear here.</p></li>
-        <li class="fd good rc-a" style="--i:2"><p>Consent tool found in the source: GDRock.</p><code>https://cdn.gdrock.com/gdrock.js</code></li>
-        <li class="fd good rc-a" style="--i:3"><p>A privacy policy link is present in the homepage markup.</p></li>
-        <li class="fd good rc-a" style="--i:4"><p>The privacy policy we read covers who the controller is, with contact details; the legal basis for each use of data; the visitor's rights (access, erasure, objection…); how long data is kept; who the data is shared with (processors, recipients); the right to complain to a supervisory authority.</p><code>https://gdrock.com/terms-and-conditions.html#privacy … 1. Data Controller Yaniv Shashua, trading as GDRock (Israel), operat…</code></li>
-      </ul>
-      <details class="rc-limits rc-a" style="--i:5">
-        <summary>What this scan can't see</summary>
-        <ul id="rc-limits">
-          <li>The homepage was read, plus 2 of the site's own stylesheets (for the fonts they import) and the privacy policy page it links to. No other page was.</li>
-          <li>No JavaScript was executed, so nothing here describes what runs in a real browser &mdash; not whether a banner appears, not the order tags fire in, and not the cookies JavaScript writes.</li>
-          <li>A consent tool, banner or tag added by a tag manager, a store app or a server-side country rule is invisible to a source scan.</li>
-        </ul>
-      </details>
+    </article>
+    <p class="rp-note" id="rc-sample-note">This is gdrock.com, scanned by the tool above under the same rules your store gets. It used to score 90, for loading its fonts from Google. Now they come from our own server.</p>
 
-      <p class="rc-foot" id="rc-sample-note">This is gdrock.com, scanned by the tool on the left, under the same rules your store gets. It used to score 90, for loading its fonts from Google. Now they come from our own server.</p>
-
-      <div class="rc-act" id="rc-act" hidden>
-        <a class="btn btn-1 btn-wide" href="#fix" id="scan-fix-cta">See the fix
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
+    <div class="rc-act" id="rc-act" hidden>
         <div class="report-box" id="report-box">
           <h4>Email me this report</h4>
           <p>The same findings with their evidence, so you can hand them to whoever runs your store.</p>
@@ -265,11 +277,14 @@
           <p class="field-err" id="err-deep">Enter a valid email address.</p>
           <p class="deep-msg" id="deep-msg" role="status" aria-live="polite"></p>
         </div>
-        <button class="btn btn-2 btn-wide" type="button" id="scan-again">Scan another address</button>
-        <p class="disclose" id="rc-disclaimer">This scan is automated and informational: it is not legal advice, a formal audit, or a compliance guarantee. GDRock provides software and templates, not legal services.</p>
+        <div class="rc-act-row">
+          <a class="btn btn-1" href="#fix" id="scan-fix-cta">See the fix
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <button class="btn btn-2" type="button" id="scan-again">Scan another address</button>
+          <p class="disclose" id="rc-disclaimer">This scan is automated and informational: it is not legal advice, a formal audit, or a compliance guarantee. GDRock provides software and templates, not legal services.</p>
+        </div>
       </div>
-    </div>
-
   </div>
 </section>
 
@@ -674,10 +689,12 @@
 })();
 
 /* ===================== SCANNER =====================
-   The API reads one homepage's source and returns rule-based findings, each
-   with the evidence string it came from, plus the scan's own limits. This
-   renders exactly that and nothing more: the verdict is worded from the
-   deductions the API made, never from a guess about the site.
+   Scan API -> normalizeScan() -> renderReport(). The API reads one homepage's
+   source and returns rule-based findings (each with a stable id, a severity,
+   the rule's own wording and the evidence it came from) plus the scan's own
+   limits. The page adds fixed copy keyed by finding id and nothing else: no
+   text on this report is generated at runtime, and a response from before
+   ids existed (or from the 10-minute cache) is mapped by the rule's wording.
 
    Failure is never dressed as success, and the email is only asked for after
    a real result is on screen. Everything site-derived goes in via textContent. */
@@ -689,28 +706,218 @@
 
   var form=$('scan-form'),urlEl=$('scan-url'),btn=$('scan-btn'),run=$('scan-run'),bar=$('scan-bar'),step=$('scan-step'),
       fail=$('scan-fail'),retry=$('scan-retry'),errU=$('err-url'),
-      rc=$('rc'),rcTag=$('rc-tag'),rcSite=$('rc-site'),rcScore=$('rc-score'),rcVerdict=$('rc-verdict'),rcPlatform=$('rc-platform'),
-      rcSum=$('rc-sum'),rcList=$('rc-list'),rcLimits=$('rc-limits'),rcNote=$('rc-sample-note'),rcAct=$('rc-act'),
+      rc=$('rc'),rpKind=$('rp-kind'),rpDomain=$('rp-domain'),rpTime=$('rp-time'),rpNum=$('rp-num'),rpScore=$('rp-score'),
+      rpHead=$('rp-headline'),rpExplain=$('rp-explain'),rpBasis=$('rp-basis'),rpList=$('rp-list'),rpLimits=$('rp-limits'),
+      rcNote=$('rc-sample-note'),rcAct=$('rc-act'),
       reportBox=$('report-box'),reportEmail=$('report-email'),reportBtn=$('report-btn'),consentEl=$('scan-consent'),errE=$('err-email'),
-      again=$('scan-again'),rcTags=$('rc-tags'),rcOf=$('rc-of'),rcKindLab=$('rc-kindlab'),
-      deepBox=$('deep-box'),deepH=$('deep-h'),
+      again=$('scan-again'),deepBox=$('deep-box'),deepH=$('deep-h'),
       deepEmail=$('deep-email'),deepBtn=$('deep-btn'),deepMsg=$('deep-msg'),errD=$('err-deep');
-  if(!form)return;
-  var before=null;
+  if(!form||!rc)return;
+  var current=null;
   var lastUrl='',lastScore=null,busy=false;
 
+  /* A real gdrock.com result from the scan API, shown through the same path as any scan. */
+  var SAMPLE={"score":100,"needs_browser_check":false,"open_question":null,"platform":null,"consent_tools":[{"name":"GDRock","evidence":"https://cdn.gdrock.com/gdrock.js"}],"tags_found":[],"privacy_policy":{"url":"https://www.gdrock.com/terms-and-conditions.html","status":"read","checks":[{"key":"controller","label":"who the controller is, with contact details","found":true,"evidence":"… of Israel. Privacy Policy 1. Data Controller Yaniv Shashua, trading as GDRock (Israel), operates as the data controller for personal data c…"},{"key":"legalBasis","label":"the legal basis for each use of data","found":true,"evidence":"…al data to third parties. 3a. Lawful Basis for Processing (GDPR Art. 13(1)(c)) Email addresses: Contract performance and legitimate interest…"},{"key":"rights","label":"the visitor's rights (access, erasure, objection…)","found":true,"evidence":"…ata retention policy. 7. Your GDPR Rights Under the GDPR, you have the right to access, rectify, erase, restrict, or port your personal data…"},{"key":"retention","label":"how long data is kept","found":true,"evidence":"…roved sub-processors. 6. Data Retention Personal data is retained only for as long as necessary to deliver the Services or as required by ap…"},{"key":"processors","label":"who the data is shared with (processors, recipients)","found":true,"evidence":"… do not sell personal data to third parties. 3a. Lawful Basis for Processing (GDPR Art. 13(1)(c)) Email addresses: Contract performance and …"},{"key":"complaint","label":"the right to complain to a supervisory authority","found":true,"evidence":"…R. You also have the right to lodge a complaint with your national data protection supervisory authority at any time. A list of EU data prot…"}]},"document_cookies":[],"deductions":[],"limits":["The homepage at https://www.gdrock.com/ was read, plus 2 of the site's own stylesheets (for the fonts they import) and the privacy policy page it links to. No other page was.","No JavaScript was executed, so nothing here describes what runs in a real browser — not whether a banner appears, not the order tags fire in, and not the cookies JavaScript writes.","A consent tool, banner or tag added by a tag manager, a store app or a server-side country rule is invisible to a source scan.","This request left a Cloudflare location in IL, outside the EU/EEA/UK, so markup this site serves only to European visitors may not be in what we read."],"issues":[{"severity":"good","text":"No third-party analytics or advertising tag was found in the homepage source. Tags injected later by a tag manager, by an app, or on another page would not appear here.","confidence":"observed","evidence":null},{"severity":"good","text":"Consent tool found in the source: GDRock.","confidence":"observed","evidence":"https://cdn.gdrock.com/gdrock.js"},{"severity":"good","text":"A privacy policy link is present in the homepage markup.","confidence":"observed","evidence":null},{"severity":"good","text":"The privacy policy we read covers who the controller is, with contact details; the legal basis for each use of data; the visitor's rights (access, erasure, objection…); how long data is kept; who the data is shared with (processors, recipients); the right to complain to a supervisory authority.","confidence":"observed","evidence":"https://www.gdrock.com/terms-and-conditions.html … of Israel. Privacy Policy 1. Data Controller Yaniv Shashua, trading as GDRock (Israel), operates as the data controller for personal data c…"}],"checked_at":"2026-10-01T18:37:15.995Z","domain":"gdrock.com"};
+
+  /* ---- Normalisation: the scanner's schema in, the report's schema out ---- */
+
+  /* Fixed copy per finding id: a title and one short line. The rule's own
+     sentence and its evidence appear when the row is opened. */
+  var COPY={
+    tags_no_consent_tool:{t:'Tracking tags with no consent tool',s:'Analytics or advertising tags are in the source, and no consent tool appears alongside them.'},
+    tags_not_marked_for_consent:{t:'Tags not marked to wait for consent',s:'A consent tool is installed, but no tag carries the markup it uses to hold one back.'},
+    tags_marked_for_consent:{t:'Tags marked to wait for consent',s:'Tags in the source carry the markup a consent tool uses to hold them back.'},
+    no_tags_in_source:{t:'No tracking tags in the source',s:'No analytics or advertising tag was found in the homepage source.'},
+    consent_tool_found:{t:'Consent tool detected',s:'A consent management tool is present in the homepage source.'},
+    no_consent_tool:{t:'No consent tool in the source',s:'Nothing in the homepage source declares a consent tool.'},
+    consent_mode_granted:{t:'Consent Mode grants storage by default',s:'Google Consent Mode lets tags store and send data before anyone agrees.'},
+    consent_mode_denied:{t:'Consent Mode denies storage by default',s:'Ad and analytics storage stay off until a visitor agrees.'},
+    third_party_fonts:{t:'Fonts load from an outside server',s:'Visitors’ browsers request fonts from a third party as the page loads.'},
+    cookie_setting_embed:{t:'Embeds that set cookies on load',s:'An embedded video or map can set cookies before any choice.'},
+    tracking_cookie_on_document:{t:'Tracking cookie set by the page itself',s:'The homepage response set a tracking cookie before any consent.'},
+    no_privacy_link:{t:'No privacy policy link',s:'No link to a privacy policy was found on the homepage.'},
+    privacy_link_found:{t:'Privacy policy link found',s:'A privacy policy link is present on the homepage.'},
+    no_terms_link:{t:'No terms or imprint link',s:'No terms, legal or imprint link was found on the homepage.'},
+    policy_covers:{t:'What the privacy policy covers',s:null},
+    policy_gaps:{t:'Gaps in the privacy policy',s:'Some points Art. 13 GDPR asks a policy to cover weren’t found in its text.'},
+    policy_unreadable:{t:'Privacy policy couldn’t be checked',s:'A policy link exists, but its text couldn’t be read.'},
+    gtm_container:{t:'Google Tag Manager container',s:'A tag manager can load more tags than a source scan can list.'}
+  };
+  var LEGACY=[
+    [/^The homepage source loads .*no consent tool/,'tags_no_consent_tool'],
+    [/is installed alongside .*no tag in the source carries/,'tags_not_marked_for_consent'],
+    [/is installed, and \d+ tags? (is|are) marked/,'tags_marked_for_consent'],
+    [/^No third-party analytics or advertising tag/,'no_tags_in_source'],
+    [/^Consent tool found in the source/,'consent_tool_found'],
+    [/^No consent tool was found/,'no_consent_tool'],
+    [/^Google Consent Mode is configured .*granted by default/,'consent_mode_granted'],
+    [/^Google Consent Mode is configured .*denied by default/,'consent_mode_denied'],
+    [/(is|are) (linked directly in the homepage source|linked in the homepage source|imported by the site's own stylesheet)/,'third_party_fonts'],
+    [/embedded in the homepage source/,'cookie_setting_embed'],
+    [/^The homepage response set/,'tracking_cookie_on_document'],
+    [/^No link to a privacy policy/,'no_privacy_link'],
+    [/^A privacy policy link is present/,'privacy_link_found'],
+    [/^No terms, legal or imprint link/,'no_terms_link'],
+    [/^The privacy policy we read covers/,'policy_covers'],
+    [/^Not found in the policy text we read/,'policy_gaps'],
+    [/^A privacy policy link was found, but/,'policy_unreadable'],
+    [/^Google Tag Manager container detected/,'gtm_container']
+  ];
+  var SEV={good:'pass',warning:'attention',critical:'critical'};
+  var BADGE={pass:'OK',attention:'Needs attention',critical:'Critical'};
+
+  function idOf(it){
+    if(it.id)return it.id;
+    for(var i=0;i<LEGACY.length;i++)if(LEGACY[i][0].test(it.text||''))return LEGACY[i][1];
+    return null;
+  }
+  function plural(n,one,many){return n+' '+(n===1?one:(many||one+'s'));}
+  function firstSentence(t){var m=/^(.+?[.!?])(\s|$)/.exec(t||'');return m?m[1]:(t||'');}
+
+  /* Only what the scanner returned: structured lists where it gives them,
+     otherwise the rule's own evidence string (several are joined by " | "). */
+  function evidenceFor(id,it,d){
+    var g=[],pol=d.privacy_policy;
+    var tags=(d.tags_found||[]).map(function(t){return {k:t.name,v:t.evidence};});
+    if(/^tags_/.test(id)&&tags.length)g.push({h:'Tags in the source',items:tags});
+    if(id==='consent_tool_found'&&(d.consent_tools||[]).length)
+      g.push({h:'Consent tool loader',items:d.consent_tools.map(function(c){return {k:c.name,v:c.evidence};})});
+    if((id==='policy_covers'||id==='policy_gaps')&&pol&&pol.checks){
+      if(pol.url)g.push({h:'Policy page read',items:[{v:pol.url}]});
+      g.push({h:'Art. 13 points',items:pol.checks.map(function(c){return {k:c.label,ok:!!c.found,v:c.found?c.evidence:null};})});
+    }
+    if(id==='tracking_cookie_on_document'&&(d.document_cookies||[]).length)
+      g.push({h:'Cookies set by the page response',items:d.document_cookies.map(function(n){return {v:n};})});
+    var shown={consent_tool_found:1,policy_covers:1,policy_gaps:1,tags_no_consent_tool:1,tracking_cookie_on_document:1};
+    if(it.evidence&&!shown[id])
+      g.push({h:id==='tags_not_marked_for_consent'?'Consent tool loader':'Evidence',
+        items:String(it.evidence).split(' | ').map(function(v){return {v:v};})});
+    return g;
+  }
+
+  function normalizeScan(d,o){
+    o=o||{};
+    var pol=d.privacy_policy;
+    var findings=(d.issues||[]).map(function(it,i){
+      var id=idOf(it),copy=COPY[id]||null,sev=SEV[it.severity]||'attention';
+      var sum=copy&&copy.s?copy.s:firstSentence(it.text);
+      if(id==='policy_covers'&&pol&&pol.checks){
+        var hit=pol.checks.filter(function(c){return c.found;}).length;
+        sum='The policy covers '+hit+' of the '+pol.checks.length+' points Art. 13 GDPR asks for.';
+      }
+      return {key:'f'+i,id:id,severity:sev,title:copy?copy.t:firstSentence(it.text),summary:sum,
+        text:it.text||'',confidence:it.confidence||null,evidence:evidenceFor(id,it,d)};
+    });
+    var counts={pass:0,attention:0,critical:0};
+    findings.forEach(function(f){counts[f.severity]++;});
+    var open=d.needs_browser_check===true&&!!d.open_question;
+    var at=d.checked_at?new Date(d.checked_at):null;
+    return {domain:o.domain||'',sample:!!o.sample,score:typeof d.score==='number'?d.score:null,
+      open:open,openText:open?d.open_question.text:null,deductions:(d.deductions||[]).length,counts:counts,
+      findings:findings,limits:(d.limits||[]).slice(),platform:d.platform&&d.platform.name?d.platform.name:null,
+      scannedAt:at&&!isNaN(at.getTime())?at:null};
+  }
+
+  /* Headline and line under it: templates over the counts, nothing guessed. */
+  function verdictFor(n){
+    var c=n.counts.critical,w=n.counts.attention,dd=n.deductions;
+    if(n.open)return {h:'Needs a real-browser check.',p:n.openText+(dd?' Already '+plural(dd,'thing')+' to fix in the source.':''),link:true};
+    if(c)return {h:'Critical issues detected.',p:plural(c,'critical finding')+' in the source'+(w?', and '+plural(w,'more item')+' to review':'')+'.'};
+    if(!w)return {h:'No issues found in the source.',p:'Everything this scan can check came back clean. What it can’t see is listed below.'};
+    if(!dd)return {h:'Strong baseline.',p:'No critical issues found. '+plural(w,'item')+' still '+(w===1?'needs':'need')+' attention.'};
+    return {h:'Some items need attention.',p:plural(dd,'thing')+' to fix in the source'+(w>dd?', and '+plural(w-dd,'more item')+' to review':'')+'.'};
+  }
+  /* Same thresholds the score has always used: 90+ pass, 70+ attention, below that red. */
+  function tone(s){return s>=90?'var(--r-pass)':s>=70?'var(--r-warn)':'var(--r-fail)';}
+
+  /* ---- Rendering ---- */
+  var FMT=null;
+  try{FMT=new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){}
+  var SVGNS='http://www.w3.org/2000/svg';
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+  function chevron(){
+    var s=document.createElementNS(SVGNS,'svg'),p=document.createElementNS(SVGNS,'path');
+    s.setAttribute('viewBox','0 0 24 24');s.setAttribute('class','rp-chev');s.setAttribute('aria-hidden','true');s.setAttribute('fill','none');
+    s.setAttribute('stroke','currentColor');s.setAttribute('stroke-width','2');s.setAttribute('stroke-linecap','round');s.setAttribute('stroke-linejoin','round');
+    p.setAttribute('d','M9 6l6 6-6 6');s.appendChild(p);return s;
+  }
+  function rowFor(f,i){
+    var li=el('li','rp-row');li.setAttribute('data-sev',f.severity);li.style.setProperty('--i',i);
+    var more=(f.text&&f.text!==f.summary)||f.evidence.length>0;
+    var trig=el(more?'button':'div','rp-trig'+(more?'':' static'));
+    var main=el('span','rp-main');
+    main.appendChild(el('span','rp-title',f.title));
+    main.appendChild(el('span','rp-sum',f.summary));
+    trig.appendChild(main);
+    trig.appendChild(el('span','rp-badge',BADGE[f.severity]));
+    li.appendChild(trig);
+    if(!more)return li;
+    var did='rp-d-'+f.key;
+    trig.type='button';trig.id='rp-t-'+f.key;
+    trig.setAttribute('aria-expanded','false');trig.setAttribute('aria-controls',did);
+    trig.appendChild(chevron());
+    var det=el('div','rp-detail'),inner=el('div','rp-detail-in'),pad=el('div','rp-detail-pad');
+    det.id=did;det.setAttribute('role','region');det.setAttribute('aria-labelledby',trig.id);
+    if(f.text)pad.appendChild(el('p','rp-text',f.text));
+    f.evidence.forEach(function(g){
+      var box=el('div','rp-ev'),ul=el('ul','rp-ev-list');
+      box.appendChild(el('p','rp-ev-h',g.h));
+      g.items.forEach(function(x){
+        var row=el('li');
+        if(x.k!=null){
+          var k=el('span','rp-ev-k');
+          if(x.ok!=null){var m=el('span','rp-mark '+(x.ok?'ok':'miss'),x.ok?'✓':'−');m.setAttribute('aria-hidden','true');k.appendChild(m);}
+          k.appendChild(document.createTextNode(x.k));
+          if(x.ok===false)k.appendChild(document.createTextNode(' (not found)'));
+          if(x.ok===true)k.appendChild(el('span','sr',' (found)'));
+          row.appendChild(k);
+        }
+        if(x.v)row.appendChild(el('code','rp-code',x.v));
+        ul.appendChild(row);
+      });
+      box.appendChild(ul);pad.appendChild(box);
+    });
+    if(f.confidence)pad.appendChild(el('p','rp-conf',f.confidence==='observed'?'Observed in the page source':'Inferred from what is and isn’t in the source'));
+    inner.appendChild(pad);det.appendChild(inner);li.appendChild(det);
+    return li;
+  }
+  function countUp(node,to){
+    if(reduced()){node.textContent=String(to);return;}
+    var t0=0,dur=420;
+    function f(t){if(!t0)t0=t;var k=Math.min(1,(t-t0)/dur);node.textContent=String(Math.round(to*(1-Math.pow(1-k,3))));if(k<1)requestAnimationFrame(f);}
+    node.textContent='0';requestAnimationFrame(f);
+    /* Frames pause in a hidden tab: the real number lands regardless. */
+    setTimeout(function(){node.textContent=String(to);},dur+120);
+  }
+  function renderReport(n,o){
+    o=o||{};current=n;
+    rpKind.textContent='Privacy scan · '+(n.sample?'Sample result':'Result');
+    rpDomain.textContent=n.domain;
+    if(n.scannedAt&&FMT){rpTime.textContent='Scanned '+FMT.format(n.scannedAt);rpTime.setAttribute('datetime',n.scannedAt.toISOString());}
+    else{rpTime.textContent='';rpTime.removeAttribute('datetime');}
+    rpNum.classList.toggle('is-open',n.open);
+    if(n.open||n.score==null){rpScore.textContent='?';rpScore.style.color='var(--r-ink-2)';}
+    else{rpScore.style.color=tone(n.score);if(o.animate)countUp(rpScore,n.score);else rpScore.textContent=String(n.score);}
+    var v=verdictFor(n);
+    rpHead.textContent=v.h;rpExplain.textContent=v.p;
+    if(v.link){var a=el('a',null,'Run the free deep check');a.href='#deep-box';rpExplain.appendChild(document.createTextNode(' '));rpExplain.appendChild(a);rpExplain.appendChild(document.createTextNode('.'));}
+    rpBasis.textContent=(n.open?'No source score':'Source score')+' · '+(n.platform||'rules-based');
+    rpList.textContent='';
+    n.findings.forEach(function(f,i){rpList.appendChild(rowFor(f,i));});
+    rpLimits.textContent='';
+    n.limits.forEach(function(t){rpLimits.appendChild(el('li',null,t));});
+    if(o.animate){rc.classList.remove('show');void rc.offsetWidth;rc.classList.add('show');}
+  }
+  rpList.addEventListener('click',function(e){
+    var t=e.target&&e.target.closest?e.target.closest('button.rp-trig'):null;if(!t)return;
+    var open=t.getAttribute('aria-expanded')!=='true';
+    t.setAttribute('aria-expanded',open?'true':'false');t.parentNode.classList.toggle('open',open);
+  });
+
+  /* ---- The scan itself (unchanged request, states and copy) ---- */
   function hostOf(u){return u.replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/[\/?#].*$/,'').toLowerCase();}
   function setBar(f){bar.style.transform='scaleX('+f+')';}
   function mark(el,err,on){el.setAttribute('aria-invalid',on?'true':'false');err.classList.toggle('show',on);}
-  function colour(s){return s>=90?'var(--ok)':s>=70?'var(--warn)':'var(--penalty)';}
-  function verdict(d){
-    /* An API older than the rule-based scanner sends no deductions: word it
-       from the score rather than claim there is nothing to fix. */
-    if(!d.deductions)return d.score>=90?'Little stands out in the source.':d.score>=70?'Some gaps in the source.':'Real gaps in the source.';
-    var n=d.deductions.length;
-    if(!n)return 'Nothing in the source to fix.';
-    return n+(n===1?' thing':' things')+' to fix in the source.';
-  }
 
   /* Progress copy describes the work the API actually does, in order. */
   function steps(host){return [
@@ -727,68 +934,21 @@
     btn.querySelector('.btn-lab').textContent=on?'Scanning…':'Scan my store';
     urlEl.readOnly=on;
     rc.classList.toggle('busy',on);rc.setAttribute('aria-busy',on?'true':'false');
-    if(on){before={tag:rcTag.textContent,site:rcSite.textContent,score:rcScore.textContent,colour:rcScore.style.color,verdict:rcVerdict.textContent};
-      rcTag.textContent='Scanning';rcSite.textContent=host;rcScore.textContent='—';rcScore.style.color='var(--ink-3)';rcVerdict.textContent='Reading '+host+'…';}
+    if(on){rpKind.textContent='Privacy scan · Scanning';rpDomain.textContent=host;rpTime.textContent='';}
   }
 
-  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
-
-  function render(d,host){
-    var s=d.score;lastScore=s;
-    /* A consent tool next to tracking tags can't be scored from source: whether
-       the tags wait is the whole question, and only a browser sees it. Show that
-       instead of a number, and put the deep check first. */
-    var open=d.needs_browser_check===true&&d.open_question;
-    rcTag.textContent='Your result';rcSite.textContent=host;
-    rcScore.textContent=open?'?':s;rcScore.style.color=open?'var(--ink-2)':colour(s);
-    rcOf.hidden=!!open;rcKindLab.textContent=open?'No source score':'Source score';
-    var nd=(d.deductions||[]).length;
-    rcVerdict.textContent=open?'Needs a real-browser check.'+(nd?' Already '+nd+(nd===1?' thing':' things')+' to fix in the source.':''):verdict(d);
-    rcPlatform.textContent=d.platform&&d.platform.name?d.platform.name:'rules-based';
-    if(d.summary){rcSum.textContent=d.summary;rcSum.hidden=false;}else rcSum.hidden=true;
-    if(open){rcAct.insertBefore(deepBox,reportBox);deepH.textContent='This one needs the real check';}
-    else{rcAct.insertBefore(deepBox,reportBox.nextSibling);deepH.textContent='See what actually fires before consent';}
-    /* A clean source is not a clean site. When tags are in the page, say plainly
-       that whether they wait for consent is a question this scan can't answer. */
-    var tags=(d.tags_found||[]).map(function(t){return t.name;});
-    if(open){
-      rcTags.textContent='';
-      rcTags.appendChild(el('b',null,'Why there’s no number: '));
-      rcTags.appendChild(document.createTextNode(d.open_question.text+' '));
-      var oa=el('a',null,'Run the free deep check');oa.href='#deep-box';rcTags.appendChild(oa);
-      rcTags.appendChild(document.createTextNode(': a browser in Germany opens your store twice and records every tracker that fires before anyone chooses, to the second.'));
-      rcTags.hidden=false;
-    }else if(tags.length){
-      rcTags.textContent='';
-      rcTags.appendChild(el('b',null,tags.length+(tags.length===1?' tag':' tags')+' in your source: '));
-      rcTags.appendChild(document.createTextNode(tags.join(', ')+'. Whether they wait for a visitor’s consent only shows up in a real browser: '));
-      var a=el('a',null,'run the free deep check');a.href='#deep-box';rcTags.appendChild(a);
-      rcTags.appendChild(document.createTextNode(' below.'));
-      rcTags.hidden=false;
-    }else rcTags.hidden=true;
-
-    rcList.innerHTML='';
-    (d.issues||[]).forEach(function(it,i){
-      var li=el('li','fd '+(it.severity||'warning')+' rc-a');li.style.setProperty('--i',i+1);
-      li.appendChild(el('p',null,it.text));
-      if(it.evidence)li.appendChild(el('code',null,it.evidence.length>110?it.evidence.slice(0,110)+'…':it.evidence));
-      rcList.appendChild(li);
-    });
-    rcLimits.innerHTML='';
-    (d.limits||[]).forEach(function(t){rcLimits.appendChild(el('li',null,t));});
-    rc.querySelector('.rc-limits').style.setProperty('--i',(d.issues||[]).length+1);
-
+  function showActions(n){
     rcNote.hidden=true;rcAct.hidden=false;
-    reportBox.classList.remove('sent');reportBox.hidden=false;
+    reportBox.classList.remove('sent');
     deepMsg.textContent='';deepBtn.disabled=false;deepBtn.textContent='Run the deep check';
-    /* Re-trigger the staggered rise on every new result. */
-    rc.classList.remove('show');void rc.offsetWidth;rc.classList.add('show');
+    /* An open result leads with the deep check: it is the only way to answer it. */
+    if(n.open){rcAct.insertBefore(deepBox,reportBox);deepBox.classList.add('lead');deepH.textContent='This one needs the real check';}
+    else{rcAct.insertBefore(reportBox,deepBox);deepBox.classList.remove('lead');deepH.textContent='See what actually fires before consent';}
   }
 
   function showFail(title,body){
-    /* Put back whatever the card showed before (the sample, or the last real
-       result) rather than leave it blank or half-relabelled. */
-    if(before){rcTag.textContent=before.tag;rcSite.textContent=before.site;rcScore.textContent=before.score;rcScore.style.color=before.colour;rcVerdict.textContent=before.verdict;}
+    /* Put back whatever the report showed before (the sample, or the last real result). */
+    if(current)renderReport(current);
     fail.querySelector('#fail-h').textContent=title;
     fail.querySelector('#fail-p').innerHTML=body;
     fail.classList.add('on');
@@ -823,8 +983,12 @@
           return;
         }
         setBar(1);step.textContent='Done.';
-        setTimeout(function(){run.classList.remove('on');setBusy(false);render(d,host);
-          if(window.innerWidth<961)rc.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});},260);
+        setTimeout(function(){
+          run.classList.remove('on');setBusy(false);lastScore=d.score;
+          var n=normalizeScan(d,{domain:host});
+          renderReport(n,{animate:true});showActions(n);
+          rc.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});
+        },260);
       })
       .catch(function(err){
         stop();setBar(1);run.classList.remove('on');setBusy(false);
@@ -875,6 +1039,9 @@
       })
       .catch(function(){deepMsg.textContent='That didn’t go through. Try again, or email office@gdrock.com.';deepBtn.disabled=false;deepBtn.textContent='Run the deep check';});
   });
+
+  /* The sample, through the same normalisation and renderer as a live scan. */
+  renderReport(normalizeScan(SAMPLE,{domain:SAMPLE.domain||'gdrock.com',sample:true}));
 
   /* ---- Compact scan bar (desktop): appears once the scan band is behind you ---- */
   var sb=$('scanbar'),sbForm=$('sb-form'),sbUrl=$('sb-url'),band=$('scan'),foot=document.querySelector('footer');

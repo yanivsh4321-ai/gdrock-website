@@ -381,3 +381,21 @@ test("an open result is never emailed or alerted as a number", async () => {
   assert.match(telegram[0].text, /Score: none, needs a browser check \(Cookiebot \+ 2 tags\)/);
   assert.doesNotMatch(telegram[0].text, /\/100/);
 });
+
+// --- Stable finding ids (for the report UI): every issue carries one, from a fixed set ---
+const KNOWN_IDS = new Set(["tags_no_consent_tool", "tags_not_marked_for_consent", "tags_marked_for_consent", "no_tags_in_source",
+  "consent_tool_found", "no_consent_tool", "consent_mode_granted", "consent_mode_denied", "third_party_fonts", "cookie_setting_embed",
+  "tracking_cookie_on_document", "no_privacy_link", "privacy_link_found", "no_terms_link", "policy_covers", "policy_gaps", "policy_unreadable", "gtm_container"]);
+
+test("every finding has a stable id from the known set, and adding ids changed no score", async () => {
+  const pages = ["", META_PIXEL, CUBITTS_LIKE, COOKIEBOT_LOADER, `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter">`,
+    `<iframe src="https://www.youtube.com/embed/abc"></iframe>`, `<script>gtag('consent','default',{ad_storage:'granted',analytics_storage:'granted'});</script>`];
+  for (const p of pages) {
+    const { report } = await scan(p);
+    for (const i of report.issues) assert.ok(KNOWN_IDS.has(i.id), `unknown id ${i.id} for: ${i.text.slice(0, 60)}`);
+  }
+  assert.equal((await scan(META_PIXEL)).report.score, 70);
+  assert.equal((await scan(CUBITTS_LIKE)).report.score, 100);
+  const gtm = await scan(GTM_INSTALLS["<script src> from googletagmanager.com"]);
+  assert.ok(gtm.report.issues.some((i) => i.id === "gtm_container"));
+});
