@@ -444,7 +444,10 @@ function relTime(iso){
       headers:{'Content-Type':'application/json'},body:JSON.stringify({url:'https://'+site})});
     if(!r.ok)throw 0;
     const d=await r.json();
-    if(d&&typeof d.score==='number'&&d.is_real_site!==false){
+    if(d&&d.needs_browser_check===true&&d.is_real_site!==false){
+      /* Consent tool + tracking tags: the source can't tell whether they wait. */
+      n.textContent='?';l.textContent='Needs a browser check';
+    }else if(d&&typeof d.score==='number'&&d.is_real_site!==false){
       n.textContent=d.score;l.textContent='Compliance score';
     }else{
       n.textContent='—';l.textContent='Site not reachable';

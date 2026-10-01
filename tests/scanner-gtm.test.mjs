@@ -332,3 +332,52 @@ test("the emailed report escapes site-derived text, carries evidence and limits,
   assert.match(report.htmlbody, /€15\/mo/);
   assert.doesNotMatch(report.htmlbody, /€39/);
 });
+
+// --- Open results: a consent tool next to tracking tags is not scorable from source ---
+// Regression for cubitts.com (1 Oct 2026): Cookiebot + GTM, Google Ads, Clarity, Klaviyo in the source scored 100,
+// while the rig, from a German exit, watched six trackers fire and nine cookies land before any choice.
+
+const CUBITTS_LIKE = COOKIEBOT_LOADER + GTM_INSTALLS["Google's standard inline snippet"] +
+  `<script async src="https://www.googletagmanager.com/gtag/js?id=AW-000000000"></script>` +
+  `<script data-cookieconsent="ignore">window.dataLayer=window.dataLayer||[];</script>`;
+
+test("a consent tool next to tracking tags is marked as needing a browser check, with the open question spelled out", async () => {
+  const { report } = await scan(CUBITTS_LIKE);
+  assert.equal(report.needs_browser_check, true);
+  assert.deepEqual(report.open_question.consent_tools, ["Cookiebot"]);
+  assert.deepEqual(report.open_question.tags, ["Google Ads / remarketing", "Google Tag Manager"]);
+  assert.match(report.open_question.text, /only a real browser can see that/);
+  assert.match(report.summary, /depends on what runs in a browser/);
+});
+
+test("Cookiebot's data-cookieconsent=\"ignore\" means 'run it anyway', so it is not counted as a held tag", async () => {
+  const { report } = await scan(CUBITTS_LIKE);
+  assert.equal(report.issues.some((i) => /marked in the source for it to hold back/.test(i.text)), false);
+  assert.ok(report.issues.some((i) => /no tag in the source carries the markup/.test(i.text)));
+  const necessary = await scan(COOKIEBOT_LOADER + `<script data-cookieconsent="necessary">fbq('init','000000000000000');</script>`);
+  assert.equal(necessary.report.issues.some((i) => /marked in the source for it to hold back/.test(i.text)), false);
+  const held = await scan(COOKIEBOT_LOADER + `<script type="text/plain" data-cookieconsent="marketing">fbq('init','000000000000000');</script>`);
+  assert.ok(held.report.issues.some((i) => /marked in the source for it to hold back/.test(i.text)));
+});
+
+test("results the source can settle are scored as before: tags with no consent tool, or a consent tool with no tags", async () => {
+  const noTool = await scan(META_PIXEL);
+  assert.equal(noTool.report.needs_browser_check, false);
+  assert.equal(noTool.report.score, 70);
+  const toolOnly = await scan(COOKIEBOT_LOADER);
+  assert.equal(toolOnly.report.needs_browser_check, false);
+  assert.equal(toolOnly.report.open_question, null);
+  assert.equal(toolOnly.report.score, 100);
+});
+
+test("an open result is never emailed or alerted as a number", async () => {
+  const { telegram, emails } = await scan(CUBITTS_LIKE, { env: ALERT_ENV, body: { email: "owner@shop.example" } });
+  const visitor = emails.find((e) => e.to[0].email_address.address === "owner@shop.example");
+  assert.equal(visitor.subject, "Your GDPR source scan for test-shop.example: needs a browser check");
+  assert.doesNotMatch(visitor.htmlbody, /\d+\/100/);
+  assert.match(visitor.htmlbody, /Run the free deep check/);
+  const owner = emails.find((e) => e.to[0].email_address.address === "office@gdrock.com");
+  assert.match(owner.subject, /needs browser check/);
+  assert.match(telegram[0].text, /Score: none, needs a browser check \(Cookiebot \+ 2 tags\)/);
+  assert.doesNotMatch(telegram[0].text, /\/100/);
+});

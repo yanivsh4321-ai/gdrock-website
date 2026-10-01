@@ -205,10 +205,10 @@
         <span class="rc-site num" id="rc-site">gdrock.com</span>
       </div>
       <div class="rc-score rc-a" style="--i:0">
-        <div class="rc-num"><b class="num" id="rc-score" style="color:var(--ok)">100</b><span class="num">/100</span></div>
+        <div class="rc-num"><b class="num" id="rc-score" style="color:var(--ok)">100</b><span class="num" id="rc-of">/100</span></div>
         <div>
           <p class="rc-verdict" id="rc-verdict">Nothing in the source to fix.</p>
-          <p class="rc-kind">Source score &middot; <span id="rc-platform">rules-based</span></p>
+          <p class="rc-kind"><span id="rc-kindlab">Source score</span> &middot; <span id="rc-platform">rules-based</span></p>
         </div>
       </div>
       <p class="rc-tags rc-a" id="rc-tags" style="--i:1" hidden></p>
@@ -254,7 +254,7 @@
           </div>
         </div>
         <div class="report-box deep-box" id="deep-box">
-          <h4>See what actually fires before consent</h4>
+          <h4 id="deep-h">See what actually fires before consent</h4>
           <p>This scan read your source. A deep check opens your site in a real browser on a server in Germany, twice, without touching your cookie banner, and emails you what loaded before anyone chose: trackers, cookies, fonts, with a score and a result card. Free.</p>
           <div class="report-row">
             <div class="scan-field-d">
@@ -692,7 +692,8 @@
       rc=$('rc'),rcTag=$('rc-tag'),rcSite=$('rc-site'),rcScore=$('rc-score'),rcVerdict=$('rc-verdict'),rcPlatform=$('rc-platform'),
       rcSum=$('rc-sum'),rcList=$('rc-list'),rcLimits=$('rc-limits'),rcNote=$('rc-sample-note'),rcAct=$('rc-act'),
       reportBox=$('report-box'),reportEmail=$('report-email'),reportBtn=$('report-btn'),consentEl=$('scan-consent'),errE=$('err-email'),
-      again=$('scan-again'),rcTags=$('rc-tags'),
+      again=$('scan-again'),rcTags=$('rc-tags'),rcOf=$('rc-of'),rcKindLab=$('rc-kindlab'),
+      deepBox=$('deep-box'),deepH=$('deep-h'),
       deepEmail=$('deep-email'),deepBtn=$('deep-btn'),deepMsg=$('deep-msg'),errD=$('err-deep');
   if(!form)return;
   var before=null;
@@ -734,15 +735,30 @@
 
   function render(d,host){
     var s=d.score;lastScore=s;
+    /* A consent tool next to tracking tags can't be scored from source: whether
+       the tags wait is the whole question, and only a browser sees it. Show that
+       instead of a number, and put the deep check first. */
+    var open=d.needs_browser_check===true&&d.open_question;
     rcTag.textContent='Your result';rcSite.textContent=host;
-    rcScore.textContent=s;rcScore.style.color=colour(s);
-    rcVerdict.textContent=verdict(d);
+    rcScore.textContent=open?'?':s;rcScore.style.color=open?'var(--ink-2)':colour(s);
+    rcOf.hidden=!!open;rcKindLab.textContent=open?'No source score':'Source score';
+    var nd=(d.deductions||[]).length;
+    rcVerdict.textContent=open?'Needs a real-browser check.'+(nd?' Already '+nd+(nd===1?' thing':' things')+' to fix in the source.':''):verdict(d);
     rcPlatform.textContent=d.platform&&d.platform.name?d.platform.name:'rules-based';
     if(d.summary){rcSum.textContent=d.summary;rcSum.hidden=false;}else rcSum.hidden=true;
+    if(open){rcAct.insertBefore(deepBox,reportBox);deepH.textContent='This one needs the real check';}
+    else{rcAct.insertBefore(deepBox,reportBox.nextSibling);deepH.textContent='See what actually fires before consent';}
     /* A clean source is not a clean site. When tags are in the page, say plainly
        that whether they wait for consent is a question this scan can't answer. */
     var tags=(d.tags_found||[]).map(function(t){return t.name;});
-    if(tags.length){
+    if(open){
+      rcTags.textContent='';
+      rcTags.appendChild(el('b',null,'Why there’s no number: '));
+      rcTags.appendChild(document.createTextNode(d.open_question.text+' '));
+      var oa=el('a',null,'Run the free deep check');oa.href='#deep-box';rcTags.appendChild(oa);
+      rcTags.appendChild(document.createTextNode(': a browser in Germany opens your store twice and records every tracker that fires before anyone chooses, to the second.'));
+      rcTags.hidden=false;
+    }else if(tags.length){
       rcTags.textContent='';
       rcTags.appendChild(el('b',null,tags.length+(tags.length===1?' tag':' tags')+' in your source: '));
       rcTags.appendChild(document.createTextNode(tags.join(', ')+'. Whether they wait for a visitor’s consent only shows up in a real browser: '));

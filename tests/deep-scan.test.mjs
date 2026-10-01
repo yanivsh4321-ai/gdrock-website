@@ -48,7 +48,9 @@ const RIG_RESULT = (id) => ({
   deductions: [{ points: 30, short: "Tracking before consent", detail: "Meta Pixel, Pinterest Tag" }, { points: 15, short: "Tracking cookies", detail: "_fbp, _pin_unauth" }],
   network: { country: "DE", source: "Cloudflare trace" }, visitor: { language: "German", timezone: "Europe/Berlin" },
   card: { headline: { line1: "Tracking before consent.", line2: "Two things to fix.", line2Color: "red" },
-    rows: [{ ok: true, title: "Cookie banner appears on the first visit", sub: "Cookiebot with “Deny”." }, { ok: false, title: "Trackers wait for consent", sub: "Meta Pixel fired <script>." }] },
+    rows: [{ ok: true, title: "Cookie banner appears on the first visit", sub: "Cookiebot with “Deny”." }, { ok: false, title: "Trackers wait for consent", sub: "Meta Pixel fired <script>." }],
+    timelineLabel: "WHAT SENT DATA BEFORE ANY CLICK", timelineFoot: "9 tracking requests on the first visit alone",
+    timeline: [{ at: "+0.41s", name: "Meta Pixel", note: null }, { at: "+1.20s", name: "Pinterest Tag", note: "second page" }] },
   report: "GDRock consent check\nshop.example\nVERIFIED 55/100\n",
   card_png: Buffer.from("fake-png").toString("base64"),
 });
@@ -74,6 +76,8 @@ test("a bad email or address is refused", async () => {
 test("queue -> runner -> result -> email, end to end", async () => {
   const c = capture();
   const kv = fakeKV(), env = envWith(kv);
+  // The runner has checked in (an empty poll), so the visitor is promised the fast path.
+  assert.equal((await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN })).status, 204);
   const q = await request(env, { url: "shop.example", email: "owner@shop.example", optin: true }, "198.51.100.44");
   assert.equal(q.status, 200);
   assert.equal(q.body.queued, true);
@@ -105,6 +109,10 @@ test("queue -> runner -> result -> email, end to end", async () => {
   assert.match(mail.htmlbody, /the cookie banner never clicked/);
   assert.match(mail.htmlbody, /Tracking before consent/);
   assert.match(mail.htmlbody, /Meta Pixel fired &lt;script&gt;/); // escaped
+  assert.match(mail.htmlbody, /WHAT SENT DATA BEFORE ANY CLICK/);
+  assert.match(mail.htmlbody, /\+0\.41s<\/td><td[^>]*>Meta Pixel/);
+  assert.match(mail.htmlbody, /Pinterest Tag<span[^>]*> · second page/);
+  assert.match(mail.htmlbody, /9 tracking requests on the first visit alone/);
   assert.deepEqual(mail.attachments.map((a) => a.name), ["shop.example_GDRock-deep-check.png", "shop.example_report.txt"]);
   assert.equal(Buffer.from(mail.attachments[1].content, "base64").toString("utf8"), RIG_RESULT(q.body.id).report);
   assert.match(c.telegram.at(-1).text, /deep check finished[\s\S]*55\/100/);
@@ -136,4 +144,64 @@ test("limits: 3 deep checks per email per day, 3 per connection per hour", async
   assert.equal(fourth.status, 429);
   for (let i = 0; i < 3; i++) await request(env, { url: `ip${i}.example`, email: `p${i}@shop.example` }, "198.51.100.70");
   assert.equal((await request(env, { url: "ip9.example", email: "p9@shop.example" }, "198.51.100.70")).status, 429);
+});
+
+// --- Runner presence and cheap polling --------------------------------------
+
+test("with no runner checking in, the visitor is told it runs by hand within a working day, and the owner is told to start it", async () => {
+  const c = capture();
+  const env = envWith(fakeKV());
+  const q = await request(env, { url: "shop.example", email: "owner@shop.example" }, "198.51.100.80");
+  assert.equal(q.body.queued, true);
+  assert.equal(q.body.runner_online, false);
+  assert.match(q.body.message, /offline right now[\s\S]*within one working day/);
+  assert.doesNotMatch(q.body.message, /15 minutes/);
+  assert.match(c.telegram[0].text, /RUNNER OFFLINE[\s\S]*verify_consent\.js https:\/\/shop\.example --geo=de/);
+  // The job still waits in the queue for the runner.
+  const job = await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN });
+  assert.equal(job.body.id, q.body.id);
+});
+
+test("an idle poll reads one flag and never lists the queue; a full sweep does", async () => {
+  capture();
+  const kv = fakeKV(), env = envWith(kv);
+  let lists = 0;
+  const realList = kv.list;
+  kv.list = async (o) => { lists++; return realList(o); };
+  for (let i = 0; i < 5; i++) assert.equal((await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN })).status, 204);
+  assert.equal(lists, 0);
+  assert.equal((await call("/api/deep-scan/next?full=1", { env, auth: "Bearer " + TOKEN })).status, 204);
+  assert.equal(lists, 1);
+});
+
+test("the runner heartbeat is written at most every five minutes, with an expiry", async () => {
+  capture();
+  const kv = fakeKV(), env = envWith(kv);
+  let beats = 0;
+  const realPut = kv.put;
+  kv.put = async (k, v, o) => { if (k === "runner:seen") beats++; return realPut(k, v, o); };
+  for (let i = 0; i < 4; i++) await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN });
+  assert.equal(beats, 1);
+  assert.equal(kv.ttl.get("runner:seen"), 15 * 60);
+});
+
+test("a job queued without its flag (lost in a race) still runs on the next full sweep", async () => {
+  capture();
+  const kv = fakeKV(), env = envWith(kv);
+  const q = await request(env, { url: "late.example", email: "a@late.example" }, "198.51.100.81");
+  await kv.delete("q:any");
+  assert.equal((await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN })).status, 204);
+  const job = await call("/api/deep-scan/next?full=1", { env, auth: "Bearer " + TOKEN });
+  assert.equal(job.body.id, q.body.id);
+});
+
+test("the flag is cleared once the queue is empty and the flag is over two minutes old, not before", async () => {
+  capture();
+  const kv = fakeKV(), env = envWith(kv);
+  await kv.put("q:any", String(Date.now()));
+  await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN });
+  assert.notEqual(await kv.get("q:any"), null); // fresh: a new key may not have reached this location yet
+  await kv.put("q:any", String(Date.now() - 3 * 60 * 1000));
+  await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN });
+  assert.equal(await kv.get("q:any"), null);
 });

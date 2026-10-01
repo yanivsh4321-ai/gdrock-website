@@ -393,7 +393,7 @@ export default {
 
     // -- Deep check (queue + runner) -----------------------------
     if (path === "/api/deep-scan" && request.method === "POST") return handleDeepScanRequest(request, env, ctx);
-    if (path === "/api/deep-scan/next" && request.method === "GET") return handleDeepScanNext(request, env);
+    if (path === "/api/deep-scan/next" && request.method === "GET") return handleDeepScanNext(request, env, url);
     if (path === "/api/deep-scan/result" && request.method === "POST") return handleDeepScanResult(request, env, ctx);
     if (path === "/api/deep-scan/status" && request.method === "GET") return handleDeepScanStatus(url, env);
 
@@ -658,8 +658,15 @@ async function sendEmail(env, to, subject, html, attachments) {
 // Build + send the compliance scan report to the visitor, and notify office@gdrock.com
 async function sendScanReport(env, email, domain, result) {
 
+  const open = result.needs_browser_check === true;
   const score = result.score ?? "—";
-  const color = score >= 80 ? "#00a896" : score >= 60 ? "#f5c842" : "#e63946";
+  const color = open ? "#9CA3AF" : score >= 80 ? "#00a896" : score >= 60 ? "#f5c842" : "#e63946";
+  const scoreHtml = open
+    ? `<div style="text-align:center;font-size:48px;font-weight:800;color:${color};margin-bottom:4px;">?</div>
+    <p style="text-align:center;color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Needs a real-browser check</p>
+    <p style="color:#cfd8ea;font-size:14px;text-align:center;line-height:1.6;margin:0 0 14px;">${escHtml(result.open_question ? result.open_question.text : "")}</p>
+    <div style="text-align:center;margin:0 0 22px;"><a href="https://www.gdrock.com/#scan" style="display:inline-block;background:#3b82f6;color:#fff;text-decoration:none;font-weight:700;padding:12px 24px;border-radius:10px;">Run the free deep check →</a></div>`
+    : `<div style="text-align:center;font-size:48px;font-weight:800;color:${color};margin-bottom:8px;">${score}/100</div>`;
   const issues = (result.issues || []).map(i => {
     const c = i.severity === "critical" ? "#e63946" : i.severity === "good" ? "#00a896" : "#f5c842";
     const mark = i.severity === "critical" ? "✗" : i.severity === "good" ? "✓" : "!";
@@ -673,7 +680,7 @@ async function sendScanReport(env, email, domain, result) {
     <div style="text-align:center;margin-bottom:24px;"><span style="font-size:22px;font-weight:800;color:#fff;">GDRock</span><div style="color:#5b6a8a;font-size:12px;">GDPR Compliance</div></div>
     <h1 style="color:#fff;font-size:22px;text-align:center;margin:0 0 8px;">Your source scan</h1>
     <p style="text-align:center;color:#9CA3AF;font-size:14px;margin:0 0 20px;">for ${escHtml(domain)}</p>
-    <div style="text-align:center;font-size:48px;font-weight:800;color:${color};margin-bottom:8px;">${score}/100</div>
+    ${scoreHtml}
     <p style="color:#9CA3AF;font-size:14px;text-align:center;line-height:1.6;margin:0 0 24px;">${escHtml(result.summary || "")}</p>
     <table style="width:100%;border-collapse:collapse;">${issues}</table>
     ${limits ? `<div style="margin-top:18px;padding:14px 16px;border-radius:10px;background:#0a1020;"><p style="color:#cfd8ea;font-size:13px;font-weight:700;margin:0 0 8px;">What this scan can't see</p><ul style="color:#9CA3AF;font-size:12.5px;line-height:1.55;margin:0;padding-left:18px;">${limits}</ul></div>` : ""}
@@ -689,7 +696,7 @@ async function sendScanReport(env, email, domain, result) {
   </div>`;
 
   // The owner hears about this scan from alertScan, which fires for every scan.
-  await sendEmail(env, email, `Your GDPR source scan for ${domain}: ${score}/100`, html).catch(() => {});
+  await sendEmail(env, email, `Your GDPR source scan for ${domain}: ${open ? "needs a browser check" : score + "/100"}`, html).catch(() => {});
 }
 
 // Run work after the response is sent when the runtime allows it (ctx.waitUntil),
@@ -722,11 +729,15 @@ async function alertScan(env, { domain, email, optin, vantage, result, failed, i
   const where = vantage && vantage.country ? vantage.country + (vantage.colo ? " / " + vantage.colo : "") : "unknown";
   const headline = failed ? "Scan failed to load" : hasEmail ? "Scan + email captured" : "Anonymous scan";
   const worst = result ? (result.issues || []).filter((i) => i.severity !== "good").slice(0, 3).map((i) => "- " + String(i.text).slice(0, 140)) : [];
+  const open = !failed && result && result.needs_browser_check === true;
+  const scoreLine = open
+    ? "Score: none, needs a browser check (" + result.open_question.consent_tools.join(", ") + " + " + result.open_question.tags.length + " tags). Worth a deep check by hand: node verify_consent.js https://" + domain + " --geo=de"
+    : failed ? null : "Score: " + result.score + "/100";
   const lines = [
     "GDRock scanner: " + headline,
     "",
     "Site: " + domain,
-    failed ? "Could not read: " + failed : "Score: " + result.score + "/100" + (result.platform ? " (" + result.platform.name + ")" : ""),
+    failed ? "Could not read: " + failed : scoreLine + (result.platform ? " (" + result.platform.name + ")" : ""),
     hasEmail ? "Email: " + email + (optin ? " (opted in to alerts + news)" : " (no marketing opt-in)") : "Email: none given",
     "Visitor location: " + where,
     cached ? "(result from the 10-minute cache: not a new scan)" : null,
@@ -745,7 +756,7 @@ async function alertScan(env, { domain, email, optin, vantage, result, failed, i
     }));
   }
   const owner = env.OWNER_EMAIL || "office@gdrock.com";
-  const subject = `[GDRock scan] ${domain}` + (failed ? " - failed" : ` - ${result.score}/100`) + (hasEmail ? ` - ${email}` : " - anonymous");
+  const subject = `[GDRock scan] ${domain}` + (failed ? " - failed" : open ? " - needs browser check" : ` - ${result.score}/100`) + (hasEmail ? ` - ${email}` : " - anonymous");
   jobs.push(Promise.resolve(sendEmail(env, owner, subject, `<pre style="font:14px/1.6 ui-monospace,Menlo,monospace;white-space:pre-wrap;">${escHtml(text)}</pre>`)));
   const settled = await Promise.allSettled(jobs);
   for (const r of settled) if (r.status === "rejected") console.error("scan alert failed -", r.reason && r.reason.message);
@@ -1082,8 +1093,12 @@ function findGatedTags(html) {
   let m;
   while ((m = re.exec(html)) && out.length < 20) {
     const attrs = m[1] || "";
-    if (/\btype\s*=\s*["'](?:text\/plain|javascript\/blocked|text\/x-cookie)/i.test(attrs) ||
-        /\bdata-(?:cookieconsent|cookiecategory|cookie-consent|cmp-ab|borlabs-cookie|cmplz-src|usercentrics|gdrock-category|ot-ignore|cookiefirst-category|cookieyes|iub-purposes|klaro-config)\b/i.test(attrs)) {
+    const typeHeld = /\btype\s*=\s*["'](?:text\/plain|javascript\/blocked|text\/x-cookie)/i.test(attrs);
+    // These two mean the opposite of held: Cookiebot's "ignore"/"necessary" and OneTrust's
+    // data-ot-ignore tell the tool to let the script run without asking.
+    const exempt = /\bdata-cookieconsent\s*=\s*["'](?:ignore|necessary)["']|\bdata-ot-ignore\b/i.test(attrs);
+    if (typeHeld || (!exempt &&
+        /\bdata-(?:cookieconsent|cookiecategory|cookie-consent|cmp-ab|borlabs-cookie|cmplz-src|usercentrics|gdrock-category|cookiefirst-category|cookieyes|iub-purposes|klaro-config)\b/i.test(attrs))) {
       out.push(trimEvidence("<script" + attrs + ">"));
     }
   }
@@ -1359,6 +1374,16 @@ function alertGate(ip) {
 const DEEP_TTL_SECONDS = 14 * 86400;
 const DEEP_PER_EMAIL_PER_DAY = 3;
 const DEEP_PER_IP_PER_HOUR = 3;
+// The runner polls every 20 s. Listing the queue on every poll is ~4,300 KV list
+// operations a day, four times the free plan's 1,000, so a poll first reads one
+// flag key that a new job sets ("q:any") and lists only when it's there (or when
+// the runner asks for a full sweep, every few minutes, as a safety net). Each poll
+// also refreshes "runner:seen" (at most every 5 min); without it, a request is
+// told the truth: nobody is checking right now, it gets run by hand.
+const DEEP_FLAG = "q:any";
+const RUNNER_SEEN = "runner:seen";
+const RUNNER_SEEN_TTL = 15 * 60;
+const runnerOnline = async (env) => !!(await env.DEEP_SCAN.get(RUNNER_SEEN));
 const deepTimes = new Map();
 const EMAIL_RE = /^[^\s@<>"']+@[^\s@<>"']+\.[a-z]{2,}$/i;
 const DOMAIN_RE = /^(?=.{4,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i;
@@ -1436,18 +1461,32 @@ async function handleDeepScanRequest(request, env, ctx) {
     created: new Date(now).toISOString(), requestedFrom: vantage.country || null };
   await saveDeepJob(env, job);
   await env.DEEP_SCAN.put("queue:" + String(now).padStart(15, "0") + ":" + job.id, job.id, { expirationTtl: 3 * 86400 });
+  await env.DEEP_SCAN.put(DEEP_FLAG, String(now), { expirationTtl: 3 * 86400 });
   await env.DEEP_SCAN.put(dupKey, job.id, { expirationTtl: 86400 });
   await env.DEEP_SCAN.put(capKey, String(used + 1), { expirationTtl: 86400 });
   const position = await deepQueuePosition(env, job.id);
-  later(ctx, telegram(env, `GDRock deep check queued\n\nSite: ${domain}\nEmail: ${email}${job.optin ? " (opted in)" : ""}\nPosition: ${position || "?"}`));
-  return json({ ok: true, queued: true, id: job.id, position,
-    message: "Queued" + (position > 1 ? " (" + position + " ahead of you, including yours)" : "") + ". A browser on a server in Germany is checking " + domain + " twice, without touching the banner. The result goes to " + email + ", usually within 15 minutes." });
+  const online = await runnerOnline(env);
+  later(ctx, telegram(env, `GDRock deep check queued\n\nSite: ${domain}\nEmail: ${email}${job.optin ? " (opted in)" : ""}\nPosition: ${position || "?"}` +
+    (online ? "" : `\n\nRUNNER OFFLINE: nothing is checking the queue. Start the VPS runner, or run it by hand and email the result:\nnode verify_consent.js https://${domain} --geo=de`)));
+  return json({ ok: true, queued: true, id: job.id, position, runner_online: online,
+    message: online
+      ? "Queued" + (position > 1 ? " (" + position + " ahead of you, including yours)" : "") + ". A browser on a server in Germany is checking " + domain + " twice, without touching the banner. The result goes to " + email + ", usually within 15 minutes."
+      : "Got it. Our checking server is offline right now, so this one is run by hand, from a connection in Germany, without touching your banner. The result goes to " + email + " within one working day." });
 }
 
-async function handleDeepScanNext(request, env) {
+async function handleDeepScanNext(request, env, url) {
   if (!runnerAuthorized(env, request)) return json({ error: "unauthorized" }, 401);
   if (!env.DEEP_SCAN) return json({ error: "deep_scan_not_configured" }, 503);
+  const now = Date.now();
+  const seen = Number((await env.DEEP_SCAN.get(RUNNER_SEEN)) || 0);
+  if (now - seen > 5 * 60 * 1000) await env.DEEP_SCAN.put(RUNNER_SEEN, String(now), { expirationTtl: RUNNER_SEEN_TTL });
+  const flag = await env.DEEP_SCAN.get(DEEP_FLAG);
+  const full = url && url.searchParams.get("full") === "1";
+  if (!flag && !full) return cors(null, 204);
   const list = await env.DEEP_SCAN.list({ prefix: "queue:", limit: 20 });
+  // An empty queue clears the flag, but only once it is two minutes old: KV takes
+  // up to a minute to show a new key everywhere, and a fresh job must not be lost.
+  if (!list.keys.length && flag && now - Number(flag) > 2 * 60 * 1000) await env.DEEP_SCAN.delete(DEEP_FLAG);
   for (const k of list.keys) {
     const id = await env.DEEP_SCAN.get(k.name);
     await env.DEEP_SCAN.delete(k.name);
@@ -1501,11 +1540,16 @@ async function sendDeepScanReport(env, job, r, scored) {
   const method = `Chrome on a server in Germany (the connection was seen as ${e(net.country || "unknown")}), ${e(vis.language || "German")} language and ${e(vis.timezone || "Berlin")} time, ${e(r.runs || 2)} separate visits, the cookie banner never clicked. Checked ${e(checked)}.`;
   const head = card.headline ? `<p style="color:#fff;font-size:20px;font-weight:800;text-align:center;margin:0 0 4px;">${e(card.headline.line1 || "")}</p><p style="color:${card.headline.line2Color === "red" ? "#ff8a8a" : "#9CA3AF"};font-size:16px;text-align:center;margin:0 0 20px;">${e(card.headline.line2 || "")}</p>` : "";
   const rowHtml = rows.map((x) => `<tr><td style="padding:8px 12px;border-left:3px solid ${x.ok ? "#00a896" : "#e63946"};background:#0a1020;color:#cfd8ea;font-size:14px;border-radius:6px;">${x.ok ? "✓" : "✗"} <b>${e(x.title || "")}</b>${x.sub ? `<div style="color:#9CA3AF;font-size:12.5px;margin-top:4px;">${e(x.sub)}</div>` : ""}</td></tr><tr><td style="height:8px"></td></tr>`).join("");
+  // What loaded before any click, with its time from the start of the visit (from the rig's card).
+  const timeline = Array.isArray(card.timeline) ? card.timeline.slice(0, 12) : [];
+  const tlHtml = timeline.length ? `<p style="color:#9CA3AF;font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:.06em;margin:4px 0 8px;">${e(card.timelineLabel || "WHAT LOADED BEFORE ANY CLICK")}</p>
+       <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">${timeline.map((t) => `<tr><td style="padding:5px 10px 5px 0;color:#ff6b6b;font-family:Consolas,Menlo,monospace;font-size:14px;font-weight:700;white-space:nowrap;vertical-align:top;width:1%;">${e(t.at || "")}</td><td style="padding:5px 0;color:#fff;font-size:15px;">${e(t.name || "")}${t.note ? `<span style="color:#9CA3AF;font-size:12.5px;"> · ${e(t.note)}</span>` : ""}</td></tr>`).join("")}</table>
+       ${card.timelineFoot ? `<p style="color:#9CA3AF;font-size:12.5px;margin:-8px 0 16px;">…${e(card.timelineFoot)}</p>` : ""}` : "";
   const dedHtml = deductions.length ? `<ul style="color:#cfd8ea;font-size:13px;line-height:1.6;padding-left:18px;margin:6px 0 0;">${deductions.map((d) => `<li>−${e(d.points)} ${e(d.short || d.text || "")}${d.detail ? `: <span style="color:#9CA3AF;">${e(String(d.detail).slice(0, 240))}</span>` : ""}</li>`).join("")}</ul>` : "";
   const body = scored
     ? `<div style="text-align:center;font-size:48px;font-weight:800;color:${color};margin-bottom:8px;">${e(r.score)}/100</div>${head}
        ${r.safeClaim ? `<p style="color:#cfd8ea;font-size:14px;line-height:1.6;margin:0 0 16px;">${e(String(r.safeClaim).slice(0, 700))}</p>` : ""}
-       <table style="width:100%;border-collapse:collapse;">${rowHtml}</table>${dedHtml}`
+       ${tlHtml}<table style="width:100%;border-collapse:collapse;">${rowHtml}</table>${dedHtml}`
     : `<p style="color:#fff;font-size:18px;font-weight:700;text-align:center;margin:0 0 10px;">We couldn't settle this one</p>
        <p style="color:#cfd8ea;font-size:14px;line-height:1.6;text-align:center;margin:0 0 10px;">${e(String(r.problem || r.error || "The check did not finish.").slice(0, 400))}</p>
        <p style="color:#9CA3AF;font-size:13px;line-height:1.6;text-align:center;margin:0;">So nothing is claimed about your site from this run. Reply to this email and we'll look at it by hand.</p>`;
@@ -1728,13 +1772,29 @@ function buildReport(domain, s) {
 
   score = Math.max(0, Math.min(100, score));
 
-  const band = score >= 90 ? "Nothing in the source stands out."
+  // 8. A consent tool next to tracking tags is the one case a source read cannot
+  //    settle, and it is the case that matters most: whether those tags wait is
+  //    the whole question. cubitts.com scored 100 here while a real browser in
+  //    Germany watched six trackers fire before anyone chose. So the score stays
+  //    (it counts only what the source proves) but the result is marked open, and
+  //    every surface shows "needs a browser check" instead of the number.
+  const needsBrowser = hasTrk && hasCMP;
+  const openQuestion = needsBrowser ? {
+    tags: s.trackers.map((t) => t.name),
+    consent_tools: s.cmps.map((c) => c.name),
+    text: names(s.cmps) + " is installed next to " + s.trackers.length + (s.trackers.length === 1 ? " tracking tag" : " tracking tags") + " (" + names(s.trackers) + "). Whether " + (s.trackers.length === 1 ? "it waits" : "they wait") + " for a visitor's choice decides this site's result, and only a real browser can see that. Source code can't, so this scan gives no score.",
+  } : null;
+
+  const band = needsBrowser ? "A consent tool and tracking tags are both in the source, so the result depends on what runs in a browser."
+    : score >= 90 ? "Nothing in the source stands out."
     : score >= 70 ? "The basics are in the source, and the specific gaps are listed below."
     : score >= 40 ? "Real gaps are visible in the source."
     : "The source is missing core protections.";
 
   return {
     score,
+    needs_browser_check: needsBrowser,
+    open_question: openQuestion,
     is_real_site: true,
     scan_method: "source",
     site_description: "Website at " + domain + (s.platform ? " (" + s.platform.name + ")" : ""),
