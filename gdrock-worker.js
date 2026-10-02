@@ -1846,15 +1846,15 @@ async function sendDeepScanReport(env, job, r, scored) {
   const rows = Array.isArray(card.rows) ? card.rows.slice(0, 10) : [];
   const deductions = Array.isArray(r.deductions) ? r.deductions.slice(0, 10) : [];
   const net = r.network || {}, vis = r.visitor || {};
-  const color = !scored ? "#9CA3AF" : r.score >= 80 ? "#00a896" : r.score >= 60 ? "#f5c842" : "#e63946";
+  const color = !scored ? "#9CA3AF" : r.score >= 80 ? "#4f7dff" : r.score >= 60 ? "#f5c842" : "#e63946";
   const checked = job.finished ? job.finished.slice(0, 10) : "";
   const method = `Chrome on a server in Germany (the connection was seen as ${e(net.country || "unknown")}), ${e(vis.language || "German")} language and ${e(vis.timezone || "Berlin")} time, ${e(r.runs || 2)} separate visits, the cookie banner never clicked. Checked ${e(checked)}.`;
   const head = card.headline ? `<p style="color:#fff;font-size:20px;font-weight:800;text-align:center;margin:0 0 4px;">${e(card.headline.line1 || "")}</p><p style="color:${card.headline.line2Color === "red" ? "#ff8a8a" : "#9CA3AF"};font-size:16px;text-align:center;margin:0 0 20px;">${e(card.headline.line2 || "")}</p>` : "";
-  const rowHtml = rows.map((x) => `<tr><td style="padding:8px 12px;border-left:3px solid ${x.ok ? "#00a896" : "#e63946"};background:#0a1020;color:#cfd8ea;font-size:14px;border-radius:6px;">${x.ok ? "✓" : "✗"} <b>${e(x.title || "")}</b>${x.sub ? `<div style="color:#9CA3AF;font-size:12.5px;margin-top:4px;">${e(x.sub)}</div>` : ""}</td></tr><tr><td style="height:8px"></td></tr>`).join("");
+  const rowHtml = rows.map((x) => `<tr><td style="padding:8px 12px;border-left:3px solid ${x.ok ? "#4f7dff" : "#e63946"};background:#111522;color:#cfd8ea;font-size:14px;border-radius:6px;">${x.ok ? "✓" : "✗"} <b>${e(x.title || "")}</b>${x.sub ? `<div style="color:#9CA3AF;font-size:12.5px;margin-top:4px;">${e(x.sub)}</div>` : ""}</td></tr><tr><td style="height:8px"></td></tr>`).join("");
   // What loaded before any click, with its time from the start of the visit (from the rig's card).
   const timeline = Array.isArray(card.timeline) ? card.timeline.slice(0, 12) : [];
   const tlHtml = timeline.length ? `<p style="color:#9CA3AF;font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:.06em;margin:4px 0 8px;">${e(card.timelineLabel || "WHAT LOADED BEFORE ANY CLICK")}</p>
-       <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">${timeline.map((t) => `<tr><td style="padding:5px 10px 5px 0;color:#ff6b6b;font-family:Consolas,Menlo,monospace;font-size:14px;font-weight:700;white-space:nowrap;vertical-align:top;width:1%;">${e(t.at || "")}</td><td style="padding:5px 0;color:#fff;font-size:15px;">${e(t.name || "")}${t.note ? `<span style="color:#9CA3AF;font-size:12.5px;"> · ${e(t.note)}</span>` : ""}</td></tr>`).join("")}</table>
+       <table style="width:100%;border-collapse:collapse;margin:0 0 16px;">${timeline.map((t) => `<tr><td style="padding:5px 10px 5px 0;color:#ff6b6b;font-family:Consolas,Menlo,monospace;font-size:14px;font-weight:700;white-space:nowrap;vertical-align:top;width:1%;">${e(t.at || "")} </td><td style="padding:5px 0;color:#fff;font-size:15px;">${e(t.name || "")}${t.note ? `<span style="color:#9CA3AF;font-size:12.5px;"> · ${e(t.note)}</span>` : ""}</td></tr>`).join("\n")}</table>
        ${card.timelineFoot ? `<p style="color:#9CA3AF;font-size:12.5px;margin:-8px 0 16px;">…${e(card.timelineFoot)}</p>` : ""}` : "";
   const dedHtml = deductions.length ? `<ul style="color:#cfd8ea;font-size:13px;line-height:1.6;padding-left:18px;margin:6px 0 0;">${deductions.map((d) => `<li>−${e(d.points)} ${e(d.short || d.text || "")}${d.detail ? `: <span style="color:#9CA3AF;">${e(String(d.detail).slice(0, 240))}</span>` : ""}</li>`).join("")}</ul>` : "";
   const body = scored
@@ -1864,12 +1864,12 @@ async function sendDeepScanReport(env, job, r, scored) {
     : `<p style="color:#fff;font-size:18px;font-weight:700;text-align:center;margin:0 0 10px;">We couldn't settle this one</p>
        <p style="color:#cfd8ea;font-size:14px;line-height:1.6;text-align:center;margin:0 0 10px;">${e(String(r.problem || r.error || "The check did not finish.").slice(0, 400))}</p>
        <p style="color:#9CA3AF;font-size:13px;line-height:1.6;text-align:center;margin:0;">So nothing is claimed about your site from this run. Reply to this email and we'll look at it by hand.</p>`;
-  const html = `<div style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;background:#04081a;padding:32px;border-radius:16px;">
+  const html = `<div style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;background:#08090c;padding:32px;border-radius:16px;">
     <div style="text-align:center;margin-bottom:22px;"><span style="font-size:22px;font-weight:800;color:#fff;">GDRock</span><div style="color:#5b6a8a;font-size:12px;">Deep check · what loads before anyone chooses</div></div>
     <h1 style="color:#fff;font-size:22px;text-align:center;margin:0 0 6px;">Your deep check</h1>
     <p style="text-align:center;color:#9CA3AF;font-size:14px;margin:0 0 22px;">for ${e(job.domain)}</p>
     ${body}
-    <div style="margin-top:20px;padding:14px 16px;border-radius:10px;background:#0a1020;"><p style="color:#cfd8ea;font-size:13px;font-weight:700;margin:0 0 6px;">How this was checked</p><p style="color:#9CA3AF;font-size:12.5px;line-height:1.55;margin:0;">${method} The full report and the result card are attached. A site can change from day to day, so this is a snapshot.</p></div>
+    <div style="margin-top:20px;padding:14px 16px;border-radius:10px;background:#111522;"><p style="color:#cfd8ea;font-size:13px;font-weight:700;margin:0 0 6px;">How this was checked</p><p style="color:#9CA3AF;font-size:12.5px;line-height:1.55;margin:0;">${method} The full report and the result card are attached. A site can change from day to day, so this is a snapshot.</p></div>
     <div style="background:#111522;border:1px solid #262c3b;border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
       <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Want it fixed, not just found?</p>
       <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0 0 14px;">We install the blocker and banner, re-run this exact check, and send you the new result. From &euro;249.</p>

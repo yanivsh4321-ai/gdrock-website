@@ -110,7 +110,7 @@ test("queue -> runner -> result -> email, end to end", async () => {
   assert.match(mail.htmlbody, /Tracking before consent/);
   assert.match(mail.htmlbody, /Meta Pixel fired &lt;script&gt;/); // escaped
   assert.match(mail.htmlbody, /WHAT SENT DATA BEFORE ANY CLICK/);
-  assert.match(mail.htmlbody, /\+0\.41s<\/td><td[^>]*>Meta Pixel/);
+  assert.match(mail.htmlbody, /\+0\.41s ?<\/td><td[^>]*>Meta Pixel/);
   assert.match(mail.htmlbody, /Pinterest Tag<span[^>]*> · second page/);
   assert.match(mail.htmlbody, /9 tracking requests on the first visit alone/);
   assert.deepEqual(mail.attachments.map((a) => a.name), ["shop.example_GDRock-deep-check.png", "shop.example_report.txt"]);
