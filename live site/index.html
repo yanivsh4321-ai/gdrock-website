@@ -700,6 +700,9 @@
    a real result is on screen. Everything site-derived goes in via textContent. */
 (function(){
   var API='https://cdn.gdrock.com/api/scan';
+  /* The ad or link that brought this visitor (utm_source/utm_campaign/utm_content), read from
+     this page's own address and sent with the scan, so each campaign can be counted. Not stored. */
+  var SRC=(function(){try{var q=new URLSearchParams(location.search);return ['utm_source','utm_campaign','utm_content'].map(function(k){return (q.get(k)||'').replace(/[^a-z0-9_.-]/gi,'').slice(0,40);}).filter(Boolean).join('/');}catch(e){return '';}})();
   var EMAIL=/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
   var DOMAIN=/[a-z0-9][a-z0-9-]*\.[a-z]{2,}/i;
   var $=function(id){return document.getElementById(id);};
@@ -969,7 +972,7 @@
     var kill=setTimeout(function(){if(!settled){timedOut=true;if(ctrl)ctrl.abort();}},30000);
     function stop(){settled=true;clearInterval(tick);clearTimeout(kill);}
 
-    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url}),signal:ctrl?ctrl.signal:undefined})
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url,src:SRC}),signal:ctrl?ctrl.signal:undefined})
       .then(function(r){
         if(r.status===429)return r.json().catch(function(){return {};}).then(function(d){var e=new Error('rate');e.rate=d;throw e;});
         if(!r.ok)throw new Error('http '+r.status);return r.json();})
@@ -1016,7 +1019,7 @@
     fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({source:'scanner',email:em,website_url:lastUrl,plan:'scan',
         notes:optin?'opted-in: alerts+news':'no marketing opt-in',score:lastScore})}).catch(function(){});
-    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:lastUrl,email:em,optin:optin})})
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:lastUrl,email:em,optin:optin,src:SRC})})
       .catch(function(){});
     reportBox.classList.add('sent');reportBtn.disabled=false;reportBtn.textContent='Send it';
   });
@@ -1031,7 +1034,7 @@
     mark(deepEmail,errD,false);deepEmail.value=em;
     deepBtn.disabled=true;deepBtn.textContent='Sending…';deepMsg.textContent='';
     fetch('https://cdn.gdrock.com/api/deep-scan',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({url:lastUrl,email:em,optin:!!(consentEl&&consentEl.checked)})})
+      body:JSON.stringify({url:lastUrl,email:em,optin:!!(consentEl&&consentEl.checked),src:SRC})})
       .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:r.ok,d:d};});})
       .then(function(x){
         deepMsg.textContent=x.ok?(x.d.message||'Got it. The result will be emailed to you.'):(x.d.message||x.d.error||'That didn’t go through. Try again, or email office@gdrock.com.');

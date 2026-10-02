@@ -205,3 +205,10 @@ test("the flag is cleared once the queue is empty and the flag is over two minut
   await call("/api/deep-scan/next", { env, auth: "Bearer " + TOKEN });
   assert.equal(await kv.get("q:any"), null);
 });
+
+test("the ad or link a visitor came from rides along to the owner's alert, cleaned", async () => {
+  const kv = fakeKV(), c = capture(), env = envWith(kv);
+  const res = await call("/api/deep-scan", { method: "POST", body: { url: "shop.example", email: "a@shop.example", src: "meta/gdr-a/card<script>" }, ip: "5.5.5.5", env });
+  assert.equal(res.status, 200);
+  assert.match(c.telegram[0].text, /Came from: meta\/gdr-a\/cardscript/);
+});

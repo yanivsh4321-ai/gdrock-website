@@ -84,6 +84,9 @@ function reqHost(request) {
   const src = request.headers.get("Origin") || request.headers.get("Referer") || "";
   try { return new URL(src).hostname.replace(/^www\./, "").toLowerCase(); } catch (e) { return ""; }
 }
+// Where a visitor came from, as tagged in the ad or link that brought them (utm_source/campaign/content).
+// The page reads it from its own URL and sends it along: no cookie, no storage, nothing third-party.
+const cleanSrc = (v) => String(v || "").replace(/[^a-z0-9_.\/-]/gi, "").slice(0, 120);
 function normDomain(s) {
   return String(s || "").replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/[\/?#].*$/, "").trim().toLowerCase();
 }
@@ -333,7 +336,7 @@ export default {
       if (cached) {
         const out = { ...cached, cached: true };
         if (wantsReport) {
-          later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage: readVantage(request), result: out, ip, cached: true }));
+          later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage: readVantage(request), result: out, ip, cached: true, src: cleanSrc(body.src) }));
           later(ctx, sendScanReport(env, email, domain, out).catch(() => {}));
         }
         return json(out);
@@ -346,7 +349,7 @@ export default {
       const vantage = readVantage(request);
       const scraped = await scrapeSite(fullUrl, vantage);
       if (!scraped.ok || (scraped.text || "").length < 80) {
-        later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, ip, failed: scraped.status ? "HTTP " + scraped.status : (scraped.error || "no readable content") }));
+        later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, ip, src: cleanSrc(body.src), failed: scraped.status ? "HTTP " + scraped.status : (scraped.error || "no readable content") }));
         return json({ score: null, is_real_site: false, scan_method: "source",
           site_description: "Could not load this site.",
           summary: "The site did not respond, or returned no readable homepage content, so there is nothing to report on.",
@@ -385,7 +388,7 @@ export default {
       // report goes to the visitor when they asked for it. Both run after the
       // response is sent, so neither can slow the scan down or break it.
       scanCachePut(ctx, domain, result);
-      later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, result, ip }));
+      later(ctx, alertScan(env, { domain, email, optin: body.optin === true, vantage, result, ip, src: cleanSrc(body.src) }));
       if (wantsReport) later(ctx, sendScanReport(env, email, domain, result).catch(() => {}));
 
       return json(result);
@@ -669,7 +672,7 @@ const escHtml = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ 
 // alert too, not only the ones that left an email.
 //   TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID  → Telegram
 //   OWNER_EMAIL (default office@gdrock.com) via ZEPTO_TOKEN or RESEND_API_KEY → email
-async function alertScan(env, { domain, email, optin, vantage, result, failed, ip, cached }) {
+async function alertScan(env, { domain, email, optin, vantage, result, failed, ip, cached, src }) {
   const gate = alertGate(ip || "");
   if (!gate.send) return; // a burst from one connection, or across all of them: held back and counted
   const hasEmail = Boolean(email && String(email).includes("@"));
@@ -687,6 +690,7 @@ async function alertScan(env, { domain, email, optin, vantage, result, failed, i
     failed ? "Could not read: " + failed : scoreLine + (result.platform ? " (" + result.platform.name + ")" : ""),
     hasEmail ? "Email: " + email + (optin ? " (opted in to alerts + news)" : " (no marketing opt-in)") : "Email: none given",
     "Visitor location: " + where,
+    src ? "Came from: " + src : null,
     cached ? "(result from the 10-minute cache: not a new scan)" : null,
     gate.suppressed ? `(${gate.suppressed} alert${gate.suppressed === 1 ? "" : "s"} held back during a burst before this one)` : null,
     worst.length ? "" : null,
@@ -1752,7 +1756,7 @@ async function handleDeepScanRequest(request, env, ctx) {
 
   const now = Date.now();
   const job = { id: crypto.randomUUID(), domain, url: "https://" + domain, email, optin: b.optin === true, status: "queued",
-    created: new Date(now).toISOString(), requestedFrom: vantage.country || null };
+    created: new Date(now).toISOString(), requestedFrom: vantage.country || null, src: cleanSrc(b.src) || null };
   await saveDeepJob(env, job);
   await env.DEEP_SCAN.put("queue:" + String(now).padStart(15, "0") + ":" + job.id, job.id, { expirationTtl: 3 * 86400 });
   await env.DEEP_SCAN.put(DEEP_FLAG, String(now), { expirationTtl: 3 * 86400 });
@@ -1760,7 +1764,7 @@ async function handleDeepScanRequest(request, env, ctx) {
   await env.DEEP_SCAN.put(capKey, String(used + 1), { expirationTtl: 86400 });
   const position = await deepQueuePosition(env, job.id);
   const online = await runnerOnline(env);
-  later(ctx, telegram(env, `GDRock deep check queued\n\nSite: ${domain}\nEmail: ${email}${job.optin ? " (opted in)" : ""}\nPosition: ${position || "?"}` +
+  later(ctx, telegram(env, `GDRock deep check queued\n\nSite: ${domain}\nEmail: ${email}${job.optin ? " (opted in)" : ""}\nPosition: ${position || "?"}` + (job.src ? "\nCame from: " + job.src : "") +
     (online ? "" : `\n\nRUNNER OFFLINE: nothing is checking the queue. Start the VPS runner, or run it by hand and email the result:\nnode verify_consent.js https://${domain} --geo=de`)));
   return json({ ok: true, queued: true, id: job.id, position, runner_online: online,
     message: online
