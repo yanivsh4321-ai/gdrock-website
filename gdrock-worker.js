@@ -1042,15 +1042,22 @@ async function tellOwner(env, text) {
 const isReservedAddress = (email) => /@([^@]*\.)?(example\.(com|net|org)|[a-z0-9-]+\.(example|test|invalid|localhost))$/i.test(email);
 
 function buyerEmailShell(title, inner) {
-  return `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#0f172a;">
-  <h1 style="font-size:22px;margin:0 0 14px;">${title}</h1>
+  const font = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#08090c" style="background:#08090c;">
+<tr><td align="center" style="padding:32px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+<tr><td style="padding:0 6px 20px;font-family:${font};"><img src="https://www.gdrock.com/assets/gdrock-mark-light.png" width="26" height="26" alt="" style="vertical-align:middle;border:0;"><span style="font-size:17px;font-weight:600;color:#f4f6fa;letter-spacing:-.01em;vertical-align:middle;margin-left:9px;">GDRock</span></td></tr>
+<tr><td bgcolor="#0e1117" style="background:#0e1117;border:1px solid #1f2430;border-radius:16px;padding:32px 28px;font-family:${font};color:#f4f6fa;">
+  <h1 style="font-size:24px;line-height:1.2;letter-spacing:-.02em;font-weight:650;margin:0 0 16px;color:#f4f6fa;">${title}</h1>
   ${inner}
-  <p style="font-size:13px;line-height:1.6;color:#64748b;margin:24px 0 0;">Questions? Just reply to this email; it reaches a person. You're covered by our 14-day money-back guarantee.</p>
-</div>`;
+</td></tr>
+<tr><td style="padding:20px 6px 0;font-family:${font};font-size:12.5px;line-height:1.6;color:#8d95a8;">Questions? Just reply to this email; it reaches a person. You're covered by our 14-day money-back guarantee.<br><span style="color:#5d6476;">GDRock &middot; gdrock.com</span></td></tr>
+</table>
+</td></tr></table>`;
 }
 async function sendBuyerNote(env, email, subject, text) {
   if (isReservedAddress(email)) return null;
-  const html = buyerEmailShell(escHtml(subject), `<p style="font-size:15px;line-height:1.65;color:#475569;margin:0;">${text}</p>`);
+  const html = buyerEmailShell(escHtml(subject), `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">${text}</p>`);
   try { return await sendEmail(env, email, `GDRock: ${subject}`, html); } catch (e) { return null; }
 }
 
@@ -1059,41 +1066,41 @@ async function sendActivationEmail(env, email, planKey) {
   const plan = WHOP_PLANS[planKey] || WHOP_PLANS.care;
   const link = `https://www.gdrock.com/activate.html?email=${encodeURIComponent(email)}`;
   const many = plan.sites > 1
-    ? `<p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 16px;">Your plan covers up to ${plan.sites} sites. Activate each client site the same way, one at a time; every one gets its own access code.</p>`
+    ? `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Your plan covers up to ${plan.sites} sites. Activate each client site the same way, one at a time; every one gets its own access code.</p>`
     : "";
-  const inner = `<p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 16px;">Thank you for buying <strong>${escHtml(plan.label)}</strong>. Whop doesn't pass us your website address, so there's one step left: tell us which site the banner is for.</p>
-  <p style="margin:0 0 20px;"><a href="${link}" style="display:inline-block;background:#1a6dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Activate my site</a></p>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 16px;">Your access code and the one-line install arrive at this address a minute later.</p>
+  const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Thank you for buying <strong>${escHtml(plan.label)}</strong>. Whop doesn't pass us your website address, so there's one step left: tell us which site the banner is for.</p>
+  <p style="margin:0 0 20px;"><a href="${link}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Activate my site</a></p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Your access code and the one-line install arrive at this address a minute later.</p>
   ${many}`;
   try { return await sendEmail(env, email, `Activate your GDRock ${plan.label}: one step left`, buyerEmailShell("You're in. One step left.", inner)); } catch (e) { return null; }
 }
 
 async function sendSetupEmail(env, email, label, siteId) {
   if (isReservedAddress(email)) return null;
-  const inner = `<p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 16px;">Thank you for buying <strong>${escHtml(label)}</strong>. We do the install for you${siteId ? ` on <strong>${escHtml(siteId)}</strong>` : ""}, so the next step is a short kickoff.</p>
-  <p style="margin:0 0 20px;"><a href="https://cal.eu/gdrock/15min" style="display:inline-block;background:#1a6dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Book the 15-minute kickoff</a></p>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 12px;">Rather not book? Reply with your store address and two times that suit you.</p>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 12px;">What helps us start: your store address and platform. On Shopify we send a collaborator request, so you never share a password.</p>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0;">When the install is done, we run the same real-browser check from Germany again and send you the result.</p>`;
+  const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Thank you for buying <strong>${escHtml(label)}</strong>. We do the install for you${siteId ? ` on <strong>${escHtml(siteId)}</strong>` : ""}, so the next step is a short kickoff.</p>
+  <p style="margin:0 0 20px;"><a href="https://cal.eu/gdrock/15min" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Book the 15-minute kickoff</a></p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;">Rather not book? Reply with your store address and two times that suit you.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;">What helps us start: your store address and platform. On Shopify we send a collaborator request, so you never share a password.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">When the install is done, we run the same real-browser check from Germany again and send you the result.</p>`;
   try { return await sendEmail(env, email, `Your GDRock ${label}: book the install`, buyerEmailShell("Thank you. Let's book your install.", inner)); } catch (e) { return null; }
 }
 
 async function sendCorePackEmail(env, email) {
   if (isReservedAddress(email)) return null;
-  const inner = `<p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 16px;">Thank you for buying the <strong>Core Pack</strong>. Everything is in one download:</p>
+  const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Thank you for buying the <strong>Core Pack</strong>. Everything is in one download:</p>
   ${await corePackBlock(env, email)}
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:20px 0 12px;"><strong>The banner is the real one.</strong> It's the same blocker and banner we run on our own CDN, packaged to run from your site: it holds Meta Pixel, Google Analytics, TikTok, Klaviyo, Hotjar and the rest until the visitor chooses, with Accept and Reject as equal choices, in 7 languages. INSTALL-BANNER.txt shows the two steps; on Shopify it takes about five minutes.</p>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0;">Then check it: run the free deep check at <a href="https://www.gdrock.com/#scan" style="color:#1a6dff;">gdrock.com</a>. A real browser in Germany opens your store and tells you if anything still fires before a choice.</p>`;
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:20px 0 12px;"><strong>The banner is the real one.</strong> It's the same blocker and banner we run on our own CDN, packaged to run from your site: it holds Meta Pixel, Google Analytics, TikTok, Klaviyo, Hotjar and the rest until the visitor chooses, with Accept and Reject as equal choices, in 7 languages. Guide 01 walks you through the install in about ten minutes, with the exact lines to paste for Shopify, WooCommerce and any other site.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">Then check it: run the free deep check at <a href="https://www.gdrock.com/#scan" style="color:#8fb0ff;">gdrock.com</a>. A real browser in Germany opens your store and tells you if anything still fires before a choice.</p>`;
   try { return await sendEmail(env, email, "Your GDRock Core Pack: download inside", buyerEmailShell("Your Core Pack is ready.", inner)); } catch (e) { return null; }
 }
 
 async function corePackBlock(env, email) {
   const dl = await corePackUrl(env, email);
   if (!dl) return "";
-  return `<div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:18px 20px;margin:8px 0 0;">
-    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:8px;">Your Core Pack documents</div>
-    <p style="font-size:14px;line-height:1.6;color:#475569;margin:0 0 10px;">The self-hosted blocker and banner, privacy policy template, data retention table, breach response pack, the 25-step checklist and the Shopify guide. Start with START-HERE.txt.</p>
-    <a href="${dl}" style="color:#1a6dff;font-weight:700;">Download the Core Pack (zip)</a>
+  return `<div style="background:#151a24;border:1px solid #262c3b;border-radius:12px;padding:18px 20px;margin:8px 0 0;">
+    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#4f7dff;font-weight:700;margin-bottom:8px;">Your Core Pack</div>
+    <p style="font-size:14px;line-height:1.6;color:#c5cbd7;margin:0 0 10px;">The blocker and banner, a step-by-step install guide, a privacy policy template, a data retention schedule, a breach response pack and a 20-step store checklist, with Word and Excel files you can edit. Open <strong>01 Start here</strong> first.</p>
+    <a href="${dl}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;">Download the Core Pack</a>
   </div>`;
 }
 
@@ -1163,20 +1170,17 @@ async function supabaseGetSite(env, siteId) {
 async function sendAccessCodeEmail(env, email, siteId, plan, code) {
   if (isReservedAddress(email)) return null;
   const planLabel = (WHOP_PLANS[plan] && WHOP_PLANS[plan].label) || plan;
-  const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#0f172a;">
-  <h1 style="font-size:22px;margin:0 0 8px;">You're live, and thank you.</h1>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 24px;">Your GDRock <strong>${planLabel}</strong> plan is active for <strong>${escHtml(siteId)}</strong>.</p>
-  <div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:24px;">
-    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:8px;">Your access code</div>
-    <div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:700;letter-spacing:.06em;">${code}</div>
+  const inner = `  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 24px;">Your GDRock <strong>${planLabel}</strong> plan is active for <strong>${escHtml(siteId)}</strong>.</p>
+  <div style="background:#151a24;border:1px solid #262c3b;border-radius:12px;padding:20px;margin-bottom:24px;">
+    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8d95a8;font-weight:700;margin-bottom:8px;">Your access code</div>
+    <div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:700;letter-spacing:.06em;color:#f4f6fa;">${code}</div>
   </div>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 12px;"><strong>Install: one line, the first thing inside &lt;head&gt;, above every other script. No async or defer.</strong></p>
-  <pre style="background:#0f172a;color:#e2e8f0;padding:16px;border-radius:10px;font-size:12px;overflow-x:auto;margin:0 0 12px;">&lt;script src="https://cdn.gdrock.com/gdrock.js" data-site-id="${escHtml(siteId)}"&gt;&lt;/script&gt;</pre>
-  <p style="font-size:14px;line-height:1.6;color:#475569;margin:0 0 24px;">It holds trackers until the visitor chooses, so it has to run before them. On Shopify, use the ready-made snippet: <a href="https://www.gdrock.com/integrations/shopify/snippets/gdrock-blocker.liquid" style="color:#1a6dff;">gdrock-blocker.liquid</a>. Then open your site, press F12 and run <code>GDRock.installFix()</code> to see anything left to change.</p>
-  <p style="font-size:15px;line-height:1.65;color:#475569;margin:0 0 24px;">Customise the banner at <a href="https://cdn.gdrock.com/customize" style="color:#1a6dff;">cdn.gdrock.com/customize</a> using the code above.</p>
-  <p style="font-size:13px;line-height:1.6;color:#64748b;margin:0;">Questions, or want us to install it for you? Just reply to this email — it reaches a person. You're covered by our 14-day money-back guarantee.</p>
-</div>`;
-  try { return await sendEmail(env, email, `Your GDRock access code — ${siteId}`, html); } catch (e) { return null; }
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;"><strong>Install: one line, the first thing inside &lt;head&gt;, above every other script. No async or defer.</strong></p>
+  <pre style="background:#05060a;color:#dbe4ff;border:1px solid #2a3b6b;padding:16px;border-radius:10px;font-size:12px;overflow-x:auto;margin:0 0 12px;">&lt;script src="https://cdn.gdrock.com/gdrock.js" data-site-id="${escHtml(siteId)}"&gt;&lt;/script&gt;</pre>
+  <p style="font-size:14px;line-height:1.6;color:#c5cbd7;margin:0 0 24px;">It holds trackers until the visitor chooses, so it has to run before them. On Shopify, use the ready-made snippet: <a href="https://www.gdrock.com/integrations/shopify/snippets/gdrock-blocker.liquid" style="color:#8fb0ff;">gdrock-blocker.liquid</a>. Then open your site, press F12 and run <code>GDRock.installFix()</code> to see anything left to change.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 24px;">Customise the banner at <a href="https://cdn.gdrock.com/customize" style="color:#8fb0ff;">cdn.gdrock.com/customize</a> using the code above.</p>
+`;
+  try { return await sendEmail(env, email, `Your GDRock access code — ${siteId}`, buyerEmailShell("You're live, and thank you.", inner)); } catch (e) { return null; }
 }
 
 /* ===========================================================================
