@@ -61,29 +61,29 @@
    if(h('agency','agencies','client site','client store','white-label','white label','portfolio','resell','freelanc','my clients','for clients'))
     return{text:'GDRock has a dedicated agency programme - the Founding Partner pilot:\n- We install GDRock on up to 20 of your client sites, free for 14 days (we do the installs, not you).\n- After the pilot: white-label portfolio pricing - up to 25 sites €299/mo, 26-50 €499/mo, 51-100 €799/mo, locked for 12 months.\n- You resell it under your brand and bill your clients.\nFirst 5 agencies only.',actions:[{label:'See the agency programme',href:'agencies.html'},{label:'Apply for the free pilot',href:'agencies.html#apply'}]};
    if(h('which plan','recommend','plan fit','plan for','best plan','what plan','fits me','choose','not sure','should i'))
-    return{text:'Quick guide:\n- Core Pack: €29 once, the documents and script, you install them yourself (no hosting or updates).\n- Care: €15/mo, a hosted cookie banner we keep current when EU law changes (most popular). Extra sites €9/mo each.\nRunning client sites as an agency? Agency Portfolio from €299/mo with a free 30-day pilot.',actions:[{label:'Get Care €15/mo',href:'checkout.html?plan=care'},{label:'Core €29',href:'checkout.html?plan=core'},{label:'Agency programme',href:'agencies.html'}]};
+    return{text:'Quick guide:\n- Core Pack: €29 once, the documents and script, you install them yourself (no hosting or updates).\n- Care: €15/mo, a hosted cookie banner we keep up to date (most popular).\nRunning client sites as an agency? Agency Portfolio from €299/mo with a free 14-day pilot.',actions:[{label:'Get Care €15/mo',href:'checkout.html?plan=care'},{label:'Core €29',href:'checkout.html?plan=core'},{label:'Agency programme',href:'agencies.html'}]};
    if(h('cookie','banner','consent'))
     return{text:'Here is what it does: known analytics and ad scripts stay held until a visitor opts in, every choice is logged with a timestamp, and visitors can accept all, reject all or choose by category. Install is one script tag. Whether a site is compliant also depends on its setup and what else it runs, so we do not certify compliance.',actions:[{label:'Get hosted banner (Care)',href:'checkout.html?plan=care'},{label:'See it live',go:'#fix'}]};
    if(h('scan','audit','check my','test my','am i compliant','exposure','compliant'))
     return{text:'Run the free scan - paste your store address and in a few seconds you see every consent tool, tracking tag, outside font and cookie in your homepage source, each with the code it came from.',actions:[{label:'Run free scan',go:'#scan'}]};
    if(h('fine','penalty','risk','sue','lawsuit','how much can'))
-    return{text:'GDPR fines reach €20M or 4% of global turnover (Tier 2); €10M or 2% for Tier 1. Even stores under €1M revenue average €12k-€45k. Scan your store to see what its code gives away.',actions:[{label:'Run free scan',go:'#scan'}]};
+    return{text:'Fines depend on the case and the country, so we won\'t guess at yours. What we can show you is what your store\'s code gives away today. The scan is free and needs no email.',actions:[{label:'Run free scan',go:'#scan'}]};
    if(h('price','pricing','cost','how much','plans','euro','cheap'))
-    return{text:'Pricing:\n- Core Pack: €29 one-time\n- Care: €15/month (hosted banner, we maintain it)\n- Extra sites: €9/month each\n- Agencies: Portfolio pricing from €299/mo for a whole client portfolio (free 30-day pilot)',actions:[{label:'Core €29',href:'checkout.html?plan=core'},{label:'Care €15/mo',href:'checkout.html?plan=care'},{label:'Agency programme',href:'agencies.html'}]};
+    return{text:'Pricing:\n- Core Pack: €29 one-time\n- Care: €15/month (hosted banner, we maintain it)\n- Agencies: Portfolio pricing from €299/mo for a whole client portfolio (free 14-day pilot)',actions:[{label:'Core €29',href:'checkout.html?plan=core'},{label:'Care €15/mo',href:'checkout.html?plan=care'},{label:'Agency programme',href:'agencies.html'}]};
    if(h('refund','money back','guarantee','cancel'))
     return{text:'Every product has a 14-day unconditional money-back guarantee, and monthly plans cancel anytime. Email office@gdrock.com with your order reference.',actions:[{label:'Email us',href:'mailto:office@gdrock.com'}]};
    if(h('done for you','do it for me','dfy','install for me','set it up for me','setup service'))
     return{text:'We install everything for you - cookie banner, privacy policy and consent logging, directly on your store. Live in 48 hours, from €249.',actions:[{label:'See Done-For-You',href:'dfy.html'}]};
    if(h('free','download','starter','sample','trial'))
-    return{text:'Grab the free GDRock Starter pack - GDPR basics guide, compliance checklist and a fine-tier reference. No credit card.',actions:[{label:'Get the free pack',go:'#free'}]};
+    return{text:'Start with the free scan: it shows what your store\'s code gives away, with no signup. Then ask for the free deep check, run from a real browser in Germany.',actions:[{label:'Run free scan',go:'#scan'}]};
    if(h('shopify','woocommerce','wordpress','stripe','platform','website builder'))
     return{text:'Yes - Core Pack includes a Shopify setup guide, the hosted banner works with any Shopify/WordPress theme, and Done-For-You covers WooCommerce, Stripe and custom stacks.',actions:[{label:'Get Care €15/mo',href:'checkout.html?plan=care'},{label:'Done-For-You',href:'dfy.html'}]};
    if(h('non-eu','non eu','outside eu','united states','usa','us based','not in eu'))
     return{text:'If you collect personal data from EU residents, GDPR applies regardless of where your business is based. GDRock works for any store selling into the EU.'};
    if(h('law change','update','changes','new rules'))
-    return{text:'Care and Pro subscribers get automatic banner and policy updates when the law changes. Core Pack customers receive email alerts on major changes.'};
+    return{text:'On Care, we update the hosted banner and you never re-install. The Core Pack is a one-time download: email office@gdrock.com any time for the latest version.'};
    if(h('human','agent','sales','talk to','contact','support','email','demo','call'))
-    return{text:'Happy to connect you with the team - we reply within 24 hours.',actions:[{label:'Email office@gdrock.com',href:'mailto:office@gdrock.com'},{label:'Request a demo',go:'#contact'}]};
+    return{text:'Happy to put you in touch with Yaniv, who built GDRock. He replies within 24 hours.',actions:[{label:'Email office@gdrock.com',href:'mailto:office@gdrock.com'},{label:'Request a demo',go:'#contact'}]};
    if(h('hello','hi ','hey','thanks','thank'))
     return{text:'Hi! I can help with pricing, the cookie banner, a free compliance scan, GDPR fines, or connecting you with a human. What do you need?'};
    if(typeof faqs!=='undefined'&&faqs&&faqs.length){

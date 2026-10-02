@@ -583,7 +583,7 @@ async function sendEmail(env, to, subject, html, attachments) {
   const from = env.MAIL_FROM || "noreply@gdrock.com";
   const files = Array.isArray(attachments) ? attachments : [];
   if (env.ZEPTO_TOKEN) {
-    return fetch("https://api.zeptomail.com/v1.1/email", {
+    const sent = await fetch("https://api.zeptomail.com/v1.1/email", {
       method: "POST",
       headers: { "Authorization": "Zoho-enczapikey " + env.ZEPTO_TOKEN, "Content-Type": "application/json", "Accept": "application/json" },
       body: JSON.stringify({
@@ -593,6 +593,11 @@ async function sendEmail(env, to, subject, html, attachments) {
         ...(files.length ? { attachments: files.map((f) => ({ name: f.name, mime_type: f.type, content: f.content })) } : {}),
       }),
     });
+    // A refused email used to vanish silently (one access code was lost on 2 Oct): tell the owner.
+    if (!sent.ok) await telegram(env, `Email NOT sent (ZeptoMail ${sent.status})
+To: ${to}
+Subject: ${subject}`).catch(() => {});
+    return sent;
   }
   if (env.RESEND_API_KEY) {
     return fetch("https://api.resend.com/emails", {
@@ -1081,7 +1086,9 @@ async function sendSetupEmail(env, email, label, siteId) {
   <p style="margin:0 0 20px;"><a href="https://cal.eu/gdrock/15min" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Book the 15-minute kickoff</a></p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;">Rather not book? Reply with your store address and two times that suit you.</p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;">What helps us start: your store address and platform. On Shopify we send a collaborator request, so you never share a password.</p>
-  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">When the install is done, we run the same real-browser check from Germany again and send you the result.</p>`;
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">When the install is done, we run the same real-browser check from Germany again and send you the result.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:20px 0 0;">Your plan includes the Core Pack: the templates and guides, yours to keep.</p>
+  ${await corePackBlock(env, email)}`;
   try { return await sendEmail(env, email, `Your GDRock ${label}: book the install`, buyerEmailShell("Thank you. Let's book your install.", inner)); } catch (e) { return null; }
 }
 
@@ -1179,8 +1186,10 @@ async function sendAccessCodeEmail(env, email, siteId, plan, code) {
   <pre style="background:#05060a;color:#dbe4ff;border:1px solid #2a3b6b;padding:16px;border-radius:10px;font-size:12px;overflow-x:auto;margin:0 0 12px;">&lt;script src="https://cdn.gdrock.com/gdrock.js" data-site-id="${escHtml(siteId)}"&gt;&lt;/script&gt;</pre>
   <p style="font-size:14px;line-height:1.6;color:#c5cbd7;margin:0 0 24px;">It holds trackers until the visitor chooses, so it has to run before them. On Shopify, use the ready-made snippet: <a href="https://www.gdrock.com/integrations/shopify/snippets/gdrock-blocker.liquid" style="color:#8fb0ff;">gdrock-blocker.liquid</a>. Then open your site, press F12 and run <code>GDRock.installFix()</code> to see anything left to change.</p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 24px;">Customise the banner at <a href="https://cdn.gdrock.com/customize" style="color:#8fb0ff;">cdn.gdrock.com/customize</a> using the code above.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 4px;">Your plan includes the Core Pack: the privacy policy, retention and breach templates and the store checklist, yours to keep.</p>
+  ${await corePackBlock(env, email)}
 `;
-  try { return await sendEmail(env, email, `Your GDRock access code — ${siteId}`, buyerEmailShell("You're live, and thank you.", inner)); } catch (e) { return null; }
+  try { return await sendEmail(env, email, `Your GDRock access code — ${siteId}`, buyerEmailShell("Your plan is active. One line to go live.", inner)); } catch (e) { return null; }
 }
 
 /* ===========================================================================
@@ -1565,9 +1574,9 @@ function policyLinkFrom(anchors, finalUrl) {
     if (!href || /^(mailto|tel|javascript):|^#/i.test(href)) continue;
     const blob = (href + " " + text).toLowerCase();
     let score = 0;
-    if (/privacy|datenschutz|confidentialit|privacidad|privacybeleid|informativa|privacyverklaring|protection-des-donnees|politique-de-confidentialite/.test(blob)) score += 2;
+    if (/privacy|datenschutz|confidentialit|privacidad|privacidade|privacybeleid|informativa|privacyverklaring|protection-des-donnees|politique-de-confidentialite|prywatno|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|riservatezza/.test(blob)) score += 2;
     if (/polic|erklärung|erklaerung|beleid|verklaring|politica|pol[ií]tica/.test(blob)) score += 1;
-    if (/cookie/.test(blob) && !/privacy|datenschutz|confidentialit|privacidad|privacybeleid|informativa/.test(blob)) score = 0; // a cookie notice is not the policy
+    if (/cookie/.test(blob) && !/privacy|datenschutz|confidentialit|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem/.test(blob)) score = 0; // a cookie notice is not the policy
     if (score > bestScore) { bestScore = score; best = href; }
   }
   if (!best || bestScore < 2) return null;
@@ -1866,7 +1875,7 @@ async function sendDeepScanReport(env, job, r, scored) {
       <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0 0 14px;">We install the blocker and banner, re-run this exact check, and send you the clean result.</p>
       <a href="https://www.gdrock.com/dfy.html" style="display:inline-block;background:#00a896;color:#fff;text-decoration:none;font-weight:700;padding:13px 26px;border-radius:10px;">See Done-For-You →</a>
     </div>
-    <p style="color:#5b6a8a;font-size:11.5px;text-align:center;margin-top:18px;line-height:1.6;">Automated and informational, not legal advice or a compliance guarantee. We keep your email with this job for 14 days, then it is deleted.<br>Questions? Just reply.</p>
+    <p style="color:#5b6a8a;font-size:11.5px;text-align:center;margin-top:18px;line-height:1.6;">Automated and informational, not legal advice or a compliance guarantee. We keep your email with this job for 14 days, then it is deleted from the queue; a copy of the request also reaches the founder so a person can follow up.<br>Questions? Just reply.</p>
   </div>`;
   const attachments = [];
   if (typeof r.card_png === "string" && /^[A-Za-z0-9+/=]+$/.test(r.card_png) && r.card_png.length < 4000000) attachments.push({ name: job.domain + "_GDRock-deep-check.png", type: "image/png", content: r.card_png });
@@ -1902,7 +1911,7 @@ async function scrapeSite(url, vantage) {
     const links = [];
     for (const a of d.anchors) {
       const blob = ((a.href || "") + " " + (a.text || "")).toLowerCase();
-      if (links.length < 12 && /privacy|datenschutz|confidential|privacybeleid|informativa|terms|agb|conditions|impressum|cookie|legal|mentions-legales/.test(blob)) links.push(a.href.slice(0, 140));
+      if (links.length < 12 && /privacy|datenschutz|confidential|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|terms|agb|conditions|condiciones|condicoes|condi[çc][õo]es|regulamin|villkor|vilkar|vilk[åa]r|ehdot|impressum|cookie|legal|mentions-legales/.test(blob)) links.push(a.href.slice(0, 140));
     }
 
     // Second reads, in parallel: the site's own stylesheets (fonts pulled in by
@@ -2041,8 +2050,8 @@ function buildReport(domain, s) {
   }
 
   // 5. Policies.
-  const hasPrivacy = s.links.some((l) => /privacy|datenschutz|confidential|privacybeleid|informativa/i.test(l));
-  const hasTerms   = s.links.some((l) => /terms|agb|conditions|impressum|legal|mentions/i.test(l));
+  const hasPrivacy = s.links.some((l) => /privacy|datenschutz|confidential|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem/i.test(l));
+  const hasTerms   = s.links.some((l) => /terms|agb|conditions|condiciones|condicoes|condi[çc][õo]es|regulamin|villkor|vilkar|vilk[åa]r|ehdot|impressum|legal|mentions/i.test(l));
   if (!hasPrivacy) {
     deduct("no_privacy_link");
     add("critical", "No link to a privacy policy was found in the homepage markup. Art. 13 GDPR requires that information to be reachable from where data is collected.", "observed", null, "no_privacy_link");

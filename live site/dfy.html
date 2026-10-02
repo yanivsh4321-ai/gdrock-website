@@ -4,8 +4,9 @@
 <style>html{background:#030712;}body{background:#030712;}</style>
 
 <meta charset="UTF-8">
+<script src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GDRock — Done-For-You GDPR Setup & Enterprise Infrastructure</title>
+<title>GDRock — Done-For-You GDPR Setup</title>
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
 <style>
@@ -269,7 +270,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
   <div class="orb orb-2"></div>
   <div class="hero-badge"><div class="badge-dot"></div>Technical Setup Service · No Coding Required</div>
   <h1>We deploy &amp; configure<br><span class="accent">GDRock on your site.</span></h1>
-  <p class="hero-sub">Our technical team installs and configures GDRock's pre-built cookie consent components, privacy policy templates, and data-tracking infrastructure directly on your website — fully tested, compliant, and ready to go.</p>
+  <p class="hero-sub">I install GDRock on your site myself: the blocker and banner, your privacy policy and the settings around them. Then a real browser in Germany checks it, and you get the before and after.</p>
 </section>
 
 <section class="how">
@@ -279,8 +280,8 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
     <div class="how-steps">
       <div class="how-step">
         <div class="how-num">1</div>
-        <h3>Book a product demo</h3>
-        <p>Fill in the form below. We confirm within 24 hours and schedule a 20-minute product demo.</p>
+        <h3>Book a 15-minute call</h3>
+        <p>Fill in the form below. We confirm within 24 hours and book a 15-minute call about your site.</p>
       </div>
       <div class="how-step">
         <div class="how-num">2</div>
@@ -312,7 +313,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
         <div class="service-tag blue">Basic setup</div>
         <div class="service-name">Essential</div>
         <div class="service-price">€249 <span>/ one-time</span></div>
-        <p class="service-desc">Our team deploys all core GDRock components your website needs. Every script installed, every template configured, and everything tested before handover.</p>
+        <p class="service-desc">I deploy all the core GDRock components your website needs. Every script installed, every template configured, and everything tested before handover.</p>
         <ul class="service-includes">
           <li><span class="check">✓</span>Automated GDPR site scan to baseline your setup</li>
           <li><span class="check">✓</span>Cookie consent banner script installed and tested</li>
@@ -322,7 +323,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
           <li><span class="check">✓</span>Written technical setup summary delivered</li>
           <li><span class="check">✓</span>14-day unconditional refund guarantee</li>
         </ul>
-        <button class="service-btn blue-btn" onclick="selectService('Product demo — Basic Setup')">Book a product demo →</button>
+        <button class="service-btn blue-btn" onclick="selectService('Product demo — Basic Setup')">Book a 15-minute call →</button>
       </div>
 
       <div class="service-card teal">
@@ -333,13 +334,13 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
         <ul class="service-includes">
           <li><span class="check">✓</span>Everything in Essential</li>
           <li><span class="check">✓</span>Shopify privacy settings fully configured</li>
-          <li><span class="check">✓</span>Data Processing Agreements signed with Shopify, Stripe, email platform</li>
+          <li><span class="check">✓</span>Each processor's DPA found, confirmed and listed for you</li>
           <li><span class="check">✓</span>Checkout privacy policy link added</li>
           <li><span class="check">✓</span>Customer data deletion process set up</li>
           <li><span class="check">✓</span>Meta Pixel / GA4 consent mode configured</li>
           <li><span class="check">✓</span>14-day unconditional refund guarantee</li>
         </ul>
-        <button class="service-btn teal-btn" onclick="selectService('Product demo — Shopify Full Setup')">Book a product demo →</button>
+        <button class="service-btn teal-btn" onclick="selectService('Product demo — Shopify Full Setup')">Book a 15-minute call →</button>
       </div>
 
       <div class="service-card gold">
@@ -356,55 +357,10 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
           <li><span class="check">✓</span>GDRock 20-step store checklist completed with you</li>
           <li><span class="check">✓</span>14-day unconditional refund guarantee</li>
         </ul>
-        <button class="service-btn outline" onclick="selectService('Product demo — SaaS Compliance')">Book a product demo →</button>
+        <button class="service-btn outline" onclick="selectService('Product demo — SaaS Compliance')">Book a 15-minute call →</button>
       </div>
 
-      <!-- ENTERPRISE / CUSTOM INFRASTRUCTURE TIER -->
-      <div class="service-card enterprise-card" id="enterprise">
-        <div class="enterprise-inner">
-          <div class="enterprise-left">
-            <div class="service-tag enterprise-tag">★ Enterprise &amp; Custom Infrastructure</div>
-            <div class="service-name">Enterprise / Custom<br>Infrastructure</div>
-            <div class="service-price" style="color:#c084fc;">Custom<span style="-webkit-text-fill-color:var(--g300);"> / scoped per project</span></div>
-            <p class="service-desc" style="margin-top:12px;">Built for international AI SaaS companies, high-volume platforms, and businesses handling cross-border EU data flows. We deploy dedicated Supabase data-consent vaults, custom automated compliance tracking scripts, and tailored framework implementations — backed by priority SLA support and liability-shield documentation.</p>
-            <ul class="service-includes">
-              <li><span class="check check-purple">✓</span>Everything in SaaS Compliance</li>
-              <li><span class="check check-purple">✓</span>Dedicated Supabase data-consent storage vault deployment</li>
-              <li><span class="check check-purple">✓</span>Automated EU compliance tracking scripts (custom-coded)</li>
-              <li><span class="check check-purple">✓</span>Custom data-mapping pipelines for cross-border flows</li>
-              <li><span class="check check-purple">✓</span>Custom Supabase webhooks for real-time consent events</li>
-              <li><span class="check check-purple">✓</span>Priority 24/7 SLA support with dedicated contact</li>
-              <li><span class="check check-purple">✓</span>Liability-shield documentation package</li>
-              <li><span class="check check-purple">✓</span>Quarterly compliance review calls</li>
-            </ul>
-          </div>
-          <div class="enterprise-right">
-            <div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25);border-radius:16px;padding:24px;margin-bottom:20px;">
-              <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#a855f7;font-weight:600;margin-bottom:12px;">Investment range</div>
-              <div style="margin-bottom:10px;">
-                <div style="font-family:var(--D);font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px;">Scale Tier</div>
-                <div style="font-size:12px;color:var(--g300);">€2,500–€5,000 setup + €299/mo recurring</div>
-                <div style="font-size:11px;color:var(--g500);margin-top:2px;">High-volume startups &amp; growing SaaS</div>
-              </div>
-              <div style="border-top:1px solid rgba(168,85,247,.15);padding-top:10px;">
-                <div style="font-family:var(--D);font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px;">Custom Enterprise Architecture</div>
-                <div style="font-size:12px;color:var(--g300);">€5,000–€15,000 setup + €999/mo recurring</div>
-                <div style="font-size:11px;color:var(--g500);margin-top:2px;">International AI SaaS with cross-border data flows</div>
-              </div>
-            </div>
-            <div class="enterprise-actions">
-              <a href="https://cal.com/gdrock/enterprise-sync" target="_blank" rel="noopener" class="service-btn enterprise-btn">
-                📅 Book a product demo →
-              </a>
-              <a href="gdrock-enterprise-pricing-guidelines.pdf" download class="enterprise-pdf-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                Download Enterprise Framework &amp; Pricing Guidelines (PDF)
-              </a>
-            </div>
-            <p style="font-size:11px;color:var(--g500);margin-top:12px;line-height:1.6;">All enterprise engagements include a complimentary 30-minute product demo. We scope each project individually — pricing above is indicative and confirmed in writing before any work begins.</p>
-          </div>
-        </div>
-      </div>
+
 
     </div>
   </div>
@@ -417,35 +373,35 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
     <div class="what-grid">
       <div class="what-list">
         <div class="what-item">
-          <div class="what-icon">🍪</div>
+          <div class="what-icon">01</div>
           <div>
             <h4>Cookie consent banner deployment</h4>
             <p>We deploy GDRock's pre-built cookie consent banner script, configure its settings for your cookie categories, and technically verify that non-essential scripts do not fire before the visitor gives consent.</p>
           </div>
         </div>
         <div class="what-item">
-          <div class="what-icon">📄</div>
+          <div class="what-icon">02</div>
           <div>
             <h4>Privacy policy template configuration</h4>
             <p>We populate GDRock's pre-built privacy policy template with your business details, data processor list, and retention periods — then publish it as a page on your site and configure all required links.</p>
           </div>
         </div>
         <div class="what-item">
-          <div class="what-icon">🤝</div>
+          <div class="what-icon">03</div>
           <div>
             <h4>Processor agreement setup</h4>
             <p>We identify your active data processors and walk you through activating the standard DPA each processor provides to their customers.</p>
           </div>
         </div>
         <div class="what-item">
-          <div class="what-icon">🗂️</div>
+          <div class="what-icon">04</div>
           <div>
             <h4>Data retention template &amp; configuration</h4>
             <p>We complete your data retention table and, where your platform allows, configure automatic data deletion schedules to match GDPR requirements.</p>
           </div>
         </div>
         <div class="what-item">
-          <div class="what-icon">📊</div>
+          <div class="what-icon">05</div>
           <div>
             <h4>Technical setup summary</h4>
             <p>After deployment we send you a written technical summary: every component installed, your site's updated scan score, and any remaining configuration steps.</p>
@@ -457,12 +413,12 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
         <div class="compare-row"><span class="compare-label">Time to complete</span><span class="compare-dfy">We handle it</span><span class="compare-diy">2–5 hours your time</span></div>
         <div class="compare-row"><span class="compare-label">Technical knowledge needed</span><span class="compare-dfy">None</span><span class="compare-diy">Moderate</span></div>
         <div class="compare-row"><span class="compare-label">Risk of mistakes</span><span class="compare-dfy">Very low</span><span class="compare-diy">Higher</span></div>
-        <div class="compare-row"><span class="compare-label">DPAs with processors</span><span class="compare-dfy">Included</span><span class="compare-diy">DIY only in Pro tier</span></div>
+        <div class="compare-row"><span class="compare-label">DPAs with processors</span><span class="compare-dfy">Included</span><span class="compare-diy">You find them yourself</span></div>
         <div class="compare-row"><span class="compare-label">Written setup summary</span><span class="compare-dfy">Included</span><span class="compare-diy">Not included</span></div>
         <div class="compare-row"><span class="compare-label">Email support after</span><span class="compare-dfy">14–60 days</span><span class="compare-diy">Standard support</span></div>
         <div class="compare-row"><span class="compare-label">Core Pack included</span><span class="compare-dfy">Yes (free)</span><span class="compare-diy">Separate purchase</span></div>
         <div style="margin-top:20px;">
-          <button class="service-btn blue-btn" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Book a product demo →</button>
+          <button class="service-btn blue-btn" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Book a 15-minute call →</button>
         </div>
       </div>
     </div>
@@ -474,7 +430,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
     <div class="book-card">
       <div class="section-label" style="text-align:center;">Request setup</div>
       <h2>Let's get GDRock deployed.</h2>
-      <p>Fill in your details below. We'll confirm within 24 hours, review your site's technical setup, and schedule a 20-minute product demo to walk through the platform-specific requirements — then we get to work.</p>
+      <p>Fill in your details below. We'll confirm within 24 hours, review your site's technical setup, and book a 15-minute call to go through your platform — then we get to work.</p>
       <div class="book-form">
         <input type="text" class="book-input" placeholder="Your name" id="bf-name">
         <input type="email" class="book-input" placeholder="Your email" id="bf-email">
@@ -484,15 +440,13 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
           <option value="Essential — €249">Essential Setup — €249</option>
           <option value="Shopify Pro — €599">Shopify Pro Setup — €599</option>
           <option value="SaaS Compliance — €1,500">SaaS Compliance — €1,500</option>
-          <option value="Scale Tier — €2,500–€5,000 setup + €299/mo">Enterprise Scale Tier — €2,500–€5,000 + €299/mo</option>
-          <option value="Custom Enterprise — €5,000–€15,000 setup + €999/mo">Custom Enterprise Architecture — €5,000–€15,000 + €999/mo</option>
           <option value="Not sure yet">Not sure yet — just want to talk</option>
         </select>
         <textarea class="book-input" placeholder="Anything we should know? (platform, number of stores, specific concerns...)" id="bf-notes" rows="3" style="resize:vertical;"></textarea>
         <button class="btn-primary" onclick="submitBooking()">Request my technical setup →</button>
         <p class="book-note">We respond within 24 hours · office@gdrock.com · No commitment required</p>
       </div>
-      <div class="success-msg" id="success-msg">✅ Got it! We'll email you within 24 hours to confirm your product demo. Check office@gdrock.com for our reply.</div>
+      <div class="success-msg" id="success-msg">Got it. You'll hear from office@gdrock.com within 24 hours to book the call.</div>
     </div>
   </div>
 </section>
@@ -508,7 +462,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
 <footer>
   <a href="/" class="footer-logo">
     <img src="/assets/gdrock-mark-light.png" alt="" width="23" height="23" style="height:23px;width:auto;display:block;">
-    GDrock
+    GDRock
   </a>
   <ul class="footer-links">
     <li><a href="/">Home</a></li>
@@ -574,13 +528,13 @@ function submitBooking() {
 }
 var faqs = [
   {q:'Do I need to give you access to my website?',a:'Yes — we need admin access to install the cookie banner and publish the privacy policy page. We use read/write access only for the tasks agreed, and we recommend removing our access after setup is complete. We sign an NDA on request.'},
-  {q:'How long does setup take?',a:'Essential setup typically takes 1–2 business days after the call. Shopify Pro takes 2–3 days. SaaS Compliance can take up to 5 business days. Enterprise projects are scoped individually and timelines are confirmed in writing before work begins.'},
-  {q:'What platforms do you support?',a:'We support Shopify, WooCommerce, Webflow, Squarespace, Wix, and most custom-built websites. Enterprise engagements also support Supabase, Vercel, and custom SaaS infrastructure. If you are on a platform not listed here, mention it in the booking form.'},
+  {q:'How long does setup take?',a:'Essential setup typically takes 1–2 business days after the call. Shopify Pro takes 2–3 days. SaaS Compliance can take up to 5 business days.'},
+  {q:'What platforms do you support?',a:'We support Shopify, WooCommerce, Webflow, Squarespace, Wix, and most custom-built websites. If you are on a platform not listed here, mention it in the booking form.'},
   {q:'Does GDRock provide legal advice?',a:'No. GDRock is a software and digital template product. Our setup service deploys pre-configured technical components — it is not legal consulting and does not substitute for professional legal advice.'},
   {q:'What is your refund policy?',a:'All packages are covered by GDRock\'s unconditional 14-day money-back guarantee. If you are unsatisfied for any reason within 14 days of purchase, contact office@gdrock.com for a full refund — no questions asked. Refunds are processed directly by GDRock.'},
-  {q:'Can I upgrade to a Care or Pro subscription after setup?',a:'Yes. After Essential or Shopify Pro setup, your site is already configured for GDRock Care — the hosted banner slot is there. Upgrading to Care means we switch your self-hosted script to our hosted version, which auto-updates when EU law changes.'},
+  {q:'Can I move to Care after setup?',a:'Yes. After Essential or Shopify Pro setup, your site is already configured for GDRock Care — the hosted banner slot is there. Upgrading to Care means we switch your self-hosted script to our hosted version, which we keep up to date for you.'},
   {q:'What if something breaks on my site?',a:'The cookie banner is a non-intrusive script addition. The privacy policy is a new page. Neither change affects your checkout, products, or existing content. We test everything before signing off.'},
-  {q:'What happens after the setup is done?',a:'You receive a written compliance report and we answer any follow-up questions for the support period. After that, email support is available through your GDRock subscription.'},
+  {q:'What happens after the setup is done?',a:'You receive a written setup summary and we answer any follow-up questions for the support period. After that, email support is available through your GDRock subscription.'},
 ];
 var list = document.getElementById('faq-list');
 faqs.forEach(function(f) {
@@ -617,9 +571,6 @@ function buyDFY(plan){
   window.location.href='dfy-checkout.html?plan='+encodeURIComponent(plan);
 }
 </script>
-<script async src="https://cdn.gdrock.com/gdrock.js"
-  data-site-id="gdrock.com"
-  data-api="https://cdn.gdrock.com"></script>
 <script>
 document.addEventListener('click',function(e){
   var a=e.target.closest&&e.target.closest('a[href^="#"]');

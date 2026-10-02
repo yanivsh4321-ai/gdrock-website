@@ -4,6 +4,7 @@
 <style>html{background:#030712;}body{background:#030712;}</style>
 
 <meta charset="UTF-8">
+<script src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="GDRock checkout — choose your GDPR compliance plan. Secure card payment.">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -251,7 +252,6 @@ function hostedLinkFor(plan){
   return HOSTED_LINKS[plan] || null;
 }
 </script>
-<script async src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
 <script>
 (function(){var p=new URLSearchParams(window.location.search).get('plan');if(p){var c=document.querySelector('.plan-card[data-plan="'+p+'"]');if(c){document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('selected');});c.classList.add('selected');}}})();
 var selectedPlan=document.querySelector('.plan-card.selected');
