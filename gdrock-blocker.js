@@ -1645,7 +1645,14 @@
   // install) make: what to find in the page source and what to put there.
   function installFix() {
     var d = diagnostics(), fixes = [], i, SRC = (me && me.getAttribute("src")) || "https://cdn.gdrock.com/gdrock.js";
-    var cleanTag = "<script src=\"" + SRC + "\" data-site-id=\"" + (SITE_ID || "YOUR_SITE_ID") + "\"></script>";
+    // Keep the merchant's own options (data-api="off", data-branding="off", data-lang…):
+    // dropping them would turn a self-hosted, nothing-sent-home install into a hosted one.
+    var extra = "", an;
+    if (me) for (i = 0; i < me.attributes.length; i++) {
+      an = me.attributes[i].name;
+      if (/^data-/.test(an) && an !== "data-site-id") extra += " " + an + "=\"" + String(me.attributes[i].value).replace(/"/g, "&quot;") + "\"";
+    }
+    var cleanTag = "<script src=\"" + SRC + "\" data-site-id=\"" + (SITE_ID || "YOUR_SITE_ID") + "\"" + extra + "></script>";
     var snippet = "{%- comment -%} GDRock: keep this the first line inside <head>, above {{ content_for_header }} {%- endcomment -%}\n" + cleanTag;
     function add(f) { fixes.push(f); }
     function tagWith(extra) { return d.install.tag ? d.install.tag.replace(/<script\b/i, "<script " + extra) : null; }
