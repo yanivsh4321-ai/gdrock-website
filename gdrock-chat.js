@@ -71,7 +71,7 @@
    if(h('price','pricing','cost','how much','plans','euro','cheap'))
     return{text:'Pricing:\n- Core Pack: €29 one-time\n- Care: €15/month (hosted banner, we maintain it)\n- Agencies: Portfolio pricing from €299/mo for a whole client portfolio (free 14-day pilot)',actions:[{label:'Core €29',href:'checkout.html?plan=core'},{label:'Care €15/mo',href:'checkout.html?plan=care'},{label:'Agency programme',href:'agencies.html'}]};
    if(h('refund','money back','guarantee','cancel'))
-    return{text:'Every product has a 14-day unconditional money-back guarantee, and monthly plans cancel anytime. Email office@gdrock.com with your order reference.',actions:[{label:'Email us',href:'mailto:office@gdrock.com'}]};
+    return{text:'Every product has a 14-day money-back guarantee (for Done-For-You, case by case once the install is delivered and accepted), and monthly plans cancel anytime. Email office@gdrock.com with your order reference.',actions:[{label:'Email us',href:'mailto:office@gdrock.com'}]};
    if(h('done for you','do it for me','dfy','install for me','set it up for me','setup service'))
     return{text:'We install everything for you - cookie banner, privacy policy and consent logging, directly on your store. Live in 48 hours, from €249.',actions:[{label:'See Done-For-You',href:'dfy.html'}]};
    if(h('free','download','starter','sample','trial'))

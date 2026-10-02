@@ -287,6 +287,32 @@ export default {
       }
     }
 
+    // -- GET /api/consent-export?site_id=X&code=Y -----------------
+    // The customer's own consent log as CSV (date, choice, analytics, marketing):
+    // no IP, no user agent. Needs the site's access code, like the customizer.
+    if (path === "/api/consent-export" && request.method === "GET") {
+      const siteId = (url.searchParams.get("site_id") || "").trim().toLowerCase();
+      const code = (url.searchParams.get("code") || "").trim().toUpperCase();
+      if (!siteId || !code) return json({ error: "site_id and code required" }, 400);
+      if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return json({ error: "not configured" }, 503);
+      const h = { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` };
+      const sr = await fetch(`${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(siteId)}&select=access_code`, { headers: h });
+      const site = sr.ok ? (await sr.json())[0] : null;
+      if (!site || !site.access_code || site.access_code.toUpperCase() !== code) return json({ error: "Site ID or access code is wrong" }, 403);
+      const rows = [];
+      for (let off = 0; off < 50000; off += 1000) {
+        const r = await fetch(`${env.SUPABASE_URL}/rest/v1/consent_logs_public?site_id=eq.${encodeURIComponent(siteId)}&select=created_at,accepted,analytics,marketing&order=created_at.asc&limit=1000&offset=${off}`, { headers: h });
+        if (!r.ok) break;
+        const page = await r.json();
+        if (!Array.isArray(page) || !page.length) break;
+        rows.push(...page);
+        if (page.length < 1000) break;
+      }
+      const yn = (v) => (v ? "yes" : "no");
+      const csv = "time_utc,choice,analytics,marketing\r\n" + rows.map((r) => `${r.created_at},${r.accepted ? "accepted" : "rejected or custom"},${yn(r.analytics)},${yn(r.marketing)}`).join("\r\n") + "\r\n";
+      return new Response(csv, { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="gdrock-consent-log-${siteId}.csv"`, "Access-Control-Allow-Origin": "*", "Cache-Control": "no-store" } });
+    }
+
     // -- POST /api/lead ------------------------------------------
     if (path === "/api/lead" && request.method === "POST") {
       const body = await request.json().catch(() => ({}));
@@ -1574,9 +1600,9 @@ function policyLinkFrom(anchors, finalUrl) {
     if (!href || /^(mailto|tel|javascript):|^#/i.test(href)) continue;
     const blob = (href + " " + text).toLowerCase();
     let score = 0;
-    if (/privacy|datenschutz|confidentialit|privacidad|privacidade|privacybeleid|informativa|privacyverklaring|protection-des-donnees|politique-de-confidentialite|prywatno|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|riservatezza/.test(blob)) score += 2;
+    if (/privacy|datenschutz|confidentialit|privacidad|privacidade|privacybeleid|informativa|privacyverklaring|protection-des-donnees|politique-de-confidentialite|prywatno|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|privatnost|zasebnost|poveritel|privatum|privaatsus|aporrit|persondata|dataskydd|riservatezza/.test(blob)) score += 2;
     if (/polic|erklärung|erklaerung|beleid|verklaring|politica|pol[ií]tica/.test(blob)) score += 1;
-    if (/cookie/.test(blob) && !/privacy|datenschutz|confidentialit|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem/.test(blob)) score = 0; // a cookie notice is not the policy
+    if (/cookie/.test(blob) && !/privacy|datenschutz|confidentialit|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|privatnost|zasebnost|poveritel|privatum|privaatsus|aporrit|persondata|dataskydd/.test(blob)) score = 0; // a cookie notice is not the policy
     if (score > bestScore) { bestScore = score; best = href; }
   }
   if (!best || bestScore < 2) return null;
@@ -1912,7 +1938,7 @@ async function scrapeSite(url, vantage) {
     const links = [];
     for (const a of d.anchors) {
       const blob = ((a.href || "") + " " + (a.text || "")).toLowerCase();
-      if (links.length < 12 && /privacy|datenschutz|confidential|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|terms|agb|conditions|condiciones|condicoes|condi[çc][õo]es|regulamin|villkor|vilkar|vilk[åa]r|ehdot|impressum|cookie|legal|mentions-legales/.test(blob)) links.push(a.href.slice(0, 140));
+      if (links.length < 12 && /privacy|datenschutz|confidential|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|privatnost|zasebnost|poveritel|privatum|privaatsus|aporrit|persondata|dataskydd|terms|agb|conditions|condiciones|condicoes|condi[çc][õo]es|regulamin|villkor|vilkar|vilk[åa]r|ehdot|uvjeti|pogoji|podm[ií]nky|obchodn|termeni|tingimused|s[aą]lygos|noteikumi|impressum|cookie|legal|mentions-legales/.test(blob)) links.push(a.href.slice(0, 140));
     }
 
     // Second reads, in parallel: the site's own stylesheets (fonts pulled in by
@@ -2051,8 +2077,8 @@ function buildReport(domain, s) {
   }
 
   // 5. Policies.
-  const hasPrivacy = s.links.some((l) => /privacy|datenschutz|confidential|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem/i.test(l));
-  const hasTerms   = s.links.some((l) => /terms|agb|conditions|condiciones|condicoes|condi[çc][õo]es|regulamin|villkor|vilkar|vilk[åa]r|ehdot|impressum|legal|mentions/i.test(l));
+  const hasPrivacy = s.links.some((l) => /privacy|datenschutz|confidential|privacidad|privacidade|privacybeleid|informativa|prywatn|integritet|privatliv|personvern|tietosuoja|osobn|adatv[ée]delem|privatnost|zasebnost|poveritel|privatum|privaatsus|aporrit|persondata|dataskydd/i.test(l));
+  const hasTerms   = s.links.some((l) => /terms|agb|conditions|condiciones|condicoes|condi[çc][õo]es|regulamin|villkor|vilkar|vilk[åa]r|ehdot|uvjeti|pogoji|podm[ií]nky|obchodn|termeni|tingimused|s[aą]lygos|noteikumi|impressum|legal|mentions/i.test(l));
   if (!hasPrivacy) {
     deduct("no_privacy_link");
     add("critical", "No link to a privacy policy was found in the homepage markup. Art. 13 GDPR requires that information to be reachable from where data is collected.", "observed", null, "no_privacy_link");
