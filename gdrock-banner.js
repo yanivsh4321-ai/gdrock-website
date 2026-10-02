@@ -28,12 +28,15 @@
  *
  * Attributes on the script tag
  *   data-site-id="X"         required; matches the blocker's storage key
- *   data-api="https://…"     API origin (default https://cdn.gdrock.com)
+ *   data-api="https://…"     API origin (default https://cdn.gdrock.com);
+ *                            "off" = self-hosted (Core Pack): no config
+ *                            request and no consent log, nothing leaves the site
  *   data-lang="de"           force a language
  *   data-policy-url="/…"     privacy policy link in the banner (else the
  *                            saved config, else a privacy link found on the page)
  *   data-manage-button="off" no floating button (the site links to
  *                            #gdrock-manage itself)
+ *   data-branding="off"      no "Consent by GDRock" line (white-label)
  *
  * Contract with the blocker (unchanged): localStorage gdrock_consent_<siteId>
  * = {accepted, analytics, marketing, timestamp}; a "gdrock:consent" event
@@ -47,8 +50,10 @@
   var SITE_ID = opt("data-site-id");
   if (!SITE_ID) { if (window.console) console.warn("[GDRock] Missing data-site-id"); return; }
   var API_BASE = String(opt("data-api") != null ? opt("data-api") : "https://cdn.gdrock.com").replace(/\/+$/, "");
+  var API_OFF = API_BASE === "off";
   var STORAGE_KEY = "gdrock_consent_" + SITE_ID;
   var MANAGE_BUTTON = opt("data-manage-button") !== "off";
+  var BRANDING = opt("data-branding") !== "off";
 
   // ---------- language ------------------------------------------------------
   var I18N = {
@@ -120,6 +125,7 @@
   // ---------- consent record --------------------------------------------------
   function loadConsent() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { return null; } }
   function sendConsent(c) {
+    if (API_OFF) return;
     try {
       fetch(API_BASE + "/api/consent", { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ site_id: SITE_ID, accepted: c.accepted, analytics: c.analytics, marketing: c.marketing }), keepalive: true })
@@ -321,7 +327,8 @@
     if (view !== "settings") h += "<button type=\"button\" class=\"gdr-link\" data-action=\"customize\">" + esc(T.customize) + "</button>";
     else if (!opts.closable) h += "<button type=\"button\" class=\"gdr-link\" data-action=\"back\">" + esc(T.back) + "</button>";
     var href = "https://gdrock.com/?utm_source=banner&utm_medium=poweredby&utm_campaign=site_" + encodeURIComponent(SITE_ID);
-    h += "<p class=\"gdr-foot\"><a href=\"" + href + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + esc(T.poweredBy) + "</a></p></div>";
+    if (BRANDING) h += "<p class=\"gdr-foot\"><a href=\"" + href + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + esc(T.poweredBy) + "</a></p>";
+    h += "</div>";
     root.innerHTML = h;
     // First in the tab order, wherever it sits on screen.
     var body = document.body || document.documentElement;
@@ -438,6 +445,7 @@
     else showManage();
   }
   function init() {
+    if (API_OFF) { start({}); return; }
     var done = false;
     // A slow or failed config request must never leave a visitor without a way to choose.
     var t = setTimeout(function () { if (!done) { done = true; start({}); } }, 2500);

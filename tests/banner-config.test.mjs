@@ -93,14 +93,14 @@ test("the access-code email tells buyers to put the tag first in <head>, without
   };
   // Drive it through a signed Whop webhook, the only path that sends it.
   const secret = "whsec_dGVzdHNlY3JldA==";
-  const body = JSON.stringify({ type: "payment.succeeded", data: { user: { email: "buyer@shop.example" }, metadata: { website_url: "shop.example", gdrock_plan: "care" } } });
+  const body = JSON.stringify({ type: "payment.succeeded", data: { user: { email: "buyer@shopmail.co" }, metadata: { website_url: "shop.example", gdrock_plan: "care" } } });
   const id = "msg_1", ts = String(Math.floor(Date.now() / 1000));
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   const sig = Buffer.from(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${id}.${ts}.${body}`))).toString("base64");
   await worker.fetch(new Request("https://cdn.gdrock.com/api/whop-webhook", { method: "POST", body,
     headers: { "webhook-id": id, "webhook-timestamp": ts, "webhook-signature": "v1," + sig } }),
     { ...ENV, WHOP_WEBHOOK_SECRET: secret, ZEPTO_TOKEN: "z" }, { waitUntil() {} });
-  const mail = sent.find((m) => m.to[0].email_address.address === "buyer@shop.example");
+  const mail = sent.find((m) => m.to[0].email_address.address === "buyer@shopmail.co");
   assert.ok(mail);
   assert.match(mail.htmlbody, /first thing inside &lt;head&gt;/);
   assert.doesNotMatch(mail.htmlbody, /script async/);

@@ -108,3 +108,7 @@ offers/free-install-playbook.md
 reports/
 workbooks/
 scan-portfolio/input/
+
+# Core Pack v3 build (paid product; this repo is public)
+products/core-pack-v3/
+products/GDRock-Core-Pack-v3.zip

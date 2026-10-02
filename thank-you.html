@@ -1,91 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<style>html{background:#030712;}body{background:#030712;}</style>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thank you — GDRock</title>
-<meta name="description" content="Your GDRock order is confirmed. Your access code and one-line install snippet are on their way to your inbox.">
+<title>Order confirmed · GDRock</title>
+<meta name="description" content="Your GDRock order is confirmed. The next step is waiting in your inbox.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#08090c">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/geist.css">
+<link rel="stylesheet" href="/assets/gdrock.css?v=20261001b">
 <style>
-:root{--navy:#04081a;--navy2:#070d22;--blue:#0033aa;--bright:#1a6dff;--teal:#00a896;--teal2:#00c9b1;--white:#fff;--g300:#a5b1cc;--g500:#5b6a8a;--g700:#1c2640;--D:'Syne',sans-serif;--B:'DM Sans',sans-serif;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--B);background:var(--navy);color:var(--white);line-height:1.7;}
-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(8,9,12,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:100;}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1060px;margin:0 auto;}
-.logo{font-family:var(--D);font-weight:800;font-size:19px;color:var(--white);text-decoration:none;display:flex;align-items:center;gap:9px;}
-.back-btn{color:var(--teal2);text-decoration:none;font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;border:1px solid rgba(0,201,177,.2);padding:7px 14px;border-radius:6px;transition:all .2s;}
-.back-btn:hover{background:rgba(0,201,177,.07);}
-.hero{padding:72px 24px 44px;text-align:center;}
-.container{max-width:720px;margin:0 auto;padding:0 24px;}
-.tick{width:64px;height:64px;border-radius:50%;background:rgba(0,168,150,.12);border:1px solid rgba(0,201,177,.4);color:var(--teal2);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 22px;}
-h1{font-family:var(--D);font-size:clamp(32px,5.5vw,54px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:16px;}
-.hero>p{color:var(--g300);font-size:16px;line-height:1.65;font-weight:300;max-width:500px;margin:0 auto;}
-.section{padding:0 24px 80px;}
-.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:38px;margin-bottom:20px;}
-h2{font-family:var(--D);font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.07);}
-p{color:var(--g300);font-size:14px;line-height:1.75;font-weight:300;margin-bottom:14px;}
-p:last-child{margin-bottom:0;}
-a{color:var(--teal2);text-decoration:none;}
-a:hover{text-decoration:underline;}
-ol{margin:0 0 0 18px;}
-ol li{color:var(--g300);font-size:14px;line-height:1.8;font-weight:300;padding:6px 0 6px 6px;}
-ol li strong{color:var(--white);font-weight:500;}
-pre{background:#010409;border:1px solid rgba(255,255,255,.09);border-radius:11px;padding:16px;font-size:12px;color:#cfe0ff;overflow-x:auto;margin:12px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
-.note{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.24);border-radius:13px;padding:18px 20px;color:#cfe0ff;font-size:13.5px;line-height:1.65;font-weight:300;}
-.note strong{color:var(--white);font-weight:500;}
-footer{border-top:1px solid rgba(255,255,255,.07);padding:28px 24px;text-align:center;color:var(--g500);font-size:12px;font-weight:300;}
-footer a{color:var(--g500);}
-@media(max-width:640px){nav{padding:14px 20px;}.card{padding:26px;}.hero{padding:52px 20px 34px;}}
+/* Post-purchase pages: the homepage system (gdrock.css), report-style rows, no decoration. */
+.nav{border-bottom-color:var(--line);background:rgba(8,9,12,.9);}
+@media(max-width:860px){.nav-right .btn-2{display:inline-flex;}}
+@media(max-width:520px){.nav-right .link-q{display:none;}}
+.page{padding:calc(62px + clamp(48px,8vw,104px)) 0 clamp(72px,9vw,120px);}
+.wrap{max-width:860px;}
+section.block{padding:0;}
+
+.status{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ok);margin-bottom:18px;}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(61,220,151,.14);}
+.intro h1{font-size:clamp(44px,6.4vw,80px);margin-bottom:22px;}
+.intro .lede{max-width:52ch;}
+
+.block{margin-top:clamp(48px,6vw,72px);}
+.block-h{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line);}
+.block-h h2{font-size:clamp(21px,2.2vw,26px);letter-spacing:-.022em;line-height:1.2;}
+.block-h span{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;}
+
+/* The scan report's finding rows: an edge, a title, one line, and what to do. */
+.rows{display:grid;gap:10px;}
+.row{position:relative;display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:8px 28px;padding:20px 22px 20px 26px;
+  background:#0d0f14;border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;transition:background .18s var(--ease-out),border-color .18s var(--ease-out);}
+.row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ind,rgba(255,255,255,.16));}
+.row:hover{background:#111318;border-color:rgba(255,255,255,.11);}
+.row.you{--ind:var(--acc);}
+.row h3{font-size:16px;font-weight:600;letter-spacing:-.014em;line-height:1.35;}
+.row .tag{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:6px;font-weight:500;}
+.row p{font-size:15px;line-height:1.62;color:var(--ink-2);}
+.row p + p{margin-top:8px;}
+.row code{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;}
+.row pre{margin:12px 0;padding:13px 14px;background:#08090c;border:1px solid rgba(255,255,255,.08);border-radius:10px;font:12.5px/1.6 var(--mono);color:#dfe3ea;white-space:pre-wrap;word-break:break-all;}
+.row .act{margin-top:14px;}
+
+.check{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:20px 32px;padding:clamp(24px,3.4vw,34px) !important;
+  background:#0d0f14;border:1px solid rgba(255,255,255,.08);border-radius:16px;}
+.check h2{font-size:clamp(21px,2.2vw,26px);letter-spacing:-.022em;line-height:1.2;margin-bottom:8px;}
+.check p{font-size:15px;line-height:1.62;color:var(--ink-2);max-width:54ch;}
+.btn:active{transform:translateY(1px);}
+
+.fine{margin-top:clamp(40px,5vw,56px);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 40px;padding-top:28px;border-top:1px solid var(--line);}
+.fine h3{font-size:14.5px;font-weight:600;letter-spacing:-.01em;margin-bottom:6px;}
+.fine p{font-size:14px;line-height:1.65;color:var(--ink-3);}
+
+.foot-mini{border-top:1px solid var(--line);padding:30px 0 40px;}
+.foot-mini .shell{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 28px;}
+.foot-mini p{font-size:13px;color:var(--ink-3);}
+
+@media(max-width:720px){
+  .row{grid-template-columns:1fr;padding:18px 18px 18px 22px;}
+  .check{grid-template-columns:1fr;}
+  .fine{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
-<nav><div class="nav-inner">
-  <a href="/" class="logo">GDRock</a>
-  <a href="/" class="back-btn">&larr; Back to site</a>
-</div></nav>
 
-<div class="hero">
-  <div class="tick">&#10003;</div>
-  <h1>Thank you &mdash; you're in.</h1>
-  <p>Your payment went through. Your access code and install snippet are on their way to the email address you checked out with.</p>
-</div>
-
-<div class="section"><div class="container">
-
-  <div class="card">
-    <h2>What happens next</h2>
-    <ol>
-      <li><strong>Check your inbox.</strong> Your access code arrives within a couple of minutes. If it isn't there, look in spam before anything else &mdash; it's almost always there.</li>
-      <li><strong>Add one line to your site,</strong> as the first thing inside <code>&lt;head&gt;</code>, above every other script, with no <code>async</code>. It holds trackers until the visitor chooses, so it has to run before them. Your real site ID is in the email:
-        <pre>&lt;script src="https://cdn.gdrock.com/gdrock.js" data-site-id="yourstore.com"&gt;&lt;/script&gt;</pre>
-        On Shopify, use the ready-made <a href="https://github.com/yanivsh4321-ai/gdrock-website/blob/main/integrations/shopify/snippets/gdrock-blocker.liquid">theme snippet</a>. Then open your site, press F12 and run <code>GDRock.installFix()</code>: it lists anything left to change.
-      </li>
-      <li><strong>Customise the banner</strong> at <a href="https://cdn.gdrock.com/customize">cdn.gdrock.com/customize</a> using your access code: colours, corners, text size, logo and position.</li>
-    </ol>
+<header class="nav">
+  <div class="nav-in">
+    <a href="/" class="brand"><img src="/assets/gdrock-mark-light.png" alt="" width="26" height="26">GDRock</a>
+    <div class="nav-right">
+      <a href="mailto:office@gdrock.com" class="link-q">office@gdrock.com</a>
+      <a href="/" class="btn btn-2">Back to site</a>
+    </div>
   </div>
+</header>
 
-  <div class="card">
-    <h2>If anything looks wrong</h2>
-    <p>Email <a href="mailto:office@gdrock.com">office@gdrock.com</a> and a person will answer &mdash; it isn't a ticket queue. Tell us your site URL and we'll look at it directly. If you'd rather not install it yourself, say so and we'll do it for you.</p>
-    <div class="note"><strong>14-day money-back guarantee.</strong> If GDRock isn't right for you, email us within 14 days of purchase for a full refund. No questions, no forms, no retention call. Full terms on our <a href="/terms-and-conditions.html#refund">refund policy</a>.</div>
+<main class="page">
+  <div class="shell wrap">
+    <div class="intro">
+      <p class="status"><i aria-hidden="true"></i>Payment confirmed</p>
+      <h1>You're in.</h1>
+      <p class="lede">Your next step is already on its way to the email you checked out with, usually within two minutes. If it isn't in your inbox, check spam first.</p>
+    </div>
+
+    <section class="block" aria-labelledby="arrives">
+      <div class="block-h"><h2 id="arrives">What arrives, by plan</h2><span>Check your inbox</span></div>
+      <div class="rows">
+        <div class="row">
+          <div><h3>Core Pack</h3><span class="tag">€29 · one-time</span></div>
+          <div><p>A download link: the self-hosted blocker and banner, the policy templates and the guides. Open START-HERE.txt first.</p></div>
+        </div>
+        <div class="row">
+          <div><h3>Care and Portfolio</h3><span class="tag">Hosted · kept up to date</span></div>
+          <div>
+            <p>Your access code and one line to paste as the first thing inside <code>&lt;head&gt;</code>, above every other script, with no async. Your real site ID is in the email.</p>
+            <pre>&lt;script src="https://cdn.gdrock.com/gdrock.js" data-site-id="yourstore.com"&gt;&lt;/script&gt;</pre>
+            <p>On Shopify, use the ready-made <a href="https://github.com/yanivsh4321-ai/gdrock-website/blob/main/integrations/shopify/snippets/gdrock-blocker.liquid">theme snippet</a>. Customise colours, text and position at <a href="https://cdn.gdrock.com/customize">cdn.gdrock.com/customize</a>.</p>
+          </div>
+        </div>
+        <div class="row you">
+          <div><h3>Bought on Whop?</h3><span class="tag">Care · Portfolio</span></div>
+          <div>
+            <p>Whop doesn't pass us your website, so tell us which site your plan covers. The access code follows by email a minute later.</p>
+            <div class="act"><a href="/activate.html" class="btn btn-1">Activate your site</a></div>
+          </div>
+        </div>
+        <div class="row">
+          <div><h3>Done-For-You</h3><span class="tag">We install it</span></div>
+          <div><p>A link to book a 15-minute kickoff. On Shopify we send a collaborator request, so you never share a password.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block check" aria-labelledby="checkit">
+      <div>
+        <h2 id="checkit">Then check it worked</h2>
+        <p>Once it's live, run the free deep check. A real browser in Germany opens your store twice, never touches the banner, and shows anything that still fires before a choice.</p>
+      </div>
+      <a href="/#scan" class="btn btn-2">Run the deep check</a>
+    </section>
+
+    <div class="fine">
+      <div>
+        <h3>Something looks wrong?</h3>
+        <p>Email <a href="mailto:office@gdrock.com">office@gdrock.com</a> with your site address. A person answers, not a ticket queue. If you'd rather we install it, say so.</p>
+      </div>
+      <div>
+        <h3>14-day money-back guarantee</h3>
+        <p>Email us within 14 days of purchase for a full refund. No forms, no retention call. <a href="/terms-and-conditions.html#refund">Refund policy</a>.</p>
+      </div>
+    </div>
   </div>
+</main>
 
-</div></div>
-
-<footer>
-  &copy; <span id="yr">2026</span> GDRock &nbsp;&middot;&nbsp;
-  <a href="/terms-and-conditions.html">Terms</a> &nbsp;&middot;&nbsp;
-  <a href="/cookie-policy.html">Cookie Policy</a> &nbsp;&middot;&nbsp;
-  <a href="/dpa.html">DPA</a> &nbsp;&middot;&nbsp;
-  <a href="mailto:office@gdrock.com">office@gdrock.com</a>
+<footer class="foot-mini">
+  <div class="shell">
+    <p>&copy; <span id="yr">2026</span> GDRock &middot; Payments processed by Whop</p>
+    <nav class="foot-links" aria-label="Legal">
+      <a href="/terms-and-conditions.html">Terms</a>
+      <a href="/terms-and-conditions.html#privacy">Privacy</a>
+      <a href="/terms-and-conditions.html#refund">Refund</a>
+      <a href="/cookie-policy.html">Cookie policy</a>
+      <a href="/dpa.html">DPA</a>
+    </nav>
+  </div>
 </footer>
-<script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>

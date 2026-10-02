@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activate your site · GDRock</title>
+<meta name="description" content="Bought GDRock on Whop? Tell us which website your plan covers and your access code arrives by email.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#08090c">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
+<link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/geist.css">
+<link rel="stylesheet" href="/assets/gdrock.css?v=20261001b">
+<style>
+/* Post-purchase pages: the homepage system (gdrock.css), one instrument card, no decoration. */
+.nav{border-bottom-color:var(--line);background:rgba(8,9,12,.9);}
+.page{min-height:calc(100dvh - 96px);display:grid;align-content:center;padding:calc(62px + clamp(40px,7vw,88px)) 0 clamp(64px,8vw,104px);}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:clamp(40px,6vw,96px);align-items:start;}
+.intro h1{font-size:clamp(40px,5.6vw,68px);margin-bottom:22px;}
+.intro .lede{max-width:44ch;}
+
+.steps{list-style:none;margin-top:clamp(36px,4.4vw,52px);border-top:1px solid var(--line);}
+.steps li{display:grid;grid-template-columns:44px 1fr;gap:6px 14px;padding:18px 0;border-bottom:1px solid var(--line);}
+.steps .n{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--ink-3);padding-top:3px;}
+.steps b{display:block;font-size:15.5px;font-weight:600;letter-spacing:-.012em;color:var(--ink);margin-bottom:3px;}
+.steps p{font-size:14.5px;line-height:1.6;color:var(--ink-2);}
+.steps code{font-family:var(--mono);font-size:12.5px;color:var(--ink);background:rgba(255,255,255,.06);padding:2px 6px;border-radius:5px;}
+
+/* The card borrows the scan report's header so it reads as the same instrument. */
+section.card,.card{padding:0;}
+.card{background:#0d0f14;border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 30px 80px -40px rgba(0,0,0,.8);}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px clamp(20px,3vw,30px);border-bottom:1px solid rgba(255,255,255,.07);}
+.card-id{display:flex;align-items:center;gap:12px;min-width:0;}
+.card-id img{width:24px;height:24px;flex:none;}
+.card-word{font-size:13px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;}
+.card-rule{width:1px;height:18px;background:rgba(255,255,255,.11);flex:none;}
+.card-kind{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9aa1ae;white-space:nowrap;}
+.card-plans{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:#697180;white-space:nowrap;}
+.card-body{padding:clamp(24px,3.4vw,34px) clamp(20px,3vw,30px) clamp(26px,3.4vw,34px);}
+
+.fld{margin-bottom:20px;}
+.fld label{display:block;font-size:13.5px;font-weight:500;color:var(--ink);margin-bottom:8px;}
+.fld input{width:100%;height:50px;padding:0 15px;background:#08090c;color:var(--ink);font:400 16px var(--sans);letter-spacing:-.005em;
+  border:1px solid rgba(255,255,255,.14);border-radius:10px;transition:border-color .18s var(--ease-out),box-shadow .18s var(--ease-out);}
+.fld input:hover{border-color:rgba(255,255,255,.24);}
+.fld input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft);}
+.fld input[aria-invalid="true"]{border-color:var(--penalty);}
+.fld .hint{display:block;font-size:13px;color:var(--ink-3);margin-top:8px;}
+.go{width:100%;height:50px;margin-top:6px;}
+.go:active{transform:translateY(1px);}
+.go .spin{display:none;width:15px;height:15px;border-radius:50%;border:2px solid rgba(10,11,15,.25);border-top-color:#0a0b0f;animation:spin .7s linear infinite;}
+.go.busy .spin{display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(prefers-reduced-motion:reduce){.go .spin{animation:none;}}
+
+/* Result: a report row with its indicator edge. */
+.result{position:relative;display:none;margin-top:18px;padding:15px 16px 15px 20px;border-radius:12px;background:#111318;border:1px solid rgba(255,255,255,.07);font-size:14.5px;line-height:1.6;color:var(--ink-2);overflow:hidden;}
+.result::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ind);}
+.result.ok{display:block;--ind:var(--ok);}
+.result.err{display:block;--ind:var(--penalty);}
+.result strong{display:block;color:var(--ink);font-weight:600;margin-bottom:2px;}
+
+.aside{margin-top:22px;display:grid;gap:10px;}
+.aside p{font-size:14px;line-height:1.6;color:var(--ink-3);}
+.aside a{color:var(--ink-2);}
+
+.foot-mini{border-top:1px solid var(--line);padding:30px 0 40px;}
+.foot-mini .shell{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 28px;}
+.foot-mini p{font-size:13px;color:var(--ink-3);}
+
+@media(max-width:900px){
+  .split{grid-template-columns:1fr;}
+  .intro .lede{max-width:none;}
+}
+@media(max-width:860px){.nav-right .btn-2{display:inline-flex;}}
+@media(max-width:520px){
+  .card-plans{display:none;}
+  .nav-right .link-q{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-in">
+    <a href="/" class="brand"><img src="/assets/gdrock-mark-light.png" alt="" width="26" height="26">GDRock</a>
+    <div class="nav-right">
+      <a href="mailto:office@gdrock.com" class="link-q">office@gdrock.com</a>
+      <a href="/" class="btn btn-2">Back to site</a>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <div class="shell split">
+    <div class="intro">
+      <p class="eyebrow">Activation</p>
+      <h1>One step left.</h1>
+      <p class="lede">You bought on Whop, and Whop doesn't pass us your website. Tell us which site your plan covers. The access code goes to the email you bought with, never to this page.</p>
+      <ol class="steps">
+        <li><span class="n">01</span><div><b>Enter your email and website</b><p>The email you checked out with on Whop, and the site the banner is for.</p></div></li>
+        <li><span class="n">02</span><div><b>Your access code arrives</b><p>With the one-line install, usually within a minute. Check spam if it doesn't.</p></div></li>
+        <li><span class="n">03</span><div><b>Install, then check it</b><p>Paste the line first in <code>&lt;head&gt;</code>, then run the free deep check to confirm nothing fires before a choice.</p></div></li>
+      </ol>
+    </div>
+
+    <div>
+      <section class="card" aria-labelledby="form-title">
+        <div class="card-head">
+          <div class="card-id">
+            <img src="/assets/gdrock-mark-light.png" alt="" width="24" height="24">
+            <span class="card-word">GDRock</span>
+            <span class="card-rule" aria-hidden="true"></span>
+            <span class="card-kind" id="form-title">Activate a site</span>
+          </div>
+          <span class="card-plans">Care · Portfolio</span>
+        </div>
+        <div class="card-body">
+          <form id="act" novalidate>
+            <div class="fld">
+              <label for="email">Email you bought with</label>
+              <input id="email" name="email" type="email" autocomplete="email" spellcheck="false" required>
+            </div>
+            <div class="fld">
+              <label for="site">Website</label>
+              <input id="site" name="site" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="yourstore.com" required>
+              <span class="hint">Portfolio covers several sites. Activate them one at a time.</span>
+            </div>
+            <button type="submit" class="btn btn-1 go" id="go"><span class="spin" aria-hidden="true"></span><span class="go-label">Activate site</span></button>
+            <div id="result" class="result" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </section>
+      <div class="aside">
+        <p>The Core Pack needs no activation: its download link is in your purchase email. Done-For-You buyers get a booking link instead.</p>
+        <p>Nothing arrived, or the wrong site? <a href="mailto:office@gdrock.com">office@gdrock.com</a>. A person answers within one working day.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot-mini">
+  <div class="shell">
+    <p>&copy; <span id="yr">2026</span> GDRock &middot; Payments processed by Whop</p>
+    <nav class="foot-links" aria-label="Legal">
+      <a href="/terms-and-conditions.html">Terms</a>
+      <a href="/terms-and-conditions.html#privacy">Privacy</a>
+      <a href="/terms-and-conditions.html#refund">Refund</a>
+      <a href="/cookie-policy.html">Cookie policy</a>
+      <a href="/dpa.html">DPA</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+(function () {
+  var f = document.getElementById('act'), em = document.getElementById('email'), site = document.getElementById('site');
+  var go = document.getElementById('go'), label = go.querySelector('.go-label'), out = document.getElementById('result');
+  var q = new URLSearchParams(location.search);
+  if (q.get('email')) em.value = q.get('email');
+  (em.value ? site : em).focus();
+
+  function show(kind, title, text) {
+    out.className = 'result ' + kind;
+    out.innerHTML = '';
+    var b = document.createElement('strong'); b.textContent = title; out.appendChild(b);
+    out.appendChild(document.createTextNode(text));
+  }
+  function bad(input, msg) { input.setAttribute('aria-invalid', 'true'); input.focus(); show('err', 'Check this field', msg); }
+  [em, site].forEach(function (i) { i.addEventListener('input', function () { i.removeAttribute('aria-invalid'); }); });
+
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em.value.trim())) return bad(em, 'Enter the email address you bought with.');
+    if (!/\.[a-z]{2,}/i.test(site.value.trim())) return bad(site, 'Enter your website address, like yourstore.com.');
+    go.disabled = true; go.classList.add('busy'); label.textContent = 'Activating';
+    fetch('https://cdn.gdrock.com/api/whop-activate', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: em.value.trim(), website_url: site.value.trim() })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (res.ok) show('ok', 'Request received', res.j.message);
+        else show('err', 'Not activated', res.j.error || 'Something went wrong. Email office@gdrock.com and we will sort it out.');
+      })
+      .catch(function () { show('err', 'Connection failed', 'We could not reach the activation service. Try again in a minute, or email office@gdrock.com.'); })
+      .then(function () { go.disabled = false; go.classList.remove('busy'); label.textContent = 'Activate site'; });
+  });
+})();
+</script>
+</body>
+</html>
