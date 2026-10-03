@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Your Core Pack · GDRock</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/geist.css">
+<style>
+:root{--bg:#08090c;--panel:#0e1015;--panel2:#14161c;--line:#232733;--ink:#f4f6fa;--ink2:#c5cbd7;--ink3:#8d95a8;--acc:#4f7dff;--ok:#3ddc97;--warn:#f5c842}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{color:var(--ink);font:15px/1.6 Geist,Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#8fb0ff}
+.mono{font-family:"Geist Mono",Consolas,monospace}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,9,12,.92);backdrop-filter:blur(10px);z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--ink);text-decoration:none}.brand img{height:22px}
+.who{font:12px "Geist Mono",monospace;color:var(--ink3)}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 57px)}
+nav{border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:57px;height:calc(100vh - 57px)}
+nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--ink2);font-size:14px}
+nav button .n{font:600 11px "Geist Mono",monospace;color:var(--ink3);width:18px}
+nav button:hover{background:var(--panel2)}nav button.on{background:var(--panel2);color:var(--ink)}nav button.on .n{color:var(--acc)}
+nav .sp{flex:1}
+.offer{border:1px solid #2a3b6b;background:linear-gradient(180deg,rgba(79,125,255,.12),rgba(79,125,255,.03));border-radius:12px;padding:14px;font-size:13px;color:var(--ink2);display:none}
+.offer b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}.offer a{display:inline-block;margin-top:10px;background:var(--acc);color:#fff;text-decoration:none;font-weight:600;padding:8px 12px;border-radius:8px}
+main{padding:34px 40px 80px;min-width:0}
+.eye{font:600 11px "Geist Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+h1{font-size:34px;line-height:1.08;letter-spacing:-.03em;font-weight:700}
+.lead{color:var(--ink3);margin-top:10px;max-width:640px}
+.view{display:none}.view.on{display:block}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}
+.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px;padding:11px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}
+.btn.p{background:var(--acc);border-color:var(--acc)}.btn:hover{filter:brightness(1.12)}.btn:disabled{opacity:.5;cursor:default}
+.pages{display:flex;flex-direction:column;align-items:center;gap:18px;margin-top:10px}
+.pages canvas{width:100%;max-width:860px;height:auto;border-radius:6px;box-shadow:0 18px 40px rgba(0,0,0,.45);border:1px solid var(--line)}
+.state{color:var(--ink3);padding:40px 0}
+/* policy editor */
+.ed{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:28px;align-items:start;margin-top:20px}
+.form{display:flex;flex-direction:column;gap:18px}
+.grp{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.grp h3{font-size:14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}.grp h3 span{font:500 11px "Geist Mono",monospace;color:var(--ink3)}
+.f{margin-bottom:12px}.f:last-child{margin-bottom:0}
+.f label{display:block;font-size:13px;color:var(--ink2);margin-bottom:5px}
+.f input{width:100%;background:#090b10;border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:10px 12px;font:14px Geist,Inter,sans-serif;outline:none}
+.f input:focus{border-color:var(--acc)}
+.f .h{font-size:12px;color:var(--ink3);margin-top:4px}
+.tg{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink2);margin-bottom:10px;cursor:pointer}
+.tg input{margin-top:4px;accent-color:var(--acc)}
+.sub{margin:8px 0 0 24px}
+.paper{background:#fff;color:#14161c;border-radius:12px;padding:44px 48px;font:15px/1.65 Geist,Inter,sans-serif;position:sticky;top:80px;max-height:calc(100vh - 110px);overflow:auto}
+.paper h1{font-size:28px;letter-spacing:-.02em;color:#0b0d12;margin-bottom:6px}
+.paper h2{font-size:17px;margin:22px 0 6px;color:#0b0d12}
+.paper p,.paper li{margin:6px 0}.paper ul{padding-left:20px}
+.paper table{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px}.paper td,.paper th{border:1px solid #dde1ea;padding:7px 9px;text-align:left;vertical-align:top}.paper th{background:#f4f6fa}
+.paper .why{font-size:12px;color:#7a8296;margin-top:-2px}
+.paper .gap{background:#fff3c4;color:#7a5a00;border-radius:4px;padding:0 4px;font-weight:600}
+.paper.nowhy .why{display:none}
+.meter{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--ink3)}.meter i{flex:1;height:6px;background:var(--panel2);border-radius:6px;overflow:hidden;display:block}.meter i b{display:block;height:100%;background:var(--ok);width:0;transition:width .2s}
+/* checklist */
+.cl{display:flex;flex-direction:column;gap:8px;margin-top:20px;max-width:860px}
+.cl h3{font:600 11px "Geist Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:18px 0 4px}
+.it{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer}
+.it input{margin-top:5px;width:18px;height:18px;accent-color:var(--ok)}
+.it .t{font-weight:600}.it .d{color:var(--ink3);font-size:13.5px}.it.done{opacity:.6}.it.done .t{text-decoration:line-through}
+.files{display:flex;flex-direction:column;gap:8px;margin-top:20px;max-width:860px}
+.file{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.file .d{color:var(--ink3);font-size:13px}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--ok);color:#06210f;font-weight:700;padding:10px 14px;border-radius:10px;opacity:0;transition:.2s;z-index:9}.toast.on{opacity:1}
+@media(max-width:980px){.ed{grid-template-columns:1fr}.paper{position:static;max-height:none;padding:28px 22px}}
+@media(max-width:760px){.app{grid-template-columns:1fr}nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);padding:10px}nav .sp,.offer{display:none!important}main{padding:24px 16px 60px}header{padding:14px 16px}}
+@media print{header,nav,.form,.bar,.lead,.eye,h1,.meter{display:none!important}.app{display:block}main{padding:0}.view{display:none!important}#v-policy{display:block!important}.ed{display:block}.paper{position:static;max-height:none;box-shadow:none;padding:0}body,html{background:#fff}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="https://www.gdrock.com/"><img src="/assets/gdrock-mark-light.png" alt="">GDRock</a><span class="who" id="who"></span></header>
+<div class="app">
+<nav id="nav">
+  <button data-v="start" class="on"><span class="n">01</span>Start here</button>
+  <button data-v="policy"><span class="n">02</span>Your privacy policy</button>
+  <button data-v="retention"><span class="n">03</span>Retention schedule</button>
+  <button data-v="breach"><span class="n">04</span>Breach response</button>
+  <button data-v="checklist"><span class="n">05</span>Store checklist</button>
+  <button data-v="files"><span class="n">↓</span>All files</button>
+  <div class="sp"></div>
+  <div class="offer" id="offer"><b>3 months of Care, free</b>Your Core Pack includes three months of the hosted banner: consent logs, the customizer, updates handled for you. We email you before anything is charged.<br><a id="offer-link" href="#">Claim it</a></div>
+</nav>
+<main>
+  <section class="view on" id="v-start"><p class="eye">Core Pack · 01</p><h1>Start here.</h1><p class="lead">Install the banner, publish your privacy policy, check the result. About an hour, most of it filling in the policy, which you can do on this page.</p><div class="bar"><button class="btn" data-dl="01">Download the PDF</button><button class="btn" data-dl="js">Download gdrock-consent.js</button></div><div class="pages" id="p-01"><div class="state">Loading your Core Pack…</div></div></section>
+
+  <section class="view" id="v-policy"><p class="eye">Core Pack · 02</p><h1>Your privacy policy.</h1><p class="lead">Fill in the gaps on the left. The policy updates on the right as you type. Download it as Word, or copy it straight into Shopify (Settings → Policies → Privacy policy). Your answers stay in this browser.</p>
+    <div class="bar"><button class="btn p" id="dl-policy" disabled>Download as Word</button><button class="btn" id="copy-policy">Copy for Shopify</button><button class="btn" onclick="window.print()">Print or save as PDF</button><label class="tg" style="margin:10px 0 0"><input type="checkbox" id="showwhy" checked> Show why each section is there</label></div>
+    <div class="meter"><span id="m-txt">0 of 0 filled</span><i><b id="m-bar"></b></i></div>
+    <div class="ed"><div class="form" id="form"></div><div class="paper" id="paper"></div></div>
+  </section>
+
+  <section class="view" id="v-retention"><p class="eye">Core Pack · 03</p><h1>Data retention schedule.</h1><p class="lead">How long to keep each kind of customer data, why, and where to set it. Fill in the Excel file with your periods, then copy them into section 7 of your policy.</p><div class="bar"><button class="btn p" data-dl="03x">Download the Excel file</button><button class="btn" data-dl="03">Download the PDF</button></div><div class="pages" id="p-03"></div></section>
+
+  <section class="view" id="v-breach"><p class="eye">Core Pack · 04</p><h1>Breach response.</h1><p class="lead">What to do in the first 72 hours if customer data is lost, leaked or stolen. Read it once now, so you aren't reading it for the first time then.</p><div class="bar"><button class="btn p" data-dl="04x">Download the Word forms</button><button class="btn" data-dl="04">Download the PDF</button></div><div class="pages" id="p-04"></div></section>
+
+  <section class="view" id="v-checklist"><p class="eye">Core Pack · 05</p><h1>Store privacy checklist.</h1><p class="lead">Twenty things to have in place, in the order to do them. Tick as you go; your ticks stay in this browser. Come back once a year.</p><div class="meter" style="margin-top:18px;max-width:860px"><span id="c-txt"></span><i><b id="c-bar"></b></i></div><div class="cl" id="cl"></div></section>
+
+  <section class="view" id="v-files"><p class="eye">Downloads</p><h1>All your files.</h1><p class="lead">Everything in the Core Pack, yours to keep.</p><div class="files" id="files"></div></section>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(function(){
+var TEMPLATE = [["title", "Privacy policy"], ["p", "Last updated: {{DATE}}"], ["h", "1. Who we are", "Who is responsible and how to reach them. Required: Art. 13(1)(a) and (b)."], ["p", "{{STORE_NAME}} (\"we\", \"us\") is run by {{LEGAL_NAME}}, {{ADDRESS}}. We decide how and why your personal data is used, which makes us its \"controller\" under data protection law."], ["p", "For anything about your data, write to {{PRIVACY_EMAIL}}."], ["opt", "Only if you have appointed one", "Our data protection officer is {{DPO_NAME}}, reachable at {{DPO_EMAIL}}."], ["opt", "Only if your business has no office in the EU or the UK and you have appointed a representative", "Our representative in the EU is {{EU_REPRESENTATIVE}}. Our representative in the UK is {{UK_REPRESENTATIVE}}."], ["h", "2. The data we collect", "What you collect and where it comes from."], ["ul", ["When you place an order: your name, email address, phone number, billing and delivery address, what you bought and whether payment went through. Card payments are handled by our payment provider; we never see or store your full card number.", "When you create an account: your login details, saved addresses and preferences.", "When you contact us: your messages and our replies.", "When you sign up for our emails: your email address, and when and how you signed up.", "When you visit our website: your IP address, device and browser type, and the pages you view. Analytics and advertising tools only run after you accept them in our cookie banner."]], ["p", "We collect this data from you, and from our payment and delivery providers when they handle your order."], ["h", "3. Why we use it, and our legal basis", "Each purpose with its legal basis, and the legitimate interests you rely on. Required: Art. 13(1)(c) and (d)."], ["table", ["What we do", "Legal basis"], [["Take, deliver and handle your order, including returns and refunds", "Contract: we need it to do what you asked."], ["Keep invoices and accounting records", "Legal obligation: tax and accounting law."], ["Answer your messages", "Contract, when it is about an order. Otherwise our legitimate interest in helping you."], ["Send you marketing emails", "Your consent. Or, if you bought from us and didn't opt out, our legitimate interest in telling you about similar products. Every email has an unsubscribe link."], ["Prevent fraud and keep our shop secure", "Our legitimate interest in protecting our shop and our customers."], ["Analytics and advertising on our website", "Your consent, given in our cookie banner."]]], ["p", "Where we rely on legitimate interests, we have checked that they don't outweigh your rights. You can ask us how we made that check."], ["h", "4. Cookies and similar technologies", "What runs with and without consent, and how to change the choice."], ["p", "Some cookies are strictly necessary for the shop to work, for example to keep your basket, take payment and remember your cookie choice. We use these without asking."], ["p", "Everything else waits for your choice. On your first visit, our banner lets you accept or reject analytics and marketing cookies, and rejecting is as easy as accepting. You can change your mind at any time with the \"Cookie settings\" button at the bottom of every page."], ["p", "With your consent we use {{ANALYTICS_TOOLS}} to understand how our shop is used, and {{ADVERTISING_TOOLS}} to measure and personalise our ads."], ["h", "5. Who we share it with", "Recipients, honestly described. Required: Art. 13(1)(e)."], ["p", "We don't sell your personal data. We share it only with companies that help us run the shop:"], ["ul", ["Our shop platform and hosting: {{PLATFORM}}", "Payments: {{PAYMENT_PROVIDERS}}", "Delivery: {{DELIVERY_COMPANIES}}", "Email: {{EMAIL_PLATFORM}}", "Analytics and advertising, only with your consent: {{ANALYTICS_TOOLS}}, {{ADVERTISING_TOOLS}}"]], ["p", "Most of these companies may only use your data to provide their service to us. Advertising platforms also use it for their own purposes, under their own privacy policies, which is why they only receive it if you consent. We also share data with our professional advisers, and with authorities when the law requires it."], ["h", "6. Transfers outside the UK and EEA", "Where data goes and what protects it. Required: Art. 13(1)(f)."], ["p", "Some of these companies process data outside the UK and the European Economic Area, for example in {{TRANSFER_COUNTRIES}}. When they do, the transfer is protected by an adequacy decision, such as the EU-US Data Privacy Framework and its UK extension for certified companies, or by standard contractual clauses. You can ask us for details of these safeguards."], ["h", "7. How long we keep it", "Retention periods. Required: Art. 13(2)(a). File 03 helps you pick the numbers."], ["ul", ["Orders and invoices: {{ACCOUNTING_YEARS}} years after the end of the financial year, because tax law requires it.", "Your account: until you close it, or {{ACCOUNT_YEARS}} years after your last login.", "Marketing emails: until you unsubscribe. We then keep only your email address on a \"do not contact\" list, so we never email you again.", "Messages to customer service: {{SUPPORT_YEARS}} years after the conversation ends.", "Analytics data: {{ANALYTICS_MONTHS}} months."]], ["p", "When a period ends, we delete the data or make it anonymous."], ["h", "8. Your rights", "Every right, how to use it, and how fast you answer. Required: Art. 13(2)(b) and (c), Art. 12(3)."], ["p", "You can ask us to:"], ["ul", ["give you a copy of your data (access);", "correct it if it is wrong;", "delete it;", "limit how we use it;", "stop using it (object);", "send it to you or another company in a common format (portability)."]], ["p", "You can object at any time to our use of your data for direct marketing, and to any use based on our legitimate interests."], ["p", "Some rights depend on the legal basis we use; if one doesn't apply, we'll explain why. Where we rely on your consent, you can withdraw it at any time; this doesn't affect what we did before. Write to {{PRIVACY_EMAIL}}. We reply within one month, free of charge, and may first ask you to confirm your identity."], ["h", "9. Complaints", "Your right to complain to an authority. Required: Art. 13(2)(d). Keep the line that fits where you sell, or both."], ["p", "If you're unhappy with how we handle your data, please tell us first at {{PRIVACY_EMAIL}}, so we can put it right. You also have the right to complain to a data protection authority:"], ["region", "UK", "the Information Commissioner's Office (ICO), ico.org.uk."], ["region", "EU", "the authority in the country where you live or work, or where the issue happened. Ours is {{SUPERVISORY_AUTHORITY}}."], ["h", "10. Do you have to give us your data?", "Required: Art. 13(2)(e)."], ["p", "To place an order, we need your name, contact details and delivery address; without them we can't deliver. Everything else is up to you."], ["h", "11. Automated decisions", "Required: Art. 13(2)(f)."], ["p", "We don't make decisions about you based only on automated processing that have legal or similarly significant effects on you."], ["opt", "Use this sentence instead if your platform automatically cancels orders flagged as fraud", "Our payment provider checks orders automatically for fraud. If your order is stopped, you can ask a person to review it at {{PRIVACY_EMAIL}}."], ["h", "12. Children", "Not required, but expected for a shop open to everyone."], ["p", "Our shop is not meant for children under {{MINIMUM_AGE}}, and we don't knowingly collect their data."], ["h", "13. Changes to this policy", "Keep the optional line only if you will really do it."], ["p", "We update this policy when our shop or the law changes. The date at the top shows the latest version."], ["opt", "Only if you will do it", "If we make an important change, we'll also tell you by email."]];
+var CHECKLIST = [["Your website", [["The banner is the first thing in <head>", "Reject all and Accept all are equal choices on the first screen. Guide 01."], ["Only one cookie banner", "Other consent apps uninstalled, and their app embeds switched off. Guide 01."], ["Shopify collects consent where you sell", "Settings → Customer privacy → Cookie banner: custom banner regions include the UK and the EU, and only one banner shows."], ["The deep check comes back clean", "Nothing sends data before a choice. Run it at gdrock.com/#scan; fix anything it lists with GDRock.installFix().text."], ["Privacy policy published and linked", "In your footer, in the banner, and filled in with the tools you really use. Section 02 on this page."], ["Fonts hosted on your own site", "Fonts loaded from Google's servers send each visitor's IP address to Google. The deep check reports them."]]], ["Your customers' rights", [["A privacy address someone reads", "The one in your policy. Check it's not going to spam."], ["You know how to export one customer's data", "Shopify: open the customer, then ⋯ → Request customer data."], ["You know how to erase it", "Shopify: open the customer, then ⋯ → Erase personal data. Remove them from your email platform too."], ["You reply within one month, and keep a log", "A simple list: date received, who, what they asked, date done."]]], ["Marketing", [["Marketing emails only to people who may receive them", "People who opted in, or past customers you offered an opt-out to when they bought (the soft opt-in, for similar products only)."], ["An unsubscribe link in every marketing email", "It works in one step, and unsubscribed people are never emailed again."], ["Sign-up records kept", "When and where each person signed up. Your email platform usually records this; check it does."]]], ["Your suppliers", [["A list of every tool that receives customer data", "Platform, payments, delivery, email, analytics, ads, apps. The Suppliers sheet in file 03 and the deep check help."], ["Each one has data processing terms", "Most include them in their standard terms; some ask you to accept them in their settings. Look once, note where."], ["Transfers outside the UK and EEA are covered", "For each tool that processes data abroad: an adequacy decision or standard contractual clauses. Named in your policy."]]], ["Records and security", [["Retention schedule filled in", "With your supplier list, it's the core of the record of processing regulators expect a business to keep."], ["Two-step login everywhere that matters", "Shopify, email platform, inbox, domain registrar. Staff get only the access they need."], ["Breach pack read, authority noted", "You know who you'd notify and have the forms ready. Section 04."], ["A yearly review in the calendar", "This list, the retention schedule and the policy. And a new deep check after every new app or theme change."]]]];
+var CARE_OFFER_URL = '';   // set when the free-Care code exists; empty = card hidden
+
+var q = new URLSearchParams(location.search), E = (q.get('e')||'').trim(), T = (q.get('t')||'').trim();
+var KEY = 'gdrock-pack:' + E.toLowerCase();
+var $ = function(s){return document.querySelector(s)}, zip = null, FILES = {};
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},1600)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var S = load(); S.v=S.v||{}; S.o=S.o||{uk:true,eu:true}; S.c=S.c||{};
+$('#who').textContent = E;
+if (CARE_OFFER_URL) { $('#offer').style.display='block'; $('#offer-link').href = CARE_OFFER_URL; }
+
+/* ---------- navigation ---------- */
+var rendered = {};
+document.querySelectorAll('#nav button').forEach(function(b){b.addEventListener('click',function(){
+  document.querySelectorAll('#nav button').forEach(function(x){x.classList.toggle('on',x===b)});
+  document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('on',v.id==='v-'+b.dataset.v)});
+  history.replaceState(null,'','#'+b.dataset.v); window.scrollTo(0,0); show(b.dataset.v);
+})});
+function show(v){ if(!zip) return; if(v==='start')pdf('01','#p-01'); if(v==='retention')pdf('03','#p-03'); if(v==='breach')pdf('04','#p-04'); }
+
+/* ---------- the pack ---------- */
+var NAMES = {'01':'01 Start here - Install guide.pdf','02':'02 Privacy policy template.pdf','02x':'02 Privacy policy template (editable).docx','03':'03 Data retention schedule.pdf','03x':'03 Data retention schedule (editable).xlsx','04':'04 Breach response pack.pdf','04x':'04 Breach response forms (editable).docx','05':'05 Store privacy checklist.pdf','js':'gdrock-consent.js'};
+var DESC = {'01':'Install guide: Shopify, WooCommerce and any site','02':'Privacy policy template, explained section by section','02x':'Privacy policy, editable Word','03':'Retention schedule, to read','03x':'Retention schedule, editable Excel','04':'Breach response guide','04x':'Breach response forms, editable Word','05':'20-step store checklist','js':'The blocker and cookie banner, to upload to your site'};
+function fail(msg){ $('#p-01').innerHTML='<div class="state">'+msg+'</div>'; }
+if (!E || !T) fail('Open this page from the link in your purchase email. Lost it? Write to <a href="mailto:office@gdrock.com">office@gdrock.com</a> and we’ll send it again.');
+else fetch('https://cdn.gdrock.com/dl/core-pack?e='+encodeURIComponent(E)+'&t='+encodeURIComponent(T))
+  .then(function(r){ if(!r.ok) return r.text().then(function(t){throw new Error(t)}); return r.arrayBuffer(); })
+  .then(function(buf){ return JSZip.loadAsync(buf); })
+  .then(function(z){ zip=z; z.forEach(function(p,f){ var n=p.split('/').pop(); for(var k in NAMES) if(NAMES[k]===n) FILES[k]=f; });
+    $('#dl-policy').disabled=false; listFiles(); show((location.hash||'#start').slice(1)); var b=document.querySelector('#nav button[data-v="'+(location.hash||'#start').slice(1)+'"]'); if(b) b.click(); })
+  .catch(function(e){ fail(esc(e.message||'Couldn’t load your Core Pack.')+' <br>Write to <a href="mailto:office@gdrock.com">office@gdrock.com</a> if this keeps happening.'); });
+
+function blobOf(k){ var ext=NAMES[k].split('.').pop(), type={pdf:'application/pdf',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',js:'application/javascript'}[ext]; return FILES[k].async('arraybuffer').then(function(b){return new Blob([b],{type:type})}); }
+function saveBlob(blob,name){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},2000); }
+document.addEventListener('click',function(ev){ var b=ev.target.closest('[data-dl]'); if(!b||!zip) return; var k=b.dataset.dl; blobOf(k).then(function(bl){saveBlob(bl,NAMES[k])}); });
+function listFiles(){ var h=''; ['01','02','02x','03','03x','04','04x','05','js'].forEach(function(k){ if(FILES[k]) h+='<div class="file"><div><div>'+esc(NAMES[k])+'</div><div class="d">'+esc(DESC[k])+'</div></div><button class="btn" data-dl="'+k+'">Download</button></div>'; });
+  h+='<div class="file"><div><div>Everything as one zip</div><div class="d">The same files, in one download</div></div><a class="btn p" href="https://cdn.gdrock.com/dl/core-pack?e='+encodeURIComponent(E)+'&t='+encodeURIComponent(T)+'">Download zip</a></div>'; $('#files').innerHTML=h; }
+
+/* ---------- PDFs, rendered in the page ---------- */
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+function pdf(k,sel){ if(rendered[k]||!FILES[k]) return; rendered[k]=1; var box=$(sel); box.innerHTML='<div class="state">Opening…</div>';
+  FILES[k].async('uint8array').then(function(data){ return pdfjsLib.getDocument({data:data,isEvalSupported:false}).promise; }).then(function(doc){
+    box.innerHTML=''; var chain=Promise.resolve();
+    for(var i=1;i<=doc.numPages;i++)(function(n){ chain=chain.then(function(){ return doc.getPage(n).then(function(pg){ var vp=pg.getViewport({scale:2}); var c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; box.appendChild(c); return pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise; }); }); })(i);
+    return chain; }).catch(function(){ box.innerHTML='<div class="state">This guide didn’t open in the page. <button class="btn" data-dl="'+k+'">Download it</button></div>'; rendered[k]=0; });
+}
+
+/* ---------- privacy policy editor ---------- */
+var FIELDS = [
+ ['Your business', [['STORE_NAME','Shop name','Northwind Coffee'],['LEGAL_NAME','Company or your own name','Northwind Coffee Ltd'],['ADDRESS','Registered or business address','12 Mill Lane, Leeds LS1 4AB'],['PRIVACY_EMAIL','Privacy email someone reads','privacy@northwind.coffee']]],
+ ['Your tools', [['PLATFORM','Shop platform and host','Shopify'],['PAYMENT_PROVIDERS','Payment providers','Shopify Payments, PayPal, Klarna'],['DELIVERY_COMPANIES','Delivery companies','An Post, DPD'],['EMAIL_PLATFORM','Email platform','Klaviyo'],['ANALYTICS_TOOLS','Analytics (after consent)','Google Analytics 4'],['ADVERTISING_TOOLS','Ad pixels (after consent)','Meta Pixel, Google Ads'],['TRANSFER_COUNTRIES','Where tools process data outside the UK and EEA','the United States']]],
+ ['How long you keep it', [['ACCOUNTING_YEARS','Orders and invoices, years','6'],['ACCOUNT_YEARS','Inactive accounts, years after last login','3'],['SUPPORT_YEARS','Customer service messages, years','2'],['ANALYTICS_MONTHS','Analytics data, months (GA4: 2 or 14)','14']]],
+ ['Where you sell', [['SUPERVISORY_AUTHORITY','Your EU authority (EU only)','Data Protection Commission (Ireland)'],['MINIMUM_AGE','Shop is not meant for children under','16']]]
+];
+var HINT = {SUPERVISORY_AUTHORITY:'Ireland: Data Protection Commission. Germany: your state’s authority. Not needed if you only sell in the UK.',TRANSFER_COUNTRIES:'Most stores: the United States (Shopify, Google, Meta, Klaviyo).',ACCOUNTING_YEARS:'Ireland and UK companies: 6. Netherlands 7. Germany 8–10. France 10.'};
+var OPTS = [['dpo','We have appointed a data protection officer',[['DPO_NAME','Data protection officer’s name',''],['DPO_EMAIL','Their email','']]],
+ ['rep','We have no office in the EU or UK and have appointed a representative',[['EU_REPRESENTATIVE','EU representative',''],['UK_REPRESENTATIVE','UK representative','']]],
+ ['fraud','Our platform automatically cancels orders flagged as fraud',[]],
+ ['notify','We will email customers about important policy changes',[]]];
+var REQUIRED = []; FIELDS.forEach(function(g){g[1].forEach(function(f){REQUIRED.push(f[0])})});
+function input(f){ var v=S.v[f[0]]||''; return '<div class="f"><label for="f-'+f[0]+'">'+esc(f[1])+'</label><input id="f-'+f[0]+'" data-k="'+f[0]+'" value="'+esc(v)+'" placeholder="'+esc(f[2])+'">'+(HINT[f[0]]?'<div class="h">'+esc(HINT[f[0]])+'</div>':'')+'</div>'; }
+function buildForm(){ var h='';
+  FIELDS.forEach(function(g){ h+='<div class="grp"><h3>'+esc(g[0])+'</h3>'+g[1].map(input).join('')+'</div>'; });
+  h+='<div class="grp"><h3>Complaints line<span>keep one or both</span></h3><label class="tg"><input type="checkbox" data-o="uk"'+(S.o.uk?' checked':'')+'> We sell in the UK</label><label class="tg"><input type="checkbox" data-o="eu"'+(S.o.eu?' checked':'')+'> We sell in the EU</label></div>';
+  h+='<div class="grp"><h3>Only if they apply</h3>'+OPTS.map(function(o){ return '<label class="tg"><input type="checkbox" data-o="'+o[0]+'"'+(S.o[o[0]]?' checked':'')+'> '+esc(o[1])+'</label>'+(o[2].length?'<div class="sub" data-sub="'+o[0]+'"'+(S.o[o[0]]?'':' hidden')+'>'+o[2].map(input).join('')+'</div>':''); }).join('')+'</div>';
+  $('#form').innerHTML=h;
+  $('#form').addEventListener('input',function(e){ var k=e.target.dataset.k; if(k){ S.v[k]=e.target.value; save(); paint(); } });
+  $('#form').addEventListener('change',function(e){ var o=e.target.dataset.o; if(o){ S.o[o]=e.target.checked; var sub=document.querySelector('[data-sub="'+o+'"]'); if(sub) sub.hidden=!e.target.checked; save(); paint(); } });
+}
+function today(){ return new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }
+function fill(t){ return esc(t).replace(/\{\{([A-Z_]+)\}\}/g,function(m,k){ var v=k==='DATE'?(S.v.DATE||today()):S.v[k]; return v&&v.trim()?esc(v.trim()):'<span class="gap">'+k.replace(/_/g,' ').toLowerCase()+'</span>'; }); }
+function optKey(label){ var l=label.toLowerCase(); return l.indexOf('appointed one')>=0?'dpo':l.indexOf('no office')>=0?'rep':l.indexOf('instead')>=0?'fraud':'notify'; }
+function paint(){ var h='', pendingRegion=false;
+  for(var i=0;i<TEMPLATE.length;i++){ var b=TEMPLATE[i], k=b[0], nx=TEMPLATE[i+1];
+    if(k!=='region' && pendingRegion){ h+='</ul>'; pendingRegion=false; }
+    if(k==='title') h+='<h1>'+esc(b[1])+'</h1>';
+    else if(k==='h') h+='<h2>'+esc(b[1])+'</h2>'+(b[2]?'<p class="why">'+esc(b[2])+'</p>':'');
+    else if(k==='p'){ if(nx&&nx[0]==='opt'&&optKey(nx[1])==='fraud'&&S.o.fraud) continue; h+='<p>'+fill(b[1])+'</p>'; }
+    else if(k==='ul') h+='<ul>'+b[1].map(function(x){return '<li>'+fill(x)+'</li>'}).join('')+'</ul>';
+    else if(k==='table') h+='<table><tr>'+b[1].map(function(x){return '<th>'+esc(x)+'</th>'}).join('')+'</tr>'+b[2].map(function(r){return '<tr>'+r.map(function(x){return '<td>'+fill(x)+'</td>'}).join('')+'</tr>'}).join('')+'</table>';
+    else if(k==='opt'){ if(S.o[optKey(b[1])]) h+='<p>'+fill(b[2])+'</p>'; }
+    else if(k==='region'){ if(S.o[b[1].toLowerCase()]){ if(!pendingRegion){ h+='<ul>'; pendingRegion=true; } h+='<li>'+fill(b[2])+'</li>'; } }
+  }
+  if(pendingRegion) h+='</ul>';
+  $('#paper').innerHTML=h; $('#paper').classList.toggle('nowhy',!$('#showwhy').checked);
+  var need=REQUIRED.filter(function(k){ return !(k==='SUPERVISORY_AUTHORITY'&&!S.o.eu); }), done=need.filter(function(k){return S.v[k]&&S.v[k].trim()}).length;
+  $('#m-txt').textContent=done+' of '+need.length+' filled'; $('#m-bar').style.width=(100*done/need.length)+'%';
+}
+$('#showwhy').addEventListener('change',paint);
+$('#copy-policy').addEventListener('click',function(){ var c=$('#paper').cloneNode(true); c.querySelectorAll('.why').forEach(function(x){x.remove()}); var html=c.innerHTML, text=c.innerText;
+  if(window.ClipboardItem){ navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([text],{type:'text/plain'})})]).then(function(){toast('Copied. Paste it into Shopify.')}); }
+  else navigator.clipboard.writeText(text).then(function(){toast('Copied as text')}); });
+
+/* Fill the real Word file: same text, same styling, gaps filled, unused blocks removed. */
+function xmlEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+$('#dl-policy').addEventListener('click',function(){ if(!FILES['02x']) return;
+  FILES['02x'].async('arraybuffer').then(JSZip.loadAsync).then(function(dz){ return dz.file('word/document.xml').async('string').then(function(x){
+    x=x.replace(/<w:tbl>(?:(?!<w:tbl>)[\s\S])*?HOW TO USE THIS FILE[\s\S]*?<\/w:tbl>/,'');
+    x=x.replace(/<w:p[ >][\s\S]*?<\/w:p>/g,function(p){
+      var m=p.match(/\[OPTIONAL: ([^\]]*)\] /); if(m){ var on=S.o[optKey(m[1])]; if(!on) return ''; return p.replace(/<w:r>(?:(?!<w:r>)[\s\S])*?\[OPTIONAL: [^\]]*\] <\/w:t><\/w:r>/,''); }
+      var r=p.match(/>\[(UK|EU)\] </); if(r){ if(!S.o[r[1].toLowerCase()]) return ''; return p.replace(/<w:r>(?:(?!<w:r>)[\s\S])*?\[(UK|EU)\] <\/w:t><\/w:r>/,''); }
+      if(S.o.fraud && p.indexOf('based only on automated processing')>=0) return '';
+      return p; });
+    x=x.replace(/<w:r>(?:(?!<w:r>)[\s\S])*?<w:t[^>]*>\{\{([A-Z_]+)\}\}<\/w:t><\/w:r>/g,function(run,k){ var v=k==='DATE'?(S.v.DATE||today()):S.v[k]; return v&&v.trim()?'<w:r><w:t xml:space="preserve">'+xmlEsc(v.trim())+'</w:t></w:r>':run; });
+    dz.file('word/document.xml',x); return dz.generateAsync({type:'blob',compression:'DEFLATE',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  }); }).then(function(b){ saveBlob(b,'Privacy policy - '+((S.v.STORE_NAME||'your store').replace(/[^\w .-]/g,''))+'.docx'); toast('Your policy is downloading'); });
+});
+
+/* ---------- checklist ---------- */
+function buildChecklist(){ var h='', n=0;
+  CHECKLIST.forEach(function(g){ h+='<h3>'+esc(g[0])+'</h3>'; g[1].forEach(function(it){ n++; var id='c'+n, on=!!S.c[id]; h+='<label class="it'+(on?' done':'')+'"><input type="checkbox" data-c="'+id+'"'+(on?' checked':'')+'><div><div class="t">'+String(n).padStart(2,'0')+' · '+esc(it[0])+'</div><div class="d">'+esc(it[1])+'</div></div></label>'; }); });
+  $('#cl').innerHTML=h; tally();
+  $('#cl').addEventListener('change',function(e){ var id=e.target.dataset.c; if(!id) return; S.c[id]=e.target.checked; e.target.closest('.it').classList.toggle('done',e.target.checked); save(); tally(); }); }
+function tally(){ var all=document.querySelectorAll('#cl input').length, on=document.querySelectorAll('#cl input:checked').length; $('#c-txt').textContent=on+' of '+all+' done'; $('#c-bar').style.width=(100*on/all)+'%'; }
+
+buildForm(); paint(); buildChecklist();
+})();
+</script>
+</body>
+</html>

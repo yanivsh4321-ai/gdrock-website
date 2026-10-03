@@ -515,7 +515,7 @@ export default {
 
     // -- GET /dl/core-pack ---------------------------------------
     // The Core Pack documents, behind a link only a buyer's email can produce.
-    if (path === "/dl/core-pack" && request.method === "GET") return handleCorePackDownload(url, env);
+    if (path === "/dl/core-pack" && request.method === "GET") return handleCorePackDownload(url, env, request);
 
     // -- GET /customize  � proxy (URL stays cdn.gdrock.com/customize) --------
     if (path === "/customize.html" || path === "/customize" || path === "/customize/") {
@@ -1044,10 +1044,12 @@ async function corePackUrl(env, email) {
   const t = await corePackToken(env, email);
   return t ? `https://cdn.gdrock.com/dl/core-pack?e=${encodeURIComponent(email)}&t=${t}` : "";
 }
-async function handleCorePackDownload(url, env) {
+async function handleCorePackDownload(url, env, request) {
   const email = String(url.searchParams.get("e") || "").trim().toLowerCase();
   const want = await corePackToken(env, email);
-  const text = (msg, status) => new Response(msg, { status, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+  const origin = (request && request.headers.get("Origin")) || "";
+  const cors = { "Access-Control-Allow-Origin": /^(https:\/\/(www\.)?gdrock\.com|http:\/\/localhost:\d+)$/.test(origin) ? origin : "https://www.gdrock.com", "Vary": "Origin" };
+  const text = (msg, status) => new Response(msg, { status, headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store", ...cors } });
   if (!want || !timingSafeEqual(String(url.searchParams.get("t") || ""), want)) {
     return text("This download link isn't valid. Email office@gdrock.com and we'll send the Core Pack again.", 403);
   }
@@ -1057,7 +1059,7 @@ async function handleCorePackDownload(url, env) {
     return text("The download is unavailable for a moment. Email office@gdrock.com and we'll send it straight away.", 503);
   }
   return new Response(zip, { headers: { "Content-Type": "application/zip",
-    "Content-Disposition": 'attachment; filename="GDRock-Core-Pack.zip"', "Cache-Control": "private, no-store" } });
+    "Content-Disposition": 'attachment; filename="GDRock-Core-Pack.zip"', "Cache-Control": "private, no-store", ...cors } });
 }
 
 // Plain text on purpose: an underscore in an email or domain breaks Telegram's Markdown.
@@ -1132,8 +1134,9 @@ async function corePackBlock(env, email) {
   if (!dl) return "";
   return `<div style="background:#151a24;border:1px solid #262c3b;border-radius:12px;padding:18px 20px;margin:8px 0 0;">
     <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#4f7dff;font-weight:700;margin-bottom:8px;">Your Core Pack</div>
-    <p style="font-size:14px;line-height:1.6;color:#c5cbd7;margin:0 0 10px;">The blocker and banner, a step-by-step install guide, a privacy policy template, a data retention schedule, a breach response pack and a 20-step store checklist, with Word and Excel files you can edit. Open <strong>01 Start here</strong> first.</p>
-    <a href="${dl}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;">Download the Core Pack</a>
+    <p style="font-size:14px;line-height:1.6;color:#c5cbd7;margin:0 0 10px;">The blocker and banner, a step-by-step install guide, a privacy policy template, a data retention schedule, a breach response pack and a 20-step store checklist, with Word and Excel files you can edit. Start with <strong>Start here</strong>.</p>
+    <a href="${dl.replace("https://cdn.gdrock.com/dl/core-pack", "https://www.gdrock.com/pack.html")}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;">Open your Core Pack</a>
+    <p style="font-size:13px;line-height:1.6;color:#8d95a8;margin:12px 0 0;">Read every guide, fill in your privacy policy on the page and download it as Word. Prefer the files? <a href="${dl}" style="color:#8fb0ff;">Download the zip</a>.</p>
   </div>`;
 }
 
