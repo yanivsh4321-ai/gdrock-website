@@ -140,7 +140,6 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
     <div class="nav-i" data-v="logs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Consent logs</div>
     <div class="nav-i" data-v="banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15h18"/></svg>Cookie banner</div>
     <div class="nav-i" data-v="policy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>Privacy policy</div>
-    <div class="nav-i" data-v="dsr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Data requests</div>
     <div class="nav-i" data-v="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>Settings</div>
     <div class="side-foot" id="side-foot">Checking banner status&hellip;</div>
   </aside>
@@ -173,7 +172,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
         </div>
         <div class="tiles">
           <div class="tile"><div class="tv" id="tv-consents">&mdash;</div><div class="tk">Consents logged</div></div>
-          <div class="tile"><div class="tv" id="tv-blocked">&mdash;</div><div class="tk">Trackers blocked pre-consent</div></div>
+          <div class="tile"><div class="tv" id="tv-blocked">&mdash;</div><div class="tk">Rejected or customised</div></div>
           <div class="tile"><div class="tv" id="tv-sync">&mdash;</div><div class="tk">Latest event</div></div>
         </div>
       </div>
@@ -221,8 +220,7 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
             <div class="toggle-row">Block non-essential before consent <span class="sw"></span></div>
             <div class="toggle-row">Log every consent with timestamp <span class="sw"></span></div>
             <div class="toggle-row">Granular categories <span class="sw"></span></div>
-            <div class="toggle-row">Auto-update on EU law changes <span class="sw"></span></div>
-            <div class="toggle-row" style="border-bottom:0">Respect Global Privacy Control <span class="sw off"></span></div>
+            <div class="toggle-row">Hosted script kept up to date <span class="sw"></span></div>
           </div>
           <p style="color:var(--ink3);font-size:11.5px;margin:8px 0 0;">Built into every install and always on — there's nothing to toggle here.</p>
 
@@ -251,28 +249,21 @@ input,textarea,select,.scan-input,.email-inp,.inp{border-radius:8px!important;}
     <!-- PRIVACY POLICY -->
     <section class="view" id="policy">
       <div class="card"><div class="doc">
-        <h3 style="margin-top:0">Privacy Policy — v4 <span style="color:var(--acc);font-family:var(--M);font-size:12px">· published</span></h3>
-        <p>This policy explains what personal data we collect, why, the lawful basis, how long we keep it, and the rights of data subjects under the GDPR.</p>
-        <h3>Data we process</h3>
-        <p>Contact details, order data, and usage analytics — each tied to a named processor and retention period in your data map.</p>
-        <h3>Your rights</h3>
-        <p>Access, rectification, erasure, restriction, portability and objection. Requests are handled in the Data requests tab within 30 days.</p>
-        <div style="margin-top:18px"><button class="btn" onclick="alert('In the live app this regenerates your policy with your processors + retention table.')">Regenerate policy</button></div>
+        <h3 style="margin-top:0">Your privacy policy</h3>
+        <p>Your plan includes the Core Pack privacy policy template: every item GDPR Article 13 asks for, with a note under each section. Fill it in, publish it on your site, and it stays yours.</p>
+        <h3>Link it from the banner</h3>
+        <p>Add <span class="mono">data-policy-url="/policies/privacy-policy"</span> (or your page's address) to the script tag, and the banner shows a Privacy policy link.</p>
+        <h3>Keep it true</h3>
+        <p>When you add an app, an analytics tool or an email platform, update the policy that week. The free deep check at gdrock.com lists what really runs on your site.</p>
       </div></div>
     </section>
 
-    <!-- DATA REQUESTS (DSR) -->
-    <section class="view" id="dsr">
-      <div class="tbl" id="dsr-tbl"></div>
-    </section>
 
     <!-- SETTINGS -->
     <section class="view" id="settings">
       <div class="card" style="max-width:560px">
         <div class="toggle-row" style="border-bottom:1px solid var(--line)"><div><div>Site domain</div><div style="font-size:12px;color:var(--ink3)">Where the banner is installed</div></div><b class="mono" id="set-site">gdrock.com</b></div>
-        <div class="toggle-row"><div><div>Plan</div><div style="font-size:12px;color:var(--ink3)">Care — hosted banner + auto-updates</div></div><span class="pill ok">active</span></div>
-        <div class="toggle-row"><div><div>Data region</div><div style="font-size:12px;color:var(--ink3)">Where consent logs are stored</div></div><b class="mono">EU (Frankfurt)</b></div>
-        <div class="toggle-row" style="border-bottom:0"><div><div>API key</div><div style="font-size:12px;color:var(--ink3)">For server-side consent logging</div></div><b class="mono">gdr_live_••••3a9f</b></div>
+        <div class="toggle-row"><div><div>Plan</div><div style="font-size:12px;color:var(--ink3)">Care or Portfolio: see your access-code email</div></div></div>
       </div>
       <p style="color:var(--ink3);font-size:12px;margin-top:16px;max-width:560px">Connect a real site by appending <span class="mono">?site=yourdomain.com</span> to this URL — the console will pull live consent data from cdn.gdrock.com when the read API is enabled.</p>
     </section>
@@ -338,23 +329,6 @@ const site=qsSite||sites[0];
 })();
 
 $('#site-id').textContent=site;$('#set-site').textContent=site;
-// demo data (live fetch hook below)
-const LOG=[
- ['14:52:07','Consent · reject non-essential','Banner','ok'],
- ['14:51:40','Banner served · EU visitor','Banner','ok'],
- ['14:50:12','Pre-consent tracker (Meta Pixel)','Blocker','no'],
- ['14:49:55','Consent · accept all','Banner','ok'],
- ['14:48:31','Privacy policy v4 published','Policy','ok'],
- ['14:47:02','Pre-consent tracker (GA4)','Blocker','no'],
- ['14:45:19','Consent · granular (analytics only)','Banner','ok'],
- ['14:43:50','Consent record exported','API','ok'],
-];
-const DSR=[
- ['anna.k@email.com','Access request','2026-06-17','done'],
- ['m.lopez@email.com','Erasure (right to be forgotten)','2026-06-17','progress'],
- ['j.becker@email.com','Data portability','2026-06-16','done'],
- ['s.rossi@email.com','Erasure','2026-06-15','done'],
-];
 function pill(s){return s==='ok'||s==='done'?'<span class="pill ok">'+s+'</span>':s==='no'?'<span class="pill no">blocked</span>':'<span class="pill w">'+(s==='progress'?'in progress':s)+'</span>';}
 function renderConsent(el,rows,head){el.innerHTML='<div class="tr head t-consent"><span>Time</span><span>Event</span><span class="src">Source</span><span>Status</span></div>'+rows.map(r=>`<div class="tr t-consent"><span class="tm">${r[0]}</span><span>${r[1]}</span><span class="src" style="color:var(--ink3)">${r[2]}</span>${pill(r[3])}</div>`).join('');}
 /* Empty state, not borrowed data. Rendering the demo rows up front meant that
@@ -376,7 +350,7 @@ const DSR_EMPTY='No data-subject requests for <b style="color:var(--ink2)">'+sit
 
 emptyState($('#ov-log'),'t-consent',CONSENT_EMPTY);
 emptyState($('#full-log'),'t-consent',CONSENT_EMPTY);
-emptyState($('#dsr-tbl'),'t-dsr',DSR_EMPTY);
+
 $('#live-note').textContent='Waiting for data from '+site+'…';
 // nav
 $$('.nav-i').forEach(n=>n.onclick=()=>{
@@ -402,7 +376,7 @@ function relTime(iso){
 (async function(){
   var note=$('#live-note'),foot=$('#side-foot');
   try{
-    const r=await fetch('https://cdn.gdrock.com/api/consent-logs?site_id='+encodeURIComponent(site),{headers:{'accept':'application/json'}});
+    const r=await fetch('https://cdn.gdrock.com/api/consent-logs?limit=200&site_id='+encodeURIComponent(site),{headers:{'accept':'application/json'}});
     if(!r.ok){
       note.textContent='Could not reach the consent API just now — nothing is missing, this view fills in on reload.';
       foot.textContent='Banner status unknown';
@@ -417,19 +391,18 @@ function relTime(iso){
       renderConsent($('#ov-log'),rows.slice(0,5));
       renderConsent($('#full-log'),rows);
       note.textContent='● Live consent data for '+site+' · '+d.length+' event'+(d.length===1?'':'s')+' recorded';
-      $('#tv-consents').textContent=d.length.toLocaleString();
+      $('#tv-consents').textContent=d.length.toLocaleString()+(d.length>=200?'+':'');
+      $('#tv-blocked').textContent=d.filter(function(x){return !x.accepted;}).length.toLocaleString();
       var newest=d.reduce(function(a,b){return new Date(b.created_at)>new Date(a.created_at)?b:a;});
       $('#tv-sync').textContent=relTime(newest.created_at);
       foot.innerHTML='Banner <span class="ok">● live</span><br>Last event '+relTime(newest.created_at);
     }else{
       note.textContent='Connected. No consent events for '+site+' yet — they appear here once the banner is live.';
       $('#tv-consents').textContent='0';
+      $('#tv-blocked').textContent='0';
       $('#tv-sync').textContent='—';
       foot.innerHTML='Banner <span style="color:var(--ink3)">not detected yet</span><br>Paste the script tag to begin';
     }
-    /* Not exposed by this endpoint yet — better an em-dash than a number we
-       cannot source. */
-    $('#tv-blocked').title='Per-site blocking counts are not exposed by the consent API yet';
   }catch(e){
     note.textContent='Could not reach the consent API just now — nothing is missing, this view fills in on reload.';
     foot.textContent='Banner status unknown';
@@ -552,9 +525,9 @@ function relTime(iso){
     var doc=new window.jspdf.jsPDF({unit:'pt',format:'a4'});
     var W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
     var siteName=(document.getElementById('site-id')||{}).textContent||'gdrock.com';
-    var score=((document.querySelector('.ring .n')||{}).textContent||'97').trim();
+    var score=((document.querySelector('.ring .n')||{}).textContent||'—').trim();
     var tv=[].map.call(document.querySelectorAll('.tile .tv'),function(t){return t.textContent.trim();});
-    var consents=tv[0]||'12,840',trackers=tv[1]||'3,201',sync=tv[2]||'2 min';
+    var consents=tv[0]||'—',trackers=tv[1]||'—',sync=tv[2]||'—';
     doc.setFillColor(8,9,12);doc.rect(0,0,W,H,'F');
     doc.setFillColor(13,15,20);doc.rect(0,0,W,92,'F');
     doc.setTextColor(59,130,246);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('GDROCK',40,42);
@@ -563,7 +536,7 @@ function relTime(iso){
     doc.text(siteName+'   ·   '+new Date().toLocaleString(),40,86);
     doc.setTextColor(59,130,246);doc.setFont('helvetica','bold');doc.setFontSize(60);doc.text(String(score),40,180);
     doc.setTextColor(154,162,178);doc.setFont('helvetica','normal');doc.setFontSize(11);doc.text('Compliance score  / 100',40,202);
-    var rows=[['Consents logged',consents],['Trackers blocked pre-consent',trackers],['Cookie banner','Live'],['Privacy policy','v4 (published)'],['Data region','EU (Frankfurt)'],['Last sync',sync+' ago']];
+    var rows=[['Consents logged',consents],['Rejected or customised',trackers],['Latest event',sync]];
     var y=250;doc.setFontSize(12);
     rows.forEach(function(r){
       doc.setTextColor(154,162,178);doc.text(r[0],40,y);
