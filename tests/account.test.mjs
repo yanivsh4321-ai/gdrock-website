@@ -208,3 +208,59 @@ test("buyer emails point to the account", async () => {
   await hook(e, payment("plan_gWq2g08EUZLAg", "owner@shopmail.co"));
   assert.match(calls.emails[0].html, /gdrock\.com\/account/);
 });
+
+// -- The Core Pack inside the account ---------------------------------------------------------
+const packGet = (e, path, cookie) => worker.fetch(new Request("https://cdn.gdrock.com" + path, {
+  headers: { Origin: ORIGIN, ...(cookie ? { Cookie: cookie } : {}) } }), e, ctx);
+const dlToken = (email) => createHmac("sha256", "dl").update("corepack:" + email).digest("base64url").slice(0, 32);
+function withAssets(e) {
+  e.DEEP_SCAN.m.set("asset:core-pack.zip", "PAIDZIP");
+  for (const n of ["01.pdf", "02.docx", "03-preview.pdf", "04-preview.pdf", "05-preview.pdf"]) e.DEEP_SCAN.m.set("asset:free:" + n, "FREE " + n);
+  return e;
+}
+
+test("free parts need an account; only the listed free files are served", async () => {
+  const e = withAssets(env()), calls = record();
+  assert.equal((await packGet(e, "/api/pack/free/01.pdf")).status, 401);
+  const cookie = await signIn(e, calls);
+  const r = await packGet(e, "/api/pack/free/01.pdf", cookie);
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get("Content-Type"), "application/pdf");
+  assert.equal(r.headers.get("Access-Control-Allow-Credentials"), "true");
+  assert.equal(await r.text(), "FREE 01.pdf");
+  assert.equal((await packGet(e, "/api/pack/free/02.docx", cookie)).status, 200);
+  for (const bad of ["core-pack.zip", "..%2Fcore-pack.zip", "03.pdf", "gdrock-consent.js"]) assert.equal((await packGet(e, "/api/pack/free/" + bad, cookie)).status, 404, bad);
+});
+
+test("the full zip only goes to an account that owns the Core Pack", async () => {
+  const e = withAssets(env()), calls = record();
+  assert.equal((await packGet(e, "/api/pack/zip")).status, 401);
+  const cookie = await signIn(e, calls);
+  assert.equal((await packGet(e, "/api/pack/zip", cookie)).status, 403);
+  await hook(e, payment("plan_gWq2g08EUZLAg", "owner@shopmail.co"));
+  const r = await packGet(e, "/api/pack/zip", cookie);
+  assert.equal(r.status, 200);
+  assert.equal(await r.text(), "PAIDZIP");
+});
+
+test("old signed links keep working, unlock the account of that email, and stop after a refund", async () => {
+  const e = withAssets(env()), calls = record();
+  const link = (email) => `/dl/core-pack?e=${encodeURIComponent(email)}&t=${dlToken(email)}`;
+  // A buyer from before accounts: no purchase on file, link still valid.
+  assert.equal((await packGet(e, link("early@shopmail.co"))).status, 200);
+  const cookie = await signIn(e, calls, "early@shopmail.co");
+  assert.equal((await (await call(e, "/api/account/me", { method: "GET", cookie })).json()).corePack, true);
+  // A refunded buyer: the link stops.
+  await hook(e, payment("plan_gWq2g08EUZLAg", "owner@shopmail.co"));
+  assert.equal((await packGet(e, link("owner@shopmail.co"))).status, 200);
+  await hook(e, { type: "payment.refunded", data: { id: "pay_x", membership: { id: "mem_plan_gWq2g08EUZLAg" } } });
+  assert.equal((await packGet(e, link("owner@shopmail.co"))).status, 403);
+  assert.equal((await packGet(e, "/dl/core-pack?e=owner@shopmail.co&t=wrong")).status, 403);
+});
+
+test("unlocking from the Core Pack page comes back to it", async () => {
+  const e = env(), calls = record();
+  const cookie = await signIn(e, calls);
+  await call(e, "/api/account/checkout", { body: { plan: "core", back: "pack" }, cookie });
+  assert.match(calls.checkouts[0].redirect_url, /gdrock\.com\/pack\.html\?bought=core$/);
+});

@@ -154,6 +154,12 @@ export default {
       if (path === "/api/account/activate" && request.method === "POST") return handleAccountActivate(request, env);
       return acctJson(request, { error: "not_found" }, 404);
     }
+    if (path.startsWith("/api/pack/")) {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: acctHeaders(request) });
+      if (path === "/api/pack/zip" && request.method === "GET") return handlePackZip(request, env);
+      if (path.startsWith("/api/pack/free/") && request.method === "GET") return handlePackFree(request, env, decodeURIComponent(path.slice("/api/pack/free/".length)));
+      return acctJson(request, { error: "not_found" }, 404);
+    }
 
     // CORS preflight
     if (request.method === "OPTIONS") return cors("", 204);
@@ -1096,6 +1102,9 @@ async function handleCorePackDownload(url, env, request) {
   if (!want || !timingSafeEqual(String(url.searchParams.get("t") || ""), want)) {
     return text("This download link isn't valid. Email office@gdrock.com and we'll send the Core Pack again.", 403);
   }
+  const bought = (await acctRecords(env, email)).flatMap((r) => r.purchases);
+  if (bought.length && bought.every((p) => p.refunded)) return text("This purchase was refunded, so the link no longer works. Email office@gdrock.com if that's a mistake.", 403);
+  if (env.DEEP_SCAN && !bought.length && !(await env.DEEP_SCAN.get("acct:pack:" + email))) await env.DEEP_SCAN.put("acct:pack:" + email, "1");
   const zip = env.DEEP_SCAN ? await env.DEEP_SCAN.get(CORE_PACK_KEY, "arrayBuffer") : null;
   if (!zip) {
     await tellOwner(env, `Core Pack download failed for ${email}: the zip isn't in KV (${CORE_PACK_KEY}).`);
@@ -1365,7 +1374,7 @@ async function handleAccountCheckout(request, env) {
     const r = await fetch("https://api.whop.com/api/v1/checkout_configurations", {
       method: "POST",
       headers: { Authorization: `Bearer ${env.WHOP_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ mode: "payment", plan_id: planId, redirect_url: `https://www.gdrock.com/account?bought=${plan}`,
+      body: JSON.stringify({ mode: "payment", plan_id: planId, redirect_url: b.back === "pack" ? `https://www.gdrock.com/pack.html?bought=${plan}` : `https://www.gdrock.com/account?bought=${plan}`,
         metadata: { gdrock_plan: plan, gdrock_account: email, email } }),
     });
     const data = await r.json().catch(() => ({}));
@@ -1397,6 +1406,43 @@ async function handleAccountActivate(request, env) {
     activated: `${siteId} is active. Its access code is below and on its way by email.`,
   }[await whopActivateSite(env, rec || null, siteId)];
   return acctJson(request, { ok: true, message: said, view: await accountView(env, email) });
+}
+
+// -- The Core Pack inside the account: free parts for every account, the rest when unlocked --
+// Free (any signed-in account): Start here in full, the policy template the builder fills in,
+// and a cover-plus-first-page preview of guides 03-05, each its own KV key (asset:free:<name>,
+// made by products/core-pack-v4-src/portal/make_free.py). The zip with everything else only
+// goes to an account that owns the Core Pack, or to a signed link from a purchase email.
+const PACK_FREE = {
+  "01.pdf": "application/pdf",
+  "02.docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "03-preview.pdf": "application/pdf",
+  "04-preview.pdf": "application/pdf",
+  "05-preview.pdf": "application/pdf",
+};
+async function handlePackFree(request, env, name) {
+  const email = await acctSession(env, request);
+  if (!email) return acctJson(request, { error: "Sign in first." }, 401);
+  const type = PACK_FREE[name];
+  if (!type) return acctJson(request, { error: "not_found" }, 404);
+  const buf = env.DEEP_SCAN ? await env.DEEP_SCAN.get("asset:free:" + name, "arrayBuffer") : null;
+  if (!buf) {
+    await tellOwner(env, `Free Core Pack file missing from KV: asset:free:${name} (asked by ${email}).`);
+    return acctJson(request, { error: "This file is unavailable for a moment. Email office@gdrock.com." }, 503);
+  }
+  return new Response(buf, { headers: { ...acctHeaders(request), "Content-Type": type, "Cache-Control": "private, no-store" } });
+}
+async function handlePackZip(request, env) {
+  const email = await acctSession(env, request);
+  if (!email) return acctJson(request, { error: "Sign in first." }, 401);
+  if (!(await corePackOwned(env, email, await acctRecords(env, email)))) return acctJson(request, { error: "locked" }, 403);
+  const zip = env.DEEP_SCAN ? await env.DEEP_SCAN.get(CORE_PACK_KEY, "arrayBuffer") : null;
+  if (!zip) {
+    await tellOwner(env, `Core Pack download failed for ${email}: the zip isn't in KV (${CORE_PACK_KEY}).`);
+    return acctJson(request, { error: "The download is unavailable for a moment. Email office@gdrock.com and we'll send it straight away." }, 503);
+  }
+  return new Response(zip, { headers: { ...acctHeaders(request), "Content-Type": "application/zip",
+    "Content-Disposition": 'attachment; filename="GDRock-Core-Pack.zip"', "Cache-Control": "private, no-store" } });
 }
 
 async function sendSignInEmail(env, email, token) {

@@ -23,8 +23,23 @@ nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;pad
 nav button .n{font:600 11px "Geist Mono",monospace;color:var(--ink3);width:18px}
 nav button:hover{background:var(--panel2)}nav button.on{background:var(--panel2);color:var(--ink)}nav button.on .n{color:var(--acc)}
 nav .sp{flex:1}
-.offer{border:1px solid #2a3b6b;background:linear-gradient(180deg,rgba(79,125,255,.12),rgba(79,125,255,.03));border-radius:12px;padding:14px;font-size:13px;color:var(--ink2);display:none}
-.offer b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}.offer a{display:inline-block;margin-top:10px;background:var(--acc);color:#fff;text-decoration:none;font-weight:600;padding:8px 12px;border-radius:8px}
+.offer{border:1px solid #2a3b6b;background:linear-gradient(180deg,rgba(79,125,255,.12),rgba(79,125,255,.03));border-radius:12px;padding:14px;font-size:13px;color:var(--ink2);display:none;margin-top:10px}
+.offer b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}.offer a,.offer button{all:unset;cursor:pointer;display:inline-block;margin-top:10px;background:var(--acc);color:#fff;text-decoration:none;font-weight:600;font-size:13px;padding:8px 12px;border-radius:8px}
+.offer.quiet{border-color:var(--line);background:var(--panel)}.offer.quiet a,.offer.quiet button{background:var(--panel2);border:1px solid var(--line);color:var(--ink)}
+.offer ul{list-style:none;margin:8px 0 0;display:flex;flex-direction:column;gap:3px}.offer li::before{content:"\2713  ";color:var(--ok);font-weight:700}
+nav button .lk{margin-left:auto;opacity:.55;display:none}.free nav button .lk{display:inline}
+.who{display:flex;align-items:center}.who a{color:var(--ink2);text-decoration:none;margin-left:14px;font-family:Geist,Inter,sans-serif;font-size:13px;border:1px solid var(--line);padding:6px 11px;border-radius:8px}.who a:hover{color:var(--ink);border-color:#2c3140}
+.lock{position:relative;max-width:860px;width:100%;margin:-160px auto 0;padding:170px 32px 34px;text-align:center;background:linear-gradient(180deg,rgba(8,9,12,0) 0,rgba(8,9,12,.94) 130px,var(--bg) 170px);z-index:1}
+.lock .ic{width:42px;height:42px;border-radius:12px;border:1px solid #2a3b6b;background:rgba(79,125,255,.08);display:grid;place-items:center;margin:0 auto 16px}
+.lock h3{font-size:22px;letter-spacing:-.02em;margin-bottom:8px}
+.lock p{color:var(--ink3);max-width:540px;margin:0 auto 18px;font-size:14.5px}
+.lock .fine{display:block;margin-top:10px;font-size:12.5px;color:var(--ink3)}
+.btn.locked{color:var(--ink3)}
+.stuck{max-width:860px;width:100%;margin:26px auto 0;display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:18px 20px}
+.stuck b{display:block;font-size:15px}.stuck span{color:var(--ink3);font-size:13.5px}
+.banner{display:none;margin:0 0 22px;border:1px solid #1f5a43;background:rgba(61,220,151,.07);color:#bdf3da;border-radius:12px;padding:12px 16px;font-size:14px}
+.freebar{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 24px;border:1px solid #2a3b6b;background:linear-gradient(90deg,rgba(79,125,255,.12),rgba(79,125,255,.02));border-radius:12px;padding:12px 14px 12px 16px;font-size:14px;color:var(--ink2)}.free .freebar{display:flex}
+.freebar b{color:var(--ink)}
 main{padding:34px 40px 80px;min-width:0}
 .eye{font:600 11px "Geist Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
 h1{font-size:34px;line-height:1.08;letter-spacing:-.03em;font-weight:700}
@@ -69,25 +84,29 @@ h1{font-size:34px;line-height:1.08;letter-spacing:-.03em;font-weight:700}
 .file .d{color:var(--ink3);font-size:13px}
 .toast{position:fixed;bottom:22px;right:22px;background:var(--ok);color:#06210f;font-weight:700;padding:10px 14px;border-radius:10px;opacity:0;transition:.2s;z-index:9}.toast.on{opacity:1}
 @media(max-width:980px){.ed{grid-template-columns:1fr}.paper{position:static;max-height:none;padding:28px 22px}}
-@media(max-width:760px){.app{grid-template-columns:1fr}nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);padding:10px}nav .sp,.offer{display:none!important}main{padding:24px 16px 60px}header{padding:14px 16px}}
-@media print{header,nav,.form,.bar,.lead,.eye,h1,.meter{display:none!important}.app{display:block}main{padding:0}.view{display:none!important}#v-policy{display:block!important}.ed{display:block}.paper{position:static;max-height:none;box-shadow:none;padding:0}body,html{background:#fff}}
+@media(max-width:760px){.app{grid-template-columns:1fr}nav{position:static;height:auto;flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);padding:10px}nav .sp,.offer{display:none!important}main{padding:24px 16px 60px}header{padding:14px 16px}.who #who{display:none}.lock{padding:140px 8px 24px}.stuck{flex-direction:column;align-items:flex-start}}
+@media print{header,nav,.form,.bar,.lead,.eye,h1,.meter,.freebar,.banner{display:none!important}.app{display:block}main{padding:0}.view{display:none!important}#v-policy{display:block!important}.ed{display:block}.paper{position:static;max-height:none;box-shadow:none;padding:0}body,html{background:#fff}}
 </style>
 </head>
 <body>
-<header><a class="brand" href="https://www.gdrock.com/"><img src="/assets/gdrock-mark-light.png" alt="">GDRock</a><span class="who" id="who"></span></header>
+<header><a class="brand" href="https://www.gdrock.com/"><img src="/assets/gdrock-mark-light.png" alt="">GDRock</a><span class="who"><span id="who"></span><a id="acct" href="/account">Your account</a></span></header>
 <div class="app">
 <nav id="nav">
   <button data-v="start" class="on"><span class="n">01</span>Start here</button>
   <button data-v="policy"><span class="n">02</span>Your privacy policy</button>
-  <button data-v="retention"><span class="n">03</span>Retention schedule</button>
-  <button data-v="breach"><span class="n">04</span>Breach response</button>
-  <button data-v="checklist"><span class="n">05</span>Store checklist</button>
+  <button data-v="retention"><span class="n">03</span>Retention schedule<svg class="lk" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button>
+  <button data-v="breach"><span class="n">04</span>Breach response<svg class="lk" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button>
+  <button data-v="checklist"><span class="n">05</span>Store checklist<svg class="lk" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button>
   <button data-v="files"><span class="n">↓</span>All files</button>
   <div class="sp"></div>
-  <div class="offer" id="offer"><b>3 months of Care, free</b>Your Core Pack includes three months of the hosted banner: consent logs, the customizer, updates handled for you. We email you before anything is charged.<br><a id="offer-link" href="#">Claim it</a></div>
+  <div class="offer" id="up-core"><b>You're on the free plan</b>Unlock the rest of the Core Pack:<ul><li>gdrock-consent.js</li><li>Every guide in full</li><li>The Excel and Word files</li><li>The interactive checklist</li></ul><button data-buy="core">Unlock everything for €29</button></div>
+  <div class="offer" id="offer"><b>3 months of Care, free</b>Your Core Pack includes three months of the hosted banner: consent logs, the customizer, updates handled for you. We email you a week before anything is charged.<br><a id="offer-link" href="#">Claim it</a></div>
+  <div class="offer quiet" id="up-dfy" style="display:block"><b>Stuck?</b>We install it for you, from €249, and re-run the check from Germany.<br><button data-buy="essential">Book the install</button></div>
 </nav>
 <main>
-  <section class="view on" id="v-start"><p class="eye">Core Pack · 01</p><h1>Start here.</h1><p class="lead">Install the banner, publish your privacy policy, check the result. About an hour, most of it filling in the policy, which you can do on this page.</p><div class="bar"><button class="btn" data-dl="01">Download the PDF</button><button class="btn" data-dl="js">Download gdrock-consent.js</button></div><div class="pages" id="p-01"><div class="state">Loading your Core Pack…</div></div></section>
+  <div class="banner" id="bought"></div>
+  <div class="freebar"><span><b>Free plan.</b> Start here and the policy builder are yours. The rest is in the full Core Pack.</span><button class="btn p" data-buy="core">Unlock everything for €29</button></div>
+  <section class="view on" id="v-start"><p class="eye">Core Pack · 01</p><h1>Start here.</h1><p class="lead">Install the banner, publish your privacy policy, check the result. About an hour, most of it filling in the policy, which you can do on this page.</p><div class="bar"><button class="btn" data-dl="01">Download the PDF</button><button class="btn" data-dl="js">Download gdrock-consent.js</button></div><div class="pages" id="p-01"><div class="state">Loading your Core Pack…</div></div><div class="stuck"><div><b>Stuck on the install?</b><span>We do it for you, from €249: the blocker, the banner and your policy, then the same check from Germany.</span></div><button class="btn p" data-buy="essential">We install it, from €249</button></div></section>
 
   <section class="view" id="v-policy"><p class="eye">Core Pack · 02</p><h1>Your privacy policy.</h1><p class="lead">Fill in the gaps on the left. The policy updates on the right as you type. Download it as Word, or copy it straight into Shopify (Settings → Policies → Privacy policy). Your answers stay in this browser.</p>
     <div class="bar"><button class="btn p" id="dl-policy" disabled>Download as Word</button><button class="btn" id="copy-policy">Copy for Shopify</button><button class="btn" onclick="window.print()">Print or save as PDF</button><label class="tg" style="margin:10px 0 0"><input type="checkbox" id="showwhy" checked> Show why each section is there</label></div>
@@ -99,7 +118,7 @@ h1{font-size:34px;line-height:1.08;letter-spacing:-.03em;font-weight:700}
 
   <section class="view" id="v-breach"><p class="eye">Core Pack · 04</p><h1>Breach response.</h1><p class="lead">What to do in the first 72 hours if customer data is lost, leaked or stolen. Read it once now, so you aren't reading it for the first time then.</p><div class="bar"><button class="btn p" data-dl="04x">Download the Word forms</button><button class="btn" data-dl="04">Download the PDF</button></div><div class="pages" id="p-04"></div></section>
 
-  <section class="view" id="v-checklist"><p class="eye">Core Pack · 05</p><h1>Store privacy checklist.</h1><p class="lead">Twenty things to have in place, in the order to do them. Tick as you go; your ticks stay in this browser. Come back once a year.</p><div class="meter" style="margin-top:18px;max-width:860px"><span id="c-txt"></span><i><b id="c-bar"></b></i></div><div class="cl" id="cl"></div></section>
+  <section class="view" id="v-checklist"><p class="eye">Core Pack · 05</p><h1>Store privacy checklist.</h1><p class="lead">Twenty things to have in place, in the order to do them. Tick as you go; your ticks stay in this browser. Come back once a year.</p><div class="meter" id="c-meter" style="margin-top:18px;max-width:860px"><span id="c-txt"></span><i><b id="c-bar"></b></i></div><div class="cl" id="cl"></div><div class="pages" id="p-05"></div></section>
 
   <section class="view" id="v-files"><p class="eye">Downloads</p><h1>All your files.</h1><p class="lead">Everything in the Core Pack, yours to keep.</p><div class="files" id="files"></div></section>
 </main>
@@ -112,53 +131,114 @@ h1{font-size:34px;line-height:1.08;letter-spacing:-.03em;font-weight:700}
 (function(){
 var TEMPLATE = [["title", "Privacy policy"], ["p", "Last updated: {{DATE}}"], ["h", "1. Who we are", "Who is responsible and how to reach them. Required: Art. 13(1)(a) and (b)."], ["p", "{{STORE_NAME}} (\"we\", \"us\") is run by {{LEGAL_NAME}}, {{ADDRESS}}. We decide how and why your personal data is used, which makes us its \"controller\" under data protection law."], ["p", "For anything about your data, write to {{PRIVACY_EMAIL}}."], ["opt", "Only if you have appointed one", "Our data protection officer is {{DPO_NAME}}, reachable at {{DPO_EMAIL}}."], ["opt", "Only if your business has no office in the EU or the UK and you have appointed a representative", "Our representative in the EU is {{EU_REPRESENTATIVE}}. Our representative in the UK is {{UK_REPRESENTATIVE}}."], ["h", "2. The data we collect", "What you collect and where it comes from."], ["ul", ["When you place an order: your name, email address, phone number, billing and delivery address, what you bought and whether payment went through. Card payments are handled by our payment provider; we never see or store your full card number.", "When you create an account: your login details, saved addresses and preferences.", "When you contact us: your messages and our replies.", "When you sign up for our emails: your email address, and when and how you signed up.", "When you visit our website: your IP address, device and browser type, and the pages you view. Analytics and advertising tools only run after you accept them in our cookie banner."]], ["p", "We collect this data from you, and from our payment and delivery providers when they handle your order."], ["h", "3. Why we use it, and our legal basis", "Each purpose with its legal basis, and the legitimate interests you rely on. Required: Art. 13(1)(c) and (d)."], ["table", ["What we do", "Legal basis"], [["Take, deliver and handle your order, including returns and refunds", "Contract: we need it to do what you asked."], ["Keep invoices and accounting records", "Legal obligation: tax and accounting law."], ["Answer your messages", "Contract, when it is about an order. Otherwise our legitimate interest in helping you."], ["Send you marketing emails", "Your consent. Or, if you bought from us and didn't opt out, our legitimate interest in telling you about similar products. Every email has an unsubscribe link."], ["Prevent fraud and keep our shop secure", "Our legitimate interest in protecting our shop and our customers."], ["Analytics and advertising on our website", "Your consent, given in our cookie banner."]]], ["p", "Where we rely on legitimate interests, we have checked that they don't outweigh your rights. You can ask us how we made that check."], ["h", "4. Cookies and similar technologies", "What runs with and without consent, and how to change the choice."], ["p", "Some cookies are strictly necessary for the shop to work, for example to keep your basket, take payment and remember your cookie choice. We use these without asking."], ["p", "Everything else waits for your choice. On your first visit, our banner lets you accept or reject analytics and marketing cookies, and rejecting is as easy as accepting. You can change your mind at any time with the \"Cookie settings\" button at the bottom of every page."], ["p", "With your consent we use {{ANALYTICS_TOOLS}} to understand how our shop is used, and {{ADVERTISING_TOOLS}} to measure and personalise our ads."], ["h", "5. Who we share it with", "Recipients, honestly described. Required: Art. 13(1)(e)."], ["p", "We don't sell your personal data. We share it only with companies that help us run the shop:"], ["ul", ["Our shop platform and hosting: {{PLATFORM}}", "Payments: {{PAYMENT_PROVIDERS}}", "Delivery: {{DELIVERY_COMPANIES}}", "Email: {{EMAIL_PLATFORM}}", "Analytics and advertising, only with your consent: {{ANALYTICS_TOOLS}}, {{ADVERTISING_TOOLS}}"]], ["p", "Most of these companies may only use your data to provide their service to us. Advertising platforms also use it for their own purposes, under their own privacy policies, which is why they only receive it if you consent. We also share data with our professional advisers, and with authorities when the law requires it."], ["h", "6. Transfers outside the UK and EEA", "Where data goes and what protects it. Required: Art. 13(1)(f)."], ["p", "Some of these companies process data outside the UK and the European Economic Area, for example in {{TRANSFER_COUNTRIES}}. When they do, the transfer is protected by an adequacy decision, such as the EU-US Data Privacy Framework and its UK extension for certified companies, or by standard contractual clauses. You can ask us for details of these safeguards."], ["h", "7. How long we keep it", "Retention periods. Required: Art. 13(2)(a). File 03 helps you pick the numbers."], ["ul", ["Orders and invoices: {{ACCOUNTING_YEARS}} years after the end of the financial year, because tax law requires it.", "Your account: until you close it, or {{ACCOUNT_YEARS}} years after your last login.", "Marketing emails: until you unsubscribe. We then keep only your email address on a \"do not contact\" list, so we never email you again.", "Messages to customer service: {{SUPPORT_YEARS}} years after the conversation ends.", "Analytics data: {{ANALYTICS_MONTHS}} months."]], ["p", "When a period ends, we delete the data or make it anonymous."], ["h", "8. Your rights", "Every right, how to use it, and how fast you answer. Required: Art. 13(2)(b) and (c), Art. 12(3)."], ["p", "You can ask us to:"], ["ul", ["give you a copy of your data (access);", "correct it if it is wrong;", "delete it;", "limit how we use it;", "stop using it (object);", "send it to you or another company in a common format (portability)."]], ["p", "You can object at any time to our use of your data for direct marketing, and to any use based on our legitimate interests."], ["p", "Some rights depend on the legal basis we use; if one doesn't apply, we'll explain why. Where we rely on your consent, you can withdraw it at any time; this doesn't affect what we did before. Write to {{PRIVACY_EMAIL}}. We reply within one month, free of charge, and may first ask you to confirm your identity."], ["h", "9. Complaints", "Your right to complain to an authority. Required: Art. 13(2)(d). Keep the line that fits where you sell, or both."], ["p", "If you're unhappy with how we handle your data, please tell us first at {{PRIVACY_EMAIL}}, so we can put it right. You also have the right to complain to a data protection authority:"], ["region", "UK", "the Information Commissioner's Office (ICO), ico.org.uk."], ["region", "EU", "the authority in the country where you live or work, or where the issue happened. Ours is {{SUPERVISORY_AUTHORITY}}."], ["h", "10. Do you have to give us your data?", "Required: Art. 13(2)(e)."], ["p", "To place an order, we need your name, contact details and delivery address; without them we can't deliver. Everything else is up to you."], ["h", "11. Automated decisions", "Required: Art. 13(2)(f)."], ["p", "We don't make decisions about you based only on automated processing that have legal or similarly significant effects on you."], ["opt", "Use this sentence instead if your platform automatically cancels orders flagged as fraud", "Our payment provider checks orders automatically for fraud. If your order is stopped, you can ask a person to review it at {{PRIVACY_EMAIL}}."], ["h", "12. Children", "Not required, but expected for a shop open to everyone."], ["p", "Our shop is not meant for children under {{MINIMUM_AGE}}, and we don't knowingly collect their data."], ["h", "13. Changes to this policy", "Keep the optional line only if you will really do it."], ["p", "We update this policy when our shop or the law changes. The date at the top shows the latest version."], ["opt", "Only if you will do it", "If we make an important change, we'll also tell you by email."]];
 var CHECKLIST = [["Your website", [["The banner is the first thing in <head>", "Reject all and Accept all are equal choices on the first screen. Guide 01."], ["Only one cookie banner", "Other consent apps uninstalled, and their app embeds switched off. Guide 01."], ["Shopify collects consent where you sell", "Settings → Customer privacy → Cookie banner: custom banner regions include the UK and the EU, and only one banner shows."], ["The deep check comes back clean", "Nothing sends data before a choice. Run it at gdrock.com/#scan; fix anything it lists with GDRock.installFix().text."], ["Privacy policy published and linked", "In your footer, in the banner, and filled in with the tools you really use. Section 02 on this page."], ["Fonts hosted on your own site", "Fonts loaded from Google's servers send each visitor's IP address to Google. The deep check reports them."]]], ["Your customers' rights", [["A privacy address someone reads", "The one in your policy. Check it's not going to spam."], ["You know how to export one customer's data", "Shopify: open the customer, then ⋯ → Request customer data."], ["You know how to erase it", "Shopify: open the customer, then ⋯ → Erase personal data. Remove them from your email platform too."], ["You reply within one month, and keep a log", "A simple list: date received, who, what they asked, date done."]]], ["Marketing", [["Marketing emails only to people who may receive them", "People who opted in, or past customers you offered an opt-out to when they bought (the soft opt-in, for similar products only)."], ["An unsubscribe link in every marketing email", "It works in one step, and unsubscribed people are never emailed again."], ["Sign-up records kept", "When and where each person signed up. Your email platform usually records this; check it does."]]], ["Your suppliers", [["A list of every tool that receives customer data", "Platform, payments, delivery, email, analytics, ads, apps. The Suppliers sheet in file 03 and the deep check help."], ["Each one has data processing terms", "Most include them in their standard terms; some ask you to accept them in their settings. Look once, note where."], ["Transfers outside the UK and EEA are covered", "For each tool that processes data abroad: an adequacy decision or standard contractual clauses. Named in your policy."]]], ["Records and security", [["Retention schedule filled in", "With your supplier list, it's the core of the record of processing regulators expect a business to keep."], ["Two-step login everywhere that matters", "Shopify, email platform, inbox, domain registrar. Staff get only the access they need."], ["Breach pack read, authority noted", "You know who you'd notify and have the forms ready. Section 04."], ["A yearly review in the calendar", "This list, the retention schedule and the policy. And a new deep check after every new app or theme change."]]]];
-var CARE_OFFER_URL = '';   // set when the free-Care code exists; empty = card hidden
+var CARE_OFFER_URL = '';   // set when the free-Care offer exists; empty = card hidden
 
+/* Three ways in:
+   - a signed link from a purchase email (?e=&t=): everything, as before accounts existed;
+   - a signed-in account that owns the Core Pack: everything, from /api/pack/zip;
+   - a signed-in account without it: Start here, the policy builder, and previews (/api/pack/free/...).
+   No session and no link: off to /account to sign in, then straight back here. */
+var API = 'https://cdn.gdrock.com';
 var q = new URLSearchParams(location.search), E = (q.get('e')||'').trim(), T = (q.get('t')||'').trim();
-var KEY = 'gdrock-pack:' + E.toLowerCase();
-var $ = function(s){return document.querySelector(s)}, zip = null, FILES = {};
+var LINK = !!(E && T), UNLOCKED = false, SIGNED = false, READY = false, KEY = '';
+var $ = function(s){return document.querySelector(s)}, zip = null, FILES = {}, FREE = {};
+var S = {v:{},o:{uk:true,eu:true},c:{}};
 function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},1600)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-var S = load(); S.v=S.v||{}; S.o=S.o||{uk:true,eu:true}; S.c=S.c||{};
-$('#who').textContent = E;
-if (CARE_OFFER_URL) { $('#offer').style.display='block'; $('#offer-link').href = CARE_OFFER_URL; }
+function setUser(email){ KEY='gdrock-pack:'+email.toLowerCase(); try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}} S.v=S.v||{}; S.o=S.o||{uk:true,eu:true}; S.c=S.c||{}; $('#who').textContent=email; }
+
+/* ---------- buying: from the account when signed in (the purchase lands in it), else Whop directly ---------- */
+var DIRECT = {core:'https://whop.com/checkout/plan_gWq2g08EUZLAg/', essential:'https://whop.com/checkout/plan_rDl4G6eAcftqC/'};
+function buy(plan, btn){
+  if (!SIGNED) { location.href = DIRECT[plan]; return; }
+  if (btn) { btn.disabled = true; btn.dataset.t = btn.textContent; btn.textContent = 'Opening checkout…'; }
+  fetch(API+'/api/account/checkout',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:plan,back:'pack'})})
+    .then(function(r){return r.json()}).then(function(j){ location.href = j.url || DIRECT[plan]; })
+    .catch(function(){ location.href = DIRECT[plan]; });
+}
 
 /* ---------- navigation ---------- */
 var rendered = {};
 document.querySelectorAll('#nav button').forEach(function(b){b.addEventListener('click',function(){
   document.querySelectorAll('#nav button').forEach(function(x){x.classList.toggle('on',x===b)});
   document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('on',v.id==='v-'+b.dataset.v)});
-  history.replaceState(null,'','#'+b.dataset.v); window.scrollTo(0,0); show(b.dataset.v);
+  history.replaceState(null,'',location.pathname+location.search+'#'+b.dataset.v); window.scrollTo(0,0); show(b.dataset.v);
 })});
-function show(v){ if(!zip) return; if(v==='start')pdf('01','#p-01'); if(v==='retention')pdf('03','#p-03'); if(v==='breach')pdf('04','#p-04'); }
+function show(v){ if(!READY) return; if(v==='start')pdf('01','#p-01'); if(v==='retention')pdf('03','#p-03'); if(v==='breach')pdf('04','#p-04'); if(v==='checklist'&&!UNLOCKED)pdf('05','#p-05'); }
 
 /* ---------- the pack ---------- */
 var NAMES = {'01':'01 Start here - Install guide.pdf','02':'02 Privacy policy template.pdf','02x':'02 Privacy policy template (editable).docx','03':'03 Data retention schedule.pdf','03x':'03 Data retention schedule (editable).xlsx','04':'04 Breach response pack.pdf','04x':'04 Breach response forms (editable).docx','05':'05 Store privacy checklist.pdf','js':'gdrock-consent.js'};
 var DESC = {'01':'Install guide: Shopify, WooCommerce and any site','02':'Privacy policy template, explained section by section','02x':'Privacy policy, editable Word','03':'Retention schedule, to read','03x':'Retention schedule, editable Excel','04':'Breach response guide','04x':'Breach response forms, editable Word','05':'20-step store checklist','js':'The blocker and cookie banner, to upload to your site'};
+// Free accounts get these from their own routes; 03-05 are previews (cover and first page).
+var FREE_NAME = {'01':'01.pdf','02x':'02.docx','03':'03-preview.pdf','04':'04-preview.pdf','05':'05-preview.pdf'};
+function canDownload(k){ return UNLOCKED ? !!FILES[k] : (k==='01'||k==='02x'); }
+function get(k){
+  if (UNLOCKED) return FILES[k].async('arraybuffer');
+  if (!FREE[k]) FREE[k] = fetch(API+'/api/pack/free/'+FREE_NAME[k],{credentials:'include'}).then(function(r){ if(!r.ok) throw new Error('This file didn’t load.'); return r.arrayBuffer(); });
+  return FREE[k];
+}
 function fail(msg){ $('#p-01').innerHTML='<div class="state">'+msg+'</div>'; }
-if (!E || !T) fail('Open this page from the link in your purchase email. Lost it? Write to <a href="mailto:office@gdrock.com">office@gdrock.com</a> and we’ll send it again.');
-else fetch('https://cdn.gdrock.com/dl/core-pack?e='+encodeURIComponent(E)+'&t='+encodeURIComponent(T))
-  .then(function(r){ if(!r.ok) return r.text().then(function(t){throw new Error(t)}); return r.arrayBuffer(); })
-  .then(function(buf){ return JSZip.loadAsync(buf); })
-  .then(function(z){ zip=z; z.forEach(function(p,f){ var n=p.split('/').pop(); for(var k in NAMES) if(NAMES[k]===n) FILES[k]=f; });
-    $('#dl-policy').disabled=false; listFiles(); show((location.hash||'#start').slice(1)); var b=document.querySelector('#nav button[data-v="'+(location.hash||'#start').slice(1)+'"]'); if(b) b.click(); })
-  .catch(function(e){ fail(esc(e.message||'Couldn’t load your Core Pack.')+' <br>Write to <a href="mailto:office@gdrock.com">office@gdrock.com</a> if this keeps happening.'); });
-
-function blobOf(k){ var ext=NAMES[k].split('.').pop(), type={pdf:'application/pdf',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',js:'application/javascript'}[ext]; return FILES[k].async('arraybuffer').then(function(b){return new Blob([b],{type:type})}); }
+function blobOf(k){ var ext=NAMES[k].split('.').pop(), type={pdf:'application/pdf',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',js:'application/javascript'}[ext]; return get(k).then(function(b){return new Blob([b],{type:type})}); }
 function saveBlob(blob,name){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},2000); }
-document.addEventListener('click',function(ev){ var b=ev.target.closest('[data-dl]'); if(!b||!zip) return; var k=b.dataset.dl; blobOf(k).then(function(bl){saveBlob(bl,NAMES[k])}); });
-function listFiles(){ var h=''; ['01','02','02x','03','03x','04','04x','05','js'].forEach(function(k){ if(FILES[k]) h+='<div class="file"><div><div>'+esc(NAMES[k])+'</div><div class="d">'+esc(DESC[k])+'</div></div><button class="btn" data-dl="'+k+'">Download</button></div>'; });
-  h+='<div class="file"><div><div>Everything as one zip</div><div class="d">The same files, in one download</div></div><a class="btn p" href="https://cdn.gdrock.com/dl/core-pack?e='+encodeURIComponent(E)+'&t='+encodeURIComponent(T)+'">Download zip</a></div>'; $('#files').innerHTML=h; }
+document.addEventListener('click',function(ev){
+  var u=ev.target.closest('[data-buy]'); if(u){ ev.preventDefault(); buy(u.dataset.buy,u); return; }
+  var b=ev.target.closest('[data-dl]'); if(!b||!READY) return; var k=b.dataset.dl;
+  if(!canDownload(k)){ buy('core',b); return; }
+  blobOf(k).then(function(bl){saveBlob(bl,NAMES[k])}).catch(function(e){toast(e.message)});
+});
+var LOCK_ICON='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+function markLocked(){ if(UNLOCKED) return; document.querySelectorAll('.bar [data-dl]').forEach(function(b){ if(!canDownload(b.dataset.dl)){ b.classList.add('locked'); b.innerHTML=LOCK_ICON+esc(b.textContent); b.title='In the full Core Pack: unlock everything for €29'; } }); }
+function listFiles(){ var h=''; ['01','02','02x','03','03x','04','04x','05','js'].forEach(function(k){ if(UNLOCKED&&!FILES[k]) return; var ok=canDownload(k);
+    h+='<div class="file"><div><div>'+esc(NAMES[k])+'</div><div class="d">'+esc(DESC[k])+(ok||UNLOCKED?'':' · in the full Core Pack')+'</div></div>'+(ok?'<button class="btn" data-dl="'+k+'">Download</button>':'<button class="btn locked" data-buy="core">'+LOCK_ICON+'Unlock</button>')+'</div>'; });
+  var all = LINK ? API+'/dl/core-pack?e='+encodeURIComponent(E)+'&t='+encodeURIComponent(T) : API+'/api/pack/zip';
+  h+='<div class="file"><div><div>Everything as one zip</div><div class="d">The same files, in one download</div></div>'+(UNLOCKED?'<a class="btn p" href="'+all+'">Download zip</a>':'<button class="btn p" data-buy="core">Unlock everything for €29</button>')+'</div>'; $('#files').innerHTML=h; }
 
-/* ---------- PDFs, rendered in the page ---------- */
+/* ---------- PDFs, rendered in the page; previews end in the unlock panel ---------- */
 if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='/assets/vendor/pdf.worker.min.js';
-function pdf(k,sel){ if(rendered[k]||!FILES[k]) return; rendered[k]=1; var box=$(sel); box.innerHTML='<div class="state">Opening…</div>';
-  FILES[k].async('uint8array').then(function(data){ return pdfjsLib.getDocument({data:data,isEvalSupported:false}).promise; }).then(function(doc){
+var LOCKS = {
+  '03':['The full retention schedule is in the Core Pack.','Every kind of customer data, how long to keep it and where to set it, with the Excel file to fill in for your store.'],
+  '04':['The full breach pack is in the Core Pack.','The 72-hour clock, who to tell in each country, your first hour, and the Word forms ready to fill in.'],
+  '05':['The interactive checklist is in the Core Pack.','Twenty steps in the order to do them, ticked off as you go and kept on this device.']};
+function lockPanel(k){ var l=LOCKS[k]; return '<div class="lock"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fb0ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><h3>'+l[0]+'</h3><p>'+l[1]+' Plus gdrock-consent.js, the blocker and banner for your own site, and every guide in full. One payment, yours to keep.</p><button class="btn p" data-buy="core">Unlock everything for €29</button><span class="fine">14-day money-back guarantee</span></div>'; }
+function pdf(k,sel){ if(rendered[k]) return; rendered[k]=1; var box=$(sel); box.innerHTML='<div class="state">Opening…</div>';
+  get(k).then(function(buf){ return pdfjsLib.getDocument({data:new Uint8Array(buf.slice(0)),isEvalSupported:false}).promise; }).then(function(doc){
     box.innerHTML=''; var chain=Promise.resolve();
     for(var i=1;i<=doc.numPages;i++)(function(n){ chain=chain.then(function(){ return doc.getPage(n).then(function(pg){ var vp=pg.getViewport({scale:2}); var c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; box.appendChild(c); return pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise; }); }); })(i);
-    return chain; }).catch(function(){ box.innerHTML='<div class="state">This guide didn’t open in the page. <button class="btn" data-dl="'+k+'">Download it</button></div>'; rendered[k]=0; });
+    return chain; }).then(function(){ if(!UNLOCKED&&LOCKS[k]) box.insertAdjacentHTML('beforeend',lockPanel(k)); })
+    .catch(function(){ box.innerHTML='<div class="state">This guide didn’t open in the page.'+(canDownload(k)?' <button class="btn" data-dl="'+k+'">Download it</button>':' Reload to try again.')+'</div>'; rendered[k]=0; });
+}
+
+/* ---------- start ---------- */
+function ready(){
+  READY = true; $('#dl-policy').disabled=false; markLocked(); listFiles(); buildForm(); paint();
+  if (UNLOCKED) buildChecklist(); else { $('#c-meter').style.display='none'; }
+  if (CARE_OFFER_URL && UNLOCKED) { $('#offer').style.display='block'; $('#offer-link').href = CARE_OFFER_URL; }
+  var v=(location.hash||'#start').slice(1), b=document.querySelector('#nav button[data-v="'+v+'"]')||document.querySelector('#nav button'); b.click();
+}
+function loadZip(url,opts){ return fetch(url,opts).then(function(r){ if(!r.ok) return r.text().then(function(t){ var m=t; try{m=JSON.parse(t).error||t}catch(e){} throw new Error(m); }); return r.arrayBuffer(); })
+  .then(function(buf){ return JSZip.loadAsync(buf); }).then(function(z){ zip=z; UNLOCKED=true; z.forEach(function(p,f){ var n=p.split('/').pop(); for(var k in NAMES) if(NAMES[k]===n) FILES[k]=f; }); }); }
+function me(){ return fetch(API+'/api/account/me',{credentials:'include'}).then(function(r){return r.json()}).catch(function(){return {signedIn:false}}); }
+function afterPurchase(m){
+  if (q.get('bought')!=='core') return;
+  var n=$('#bought'); n.style.display='block'; history.replaceState(null,'',location.pathname+location.hash);
+  if (m.corePack) { n.textContent='Unlocked. Everything is below, and in your account.'; return; }
+  n.textContent='Payment received. Unlocking your Core Pack…'; var tries=0;
+  (function poll(){ setTimeout(function(){ me().then(function(x){ if(x.corePack) location.replace('/pack.html?unlocked=1'+location.hash); else if(++tries<15) poll(); else n.textContent='Payment received. It can take a minute to unlock: reload this page in a moment, or use the link in your email.'; }); }, 4000); })();
+}
+var OOPS=' <br>Write to <a href="mailto:office@gdrock.com">office@gdrock.com</a> if this keeps happening.';
+if (LINK) {
+  setUser(E); $('#acct').textContent='Sign in';
+  me().then(function(m){ SIGNED=!!m.signedIn; if(SIGNED) $('#acct').textContent='Your account'; });
+  loadZip(API+'/dl/core-pack?e='+encodeURIComponent(E)+'&t='+encodeURIComponent(T)).then(ready).catch(function(e){ fail(esc(e.message||'Couldn’t load your Core Pack.')+OOPS); });
+} else {
+  me().then(function(m){
+    if (!m.signedIn) { location.replace('/account?next=pack'); return; }
+    SIGNED=true; setUser(m.email);
+    if (q.get('unlocked')) { var n=$('#bought'); n.style.display='block'; n.textContent='Unlocked. Everything is below, and in your account.'; history.replaceState(null,'',location.pathname+location.hash); }
+    if (m.corePack) return loadZip(API+'/api/pack/zip',{credentials:'include'}).then(function(){ ready(); afterPurchase(m); });
+    document.body.classList.add('free'); $('#up-core').style.display='block'; ready(); afterPurchase(m);
+  }).catch(function(e){ fail(esc(e.message||'Couldn’t load your Core Pack.')+OOPS); });
 }
 
 /* ---------- privacy policy editor ---------- */
@@ -209,8 +289,8 @@ $('#copy-policy').addEventListener('click',function(){ var c=$('#paper').cloneNo
 
 /* Fill the real Word file: same text, same styling, gaps filled, unused blocks removed. */
 function xmlEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-$('#dl-policy').addEventListener('click',function(){ if(!FILES['02x']) return;
-  FILES['02x'].async('arraybuffer').then(JSZip.loadAsync).then(function(dz){ return dz.file('word/document.xml').async('string').then(function(x){
+$('#dl-policy').addEventListener('click',function(){ if(!READY) return;
+  get('02x').then(function(b){ return JSZip.loadAsync(b.slice(0)); }).then(function(dz){ return dz.file('word/document.xml').async('string').then(function(x){
     x=x.replace(/<w:tbl>(?:(?!<w:tbl>)[\s\S])*?HOW TO USE THIS FILE[\s\S]*?<\/w:tbl>/,'');
     x=x.replace(/<w:p[ >][\s\S]*?<\/w:p>/g,function(p){
       var m=p.match(/\[OPTIONAL: ([^\]]*)\] /); if(m){ var on=S.o[optKey(m[1])]; if(!on) return ''; return p.replace(/<w:r>(?:(?!<w:r>)[\s\S])*?\[OPTIONAL: [^\]]*\] <\/w:t><\/w:r>/,''); }
@@ -229,7 +309,6 @@ function buildChecklist(){ var h='', n=0;
   $('#cl').addEventListener('change',function(e){ var id=e.target.dataset.c; if(!id) return; S.c[id]=e.target.checked; e.target.closest('.it').classList.toggle('done',e.target.checked); save(); tally(); }); }
 function tally(){ var all=document.querySelectorAll('#cl input').length, on=document.querySelectorAll('#cl input:checked').length; $('#c-txt').textContent=on+' of '+all+' done'; $('#c-bar').style.width=(100*on/all)+'%'; }
 
-buildForm(); paint(); buildChecklist();
 })();
 </script>
 </body>
