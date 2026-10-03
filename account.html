@@ -170,6 +170,10 @@ function checkout(plan, btn){
   if (btn) { btn.setAttribute('aria-disabled', 'true'); btn.textContent = 'Opening checkout…'; }
   api('checkout', { plan: plan }).then(function(r){ if (r.url) location.href = r.url; else { toast(r.error || 'Try again'); if (btn) btn.removeAttribute('aria-disabled'); } });
 }
+function claim(btn){
+  btn.setAttribute('aria-disabled', 'true'); btn.textContent = 'Opening checkout…';
+  api('care-offer', {}).then(function(r){ if (r.url) location.href = r.url; else { toast(r.error || 'Try again'); btn.removeAttribute('aria-disabled'); btn.textContent = 'Claim 3 free months'; } });
+}
 function fmt(d){ try { return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ''; } }
 
 function render(v){
@@ -222,6 +226,11 @@ function render(v){
   if (s) {
     h += '<div class="card w"><div class="top"><h2>Your sites</h2><span class="tag">Hosted banner</span></div>' +
       '<p class="d">Install: one line, the first thing inside &lt;head&gt;. Customise the banner, see consent in the console, download the consent log for your records.</p>' + s + '</div>';
+  } else if (v.careOffer && v.careOffer.eligible) {
+    h += '<div class="card upsell"><div class="top"><h2>Care, 3 months free</h2><span class="tag on">Yours with the Core Pack</span></div>' +
+      '<div class="price">€0 <small>for 3 months, then €15 a month</small></div>' +
+      '<p class="d">We host the blocker and banner for one site and keep it current: the customizer, consent counts in the console and a consent log you can download. We email you a week before the first charge; cancel on Whop before then and you pay nothing.</p>' +
+      '<div class="acts"><button class="btn p" data-claim>Claim 3 free months</button></div></div>';
   } else {
     h += '<div class="card"><div class="top"><h2>Care</h2><span class="tag">€15 a month</span></div>' +
       '<p class="d">We host the blocker and banner for one site and keep it current: the customizer, consent counts in the console, a consent log you can download, and updates when tracking tools change. Cancel any time.</p>' +
@@ -239,6 +248,7 @@ function render(v){
 
 document.addEventListener('click', function(e){
   var b = e.target.closest('[data-buy]'); if (b) { checkout(b.dataset.buy, b); return; }
+  var cl = e.target.closest('[data-claim]'); if (cl) { claim(cl); return; }
   var r = e.target.closest('[data-reveal]'); if (r) { var sp = r.parentNode.querySelector('[data-code]'); var on = sp.textContent.indexOf('•') < 0; sp.textContent = on ? 'GDR-••••-••••' : sp.dataset.code; r.textContent = on ? 'Show code' : 'Hide code'; return; }
   var c = e.target.closest('[data-copy]'); if (c) { navigator.clipboard.writeText(c.dataset.copy).then(function(){ toast('Access code copied'); }); }
 });

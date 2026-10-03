@@ -35,3 +35,8 @@ id = "3c12ff4a7ff74d63b64bcc9753c6a06c"
 # name = "SCAN_LIMITER"
 # namespace_id = "1001"
 # simple = { limit = 6, period = 60 }
+
+# --- Daily cron -------------------------------------------------------------------------------------
+# 07:00 UTC: reminder emails ~7 days before a free Care trial's first €15 charge (careTrialReminders).
+[triggers]
+crons = ["0 7 * * *"]

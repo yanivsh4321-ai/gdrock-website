@@ -264,3 +264,70 @@ test("unlocking from the Core Pack page comes back to it", async () => {
   await call(e, "/api/account/checkout", { body: { plan: "core", back: "pack" }, cookie });
   assert.match(calls.checkouts[0].redirect_url, /gdrock\.com\/pack\.html\?bought=core$/);
 });
+
+// -- Care, 3 months free, for Core Pack buyers -------------------------------------------------
+const CARE3 = "plan_YmrCzfSK7bj1c";
+const trialPay = (email, mid = "mem_trial", extra = {}) => ({ type: "membership.activated", data: { id: mid, plan: { id: CARE3 }, product: { title: "Care" },
+  user: { email }, metadata: { gdrock_plan: "care3", gdrock_account: email }, ...extra } });
+const me = async (e, cookie) => (await call(e, "/api/account/me", { method: "GET", cookie })).json();
+
+test("the free Care months: only for Core Pack buyers, through the account, once per email", async () => {
+  const e = env(), calls = record();
+  const cookie = await signIn(e, calls);
+  assert.equal((await me(e, cookie)).careOffer.eligible, false, "no Core Pack, no offer");
+  assert.equal((await call(e, "/api/account/care-offer", { body: {}, cookie })).status, 403);
+  await hook(e, payment("plan_gWq2g08EUZLAg", "owner@shopmail.co"));
+  assert.equal((await me(e, cookie)).careOffer.eligible, true);
+  const co = await (await call(e, "/api/account/care-offer", { body: {}, cookie })).json();
+  assert.equal(co.url, "https://whop.com/checkout/abc");
+  const sent = calls.checkouts.at(-1);
+  assert.equal(sent.plan_id, CARE3);
+  assert.equal(sent.metadata.gdrock_plan, "care3");
+  assert.equal(sent.metadata.gdrock_account, "owner@shopmail.co");
+  await hook(e, trialPay("owner@shopmail.co"));
+  const t = JSON.parse(e.DEEP_SCAN.m.get("care:trial:mem_trial"));
+  const days = (Date.parse(t.chargeAt) - Date.parse(t.start)) / 86400000;
+  assert.ok(days > 89.9 && days < 90.1, "charge 90 days on");
+  assert.equal(t.reminded, false);
+  const v = await me(e, cookie);
+  assert.equal(v.careOffer.eligible, false);
+  assert.equal(v.careOffer.claimed, true);
+  assert.deepEqual(v.waiting, [{ plan: "care3", label: "Care (3 months free)", free: 1 }]);
+  assert.equal((await call(e, "/api/account/care-offer", { body: {}, cookie })).status, 403);
+  assert.ok(!calls.telegram.some((m) => /Check this free Care trial/.test(m)));
+  // Whop sends a second event for the same membership: the trial record isn't restarted.
+  await hook(e, trialPay("owner@shopmail.co"));
+  assert.equal(JSON.parse(e.DEEP_SCAN.m.get("care:trial:mem_trial")).start, t.start);
+});
+
+test("a Care or Portfolio customer gets no free months; a trial with no Core Pack alerts the owner", async () => {
+  const e = env(), calls = record();
+  const cookie = await signIn(e, calls);
+  await hook(e, payment("plan_gWq2g08EUZLAg", "owner@shopmail.co"));
+  await hook(e, payment("plan_Hzt8oE2YfKseZ", "owner@shopmail.co"));
+  assert.equal((await me(e, cookie)).careOffer.eligible, false);
+  await hook(e, trialPay("stranger@shopmail.co", "mem_x"));
+  assert.ok(calls.telegram.some((m) => /Check this free Care trial: stranger@shopmail\.co/.test(m)));
+});
+
+test("the reminder goes out once, about a week before the first charge; a cancelled trial gets none", async () => {
+  const e = env(), calls = record();
+  const day = 86400000, put = (mid, inDays, extra = {}) => e.DEEP_SCAN.m.set("care:trial:" + mid, JSON.stringify({ email: mid + "@shopmail.co", account: "",
+    start: new Date().toISOString(), chargeAt: new Date(Date.now() + inDays * day).toISOString(), reminded: false, cancelled: false, ...extra }));
+  put("soon", 6.5); put("later", 20); put("past", -5); put("gone", 5);
+  await hook(e, { type: "membership.cancelled", data: { id: "gone", membership: { id: "gone" } } });
+  for (let run = 0; run < 2; run++) { const jobs = []; await worker.scheduled({}, e, { waitUntil: (p) => jobs.push(p) }); await Promise.all(jobs); }
+  const reminders = calls.emails.filter((m) => /Your free Care months end on/.test(m.subject));
+  assert.deepEqual(reminders.map((m) => m.to), ["soon@shopmail.co"]);
+  assert.match(reminders[0].html, /€15 a month/);
+  assert.match(reminders[0].html, /Cancel on Whop before/);
+  assert.equal(JSON.parse(e.DEEP_SCAN.m.get("care:trial:soon")).reminded, true);
+  assert.equal(JSON.parse(e.DEEP_SCAN.m.get("care:trial:gone")).cancelled, true);
+});
+
+test("the Core Pack email offers the free Care months, pointing at the account", async () => {
+  const e = env(), calls = record();
+  await hook(e, payment("plan_gWq2g08EUZLAg", "owner@shopmail.co"));
+  assert.match(calls.emails[0].html, /Three months of Care, free/);
+  assert.match(calls.emails[0].html, /week before the first charge/);
+});

@@ -152,6 +152,7 @@ export default {
       if (path === "/api/account/signout" && request.method === "POST") return handleAccountSignOut(request);
       if (path === "/api/account/checkout" && request.method === "POST") return handleAccountCheckout(request, env);
       if (path === "/api/account/activate" && request.method === "POST") return handleAccountActivate(request, env);
+      if (path === "/api/account/care-offer" && request.method === "POST") return handleAccountCareOffer(request, env);
       return acctJson(request, { error: "not_found" }, 404);
     }
     if (path.startsWith("/api/pack/")) {
@@ -615,7 +616,12 @@ export default {
     }
 
     return cors("GDRock CDN — OK", 200, { "Content-Type": "text/plain" });
-  }
+  },
+
+  // Daily cron (wrangler.toml [triggers]): the Care trial reminders.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(careTrialReminders(env).catch((e) => tellOwner(env, "Care reminder cron failed: " + (e && e.message))));
+  },
 };
 
 // -- Helpers -------------------------------------------------------
@@ -798,6 +804,8 @@ async function supabasePatch(env, siteId, data) {
 const WHOP_PLANS = {
   core:      { id: "plan_gWq2g08EUZLAg", env: "WHOP_PLAN_CORE",   label: "Core Pack",                  kind: "files" },
   care:      { id: "plan_Hzt8oE2YfKseZ", env: "WHOP_PLAN_CARE",   label: "Care",                       kind: "banner", sites: 1,  db: "care" },
+  // Hidden plan on the Care product: 90 days free, then €15 a month. Handed out only by the account.
+  care3:     { id: "plan_YmrCzfSK7bj1c",                          label: "Care (3 months free)",       kind: "banner", sites: 1,  db: "care" },
   agency:    { id: "plan_U4vLK0OIvMmrR", env: "WHOP_PLAN_AGENCY", label: "Portfolio (up to 25 sites)", kind: "banner", sites: 25, db: "agency" },
   agency50:  { id: "plan_ovQfuAhjkvcFn",                          label: "Portfolio (up to 50 sites)", kind: "banner", sites: 50, db: "agency" },
   essential: { id: "plan_rDl4G6eAcftqC",                          label: "Essential Setup",            kind: "setup" },
@@ -851,6 +859,7 @@ async function handleWhopWebhook(request, env) {
   // Access revoked: cancellation, refund, chargeback or failed renewal.
   if (WHOP_REVOKE.has(event)) {
     const refund = /refund/.test(event);
+    await careTrialCancelled(env, memberId);
     if (siteId) {
       await supabasePatch(env, siteId, { active: false });
       await whopRevokeMembership(env, memberId, refund);
@@ -869,6 +878,7 @@ async function handleWhopWebhook(request, env) {
   }
 
   if (!WHOP_GRANT.has(event)) return json({ ok: true, skipped: event });
+  if (planKey === "care3") await careTrialStarted(env, sale, d);
 
   // We install it: delivered by people, so the buyer gets a booking email.
   if (plan && plan.kind === "setup") return whopSetupSale(env, sale);
@@ -1179,7 +1189,8 @@ async function sendCorePackEmail(env, email) {
   ${await corePackBlock(env, email)}
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:20px 0 12px;"><strong>The banner is the real one.</strong> It's the same blocker and banner we run on our own CDN, packaged to run from your site: it holds Meta Pixel, Google Analytics, TikTok, Klaviyo, Hotjar and the rest until the visitor chooses, with Accept and Reject as equal choices, in 7 languages. Guide 01 walks you through the install in about ten minutes, with the exact lines to paste for Shopify, WooCommerce and any other site.</p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">Then check it: run the free deep check at <a href="https://www.gdrock.com/#scan" style="color:#8fb0ff;">gdrock.com</a>. A real browser in Germany opens your store and tells you if anything still fires before a choice.</p>`;
-  try { return await sendEmail(env, email, "Your GDRock Core Pack is ready", buyerEmailShell("Your Core Pack is ready.", inner)); } catch (e) { return null; }
+  const care = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:16px 0 0;"><strong>Three months of Care, free.</strong> Rather we host the banner and keep it current? Your Core Pack comes with three free months of Care, then €15 a month, and we email you a week before the first charge. Claim it in <a href="https://www.gdrock.com/account" style="color:#8fb0ff;">your account</a>.</p>`;
+  try { return await sendEmail(env, email, "Your GDRock Core Pack is ready", buyerEmailShell("Your Core Pack is ready.", inner + care)); } catch (e) { return null; }
 }
 
 async function corePackBlock(env, email) {
@@ -1211,7 +1222,7 @@ const ACCT_ORIGIN_RE = /^https:\/\/(www\.)?gdrock\.com$/;
 const SESSION_COOKIE = "__Host-gdr_s";
 const SESSION_DAYS = 90;
 const ACCT_NEXT = new Set(["pack", "account"]);
-const WHOP_MANAGE_URL = "https://whop.com/@me/settings/memberships/";
+const WHOP_MANAGE_URL = "https://whop.com/@me/settings/orders/";
 
 function acctHeaders(request) {
   const o = request.headers.get("Origin") || "";
@@ -1348,7 +1359,8 @@ async function accountView(env, email) {
     }
     if (p.active !== false && p.sites.length < p.limit) waiting.push({ plan: p.plan, label: plan.label, free: p.limit - p.sites.length });
   }
-  return { email, since: (user && user.created) || "", corePack: await corePackOwned(env, email, recs), plans, sites, waiting, setups, manageUrl: WHOP_MANAGE_URL };
+  return { email, since: (user && user.created) || "", corePack: await corePackOwned(env, email, recs), plans, sites, waiting, setups, manageUrl: WHOP_MANAGE_URL,
+    careOffer: await careOfferState(env, email, recs) };
 }
 
 async function handleAccountMe(request, env) {
@@ -1443,6 +1455,109 @@ async function handlePackZip(request, env) {
   }
   return new Response(zip, { headers: { ...acctHeaders(request), "Content-Type": "application/zip",
     "Content-Disposition": 'attachment; filename="GDRock-Core-Pack.zip"', "Cache-Control": "private, no-store" } });
+}
+
+// -- Care, 3 months free, for Core Pack buyers ---------------------------------------------------
+// A hidden Whop plan on the Care product (care3: 90-day free trial, then €15 a month, card taken at
+// checkout, Whop shows "€0.00 today, then €15.00 per month starting <date>"). Only the account
+// hands out its checkout, only to a Core Pack buyer who never had Care or Portfolio, once per email.
+// Nothing converts silently: a daily cron emails a reminder about 7 days before the first charge.
+//   care:offer:<email>  -> { mid, at }                     claimed (once per email)
+//   care:trial:<mid>    -> { email, account, start, chargeAt, reminded, cancelled }
+const CARE_TRIAL_DAYS = 90;
+const CARE_REMIND_DAYS = 7;
+async function careOfferState(env, email, recs) {
+  if (!env.DEEP_SCAN) return { eligible: false };
+  const purchases = recs.flatMap((r) => r.purchases);
+  if (await env.DEEP_SCAN.get("care:offer:" + email)) return { eligible: false, claimed: true };
+  if (purchases.some((p) => ["care", "care3", "agency", "agency50"].includes(p.plan))) return { eligible: false };
+  const coreBuyer = purchases.some((p) => p.plan === "core" && !p.refunded) ||
+    (!purchases.length && !!(await env.DEEP_SCAN.get("acct:pack:" + email)));
+  return { eligible: coreBuyer, days: CARE_TRIAL_DAYS, then: "€15 a month" };
+}
+
+async function handleAccountCareOffer(request, env) {
+  if (!acctOriginOk(request)) return acctJson(request, { error: "forbidden" }, 403);
+  const email = await acctSession(env, request);
+  if (!email) return acctJson(request, { error: "Sign in first." }, 401);
+  const offer = await careOfferState(env, email, await acctRecords(env, email));
+  if (!offer.eligible) return acctJson(request, { error: offer.claimed ? "You've already claimed your free Care months." : "The free Care months come with a Core Pack purchase." }, 403);
+  if (!env.WHOP_API_KEY) return acctJson(request, { error: "Checkout is offline for a moment. Email office@gdrock.com." }, 503);
+  try {
+    const r = await fetch("https://api.whop.com/api/v1/checkout_configurations", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.WHOP_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "payment", plan_id: WHOP_PLANS.care3.id, redirect_url: "https://www.gdrock.com/account?bought=care",
+        metadata: { gdrock_plan: "care3", gdrock_account: email, email } }),
+    });
+    const data = await r.json().catch(() => ({}));
+    const pu = data.purchase_url || "";
+    if (!r.ok || !pu) return acctJson(request, { error: "Checkout didn't open. Try again, or email office@gdrock.com." }, 502);
+    return acctJson(request, { url: pu.startsWith("http") ? pu : `https://whop.com${pu}` });
+  } catch (e) {
+    return acctJson(request, { error: "Checkout didn't open. Try again, or email office@gdrock.com." }, 502);
+  }
+}
+
+// Called from the webhook for every care3 grant: the first one starts the trial record; a later
+// one (the first real €15 charge, renewals) leaves it alone.
+async function careTrialStarted(env, sale, d) {
+  if (!env.DEEP_SCAN || !sale.memberId) return;
+  const key = "care:trial:" + sale.memberId;
+  if (await env.DEEP_SCAN.get(key)) return;
+  const now = Date.now();
+  // Whop's own date when it sends one that looks like the end of a 90-day trial; else 90 days on.
+  const raw = (d.membership && (d.membership.renewal_period_end || d.membership.trial_end)) || d.renewal_period_end || d.trial_end || "";
+  const theirs = typeof raw === "number" ? raw * (raw < 1e12 ? 1000 : 1) : Date.parse(raw);
+  const chargeAt = Number.isFinite(theirs) && theirs > now + 80 * 86400000 && theirs < now + 100 * 86400000 ? theirs : now + CARE_TRIAL_DAYS * 86400000;
+  const who = sale.account || sale.email;
+  await env.DEEP_SCAN.put(key, JSON.stringify({ email: sale.email, account: sale.account || "", start: new Date(now).toISOString(), chargeAt: new Date(chargeAt).toISOString(), reminded: false, cancelled: false }));
+  const prior = who ? await env.DEEP_SCAN.get("care:offer:" + who) : null;
+  if (who) await env.DEEP_SCAN.put("care:offer:" + who, JSON.stringify({ mid: sale.memberId, at: new Date(now).toISOString() }));
+  // Should never happen (the account only hands the checkout out once), so it's worth a look.
+  const recs = who ? await acctRecords(env, who) : [];
+  const coreBuyer = recs.flatMap((r) => r.purchases).some((p) => p.plan === "core" && !p.refunded) || !!(who && (await env.DEEP_SCAN.get("acct:pack:" + who)));
+  if (prior || !coreBuyer) await tellOwner(env, `Check this free Care trial: ${who || "unknown email"} (${sale.memberId}) ${prior ? "had already claimed one" : "has no Core Pack purchase on file"}. Cancel it in Whop if it isn't right.`);
+}
+async function careTrialCancelled(env, memberId) {
+  if (!env.DEEP_SCAN || !memberId) return;
+  const key = "care:trial:" + memberId;
+  const t = JSON.parse((await env.DEEP_SCAN.get(key)) || "null");
+  if (t && !t.cancelled) { t.cancelled = true; await env.DEEP_SCAN.put(key, JSON.stringify(t)); }
+}
+
+// Daily (wrangler.toml [triggers]): one reminder per trial, about a week before the first charge.
+async function careTrialReminders(env) {
+  if (!env.DEEP_SCAN) return { sent: 0 };
+  let sent = 0, cursor;
+  do {
+    const page = await env.DEEP_SCAN.list({ prefix: "care:trial:", cursor });
+    for (const k of page.keys) {
+      const t = JSON.parse((await env.DEEP_SCAN.get(k.name)) || "null");
+      if (!t || t.reminded || t.cancelled) continue;
+      const left = Date.parse(t.chargeAt) - Date.now();
+      if (left > CARE_REMIND_DAYS * 86400000 || left < -86400000) continue;
+      for (const to of new Set([t.email, t.account].filter(Boolean))) await sendCareReminder(env, to, t.chargeAt);
+      t.reminded = true;
+      t.remindedAt = new Date().toISOString();
+      await env.DEEP_SCAN.put(k.name, JSON.stringify(t));
+      await tellOwner(env, `Care trial reminder sent: ${t.account || t.email}, first €15 charge on ${t.chargeAt.slice(0, 10)}.`);
+      sent++;
+    }
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  return { sent };
+}
+
+async function sendCareReminder(env, email, chargeAt) {
+  if (isReservedAddress(email)) return null;
+  const day = new Date(chargeAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+  const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Your three free months of GDRock Care end on <strong>${day}</strong>. From then, Care is <strong>€15 a month</strong>, charged to the card you added on Whop.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;"><strong>Keeping it?</strong> Nothing to do. Your banner, consent log and customizer carry on as they are.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 20px;"><strong>Not keeping it?</strong> Cancel on Whop before ${day} and nothing is charged. Your Core Pack stays yours either way.</p>
+  <p style="margin:0 0 12px;"><a href="${WHOP_MANAGE_URL}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Manage Care on Whop</a></p>
+  <p style="font-size:13px;line-height:1.6;color:#8d95a8;margin:0;">Or reply to this email and we'll cancel it for you.</p>`;
+  try { return await sendEmail(env, email, `Your free Care months end on ${day}`, buyerEmailShell("A week to go on your free Care.", inner, "Questions? Just reply to this email; it reaches a person.")); } catch (e) { return null; }
 }
 
 async function sendSignInEmail(env, email, token) {
