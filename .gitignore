@@ -99,6 +99,8 @@ build_alreadypaying_batch.py
 build_todays_batches.py
 zoho_check.py.bak
 offers/free-install-playbook.md
+# Handover reports name real prospects and their addresses (2026-10-03)
+handover_*.md
 
 # Every CSV export and log at the repo root so far has been lead data, and none is tracked
 *.csv
