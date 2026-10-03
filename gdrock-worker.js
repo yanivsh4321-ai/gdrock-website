@@ -2325,6 +2325,8 @@ async function sendDeepScanReport(env, job, r, scored) {
   // The offer: a leaking result gets one priced button straight to the Essential Setup checkout;
   // a clean result gets no sales pitch beyond keeping it that way; an unsettled one gets a person.
   const diy = `<p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather do it yourself? <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#8fb0ff;">Core Pack, &euro;29 once</a> (self-hosted) or <a href="https://www.gdrock.com/checkout.html?plan=care" style="color:#8fb0ff;">Care, &euro;15 a month</a> (hosted, kept up to date).</p>`;
+  // Black Friday line: on when the Worker var BF_ON is "1" (1-27 Nov), off otherwise.
+  const bf = env.BF_ON === "1";
   const offer = !scored ? "" : r.score >= 90
     ? `<div style="background:#111522;border:1px solid #262c3b;border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
       <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Nothing to fix today.</p>
@@ -2334,6 +2336,7 @@ async function sendDeepScanReport(env, job, r, scored) {
       <p style="color:#8fb0ff;font-family:Consolas,Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;">Fix it for me</p>
       <p style="color:#fff;font-size:20px;font-weight:800;margin:0 0 8px;">We fix ${e(job.domain)} for &euro;249.</p>
       <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 16px;">We install the blocker and banner, run this exact check again from Germany, and send you the new result. You get a booking link straight after payment. 14-day money-back guarantee.</p>
+      ${bf ? `<p style="color:#fff;font-size:13.5px;line-height:1.6;margin:0 0 16px;"><strong>Black Friday is 27 November.</strong> Every tag above fires for every visitor that week. Book by 20 November and we fix ${e(job.domain)} before then.</p>` : ""}
       <a href="https://whop.com/checkout/plan_rDl4G6eAcftqC/" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 28px;border-radius:10px;">Fix it for me: &euro;249 &rarr;</a>
       ${diy}
     </div>`;

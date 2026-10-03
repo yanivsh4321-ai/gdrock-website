@@ -112,6 +112,9 @@ test("queue -> runner -> result -> email, end to end", async () => {
   // A leaking result offers the fix, priced, straight to the Essential Setup checkout.
   assert.match(mail.htmlbody, /Fix it for me: &euro;249/);
   assert.match(mail.htmlbody, /whop\.com\/checkout\/plan_rDl4G6eAcftqC\//);
+  // The Black Friday line only appears when the Worker var BF_ON is "1".
+  if (env.BF_ON === "1") assert.match(mail.htmlbody, /Black Friday is 27 November[\s\S]*fix shop\.example before then/);
+  else assert.doesNotMatch(mail.htmlbody, /Black Friday/);
   if (process.env.DUMP_DEEP_EMAIL) (await import("node:fs")).writeFileSync(process.env.DUMP_DEEP_EMAIL, mail.htmlbody);
   assert.match(mail.htmlbody, /WHAT SENT DATA BEFORE ANY CLICK/);
   assert.match(mail.htmlbody, /\+0\.41s ?<\/td><td[^>]*>Meta Pixel/);
