@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/account", "destination": "/account.html" }
+  ],
   "headers": [
     {
       "source": "/gdrock.js",

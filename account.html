@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Your account · GDRock</title>
+<meta name="description" content="Sign in to GDRock with a link we email you. Your Core Pack, your sites and your billing in one place.">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts/geist.css">
+<style>
+:root{--bg:#08090c;--panel:#0e1015;--panel2:#14161c;--line:#232733;--line2:#2c3140;--ink:#f4f6fa;--ink2:#c5cbd7;--ink3:#8d95a8;--acc:#4f7dff;--ok:#3ddc97;--warn:#f5c842;--bad:#ff6b6b}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{color:var(--ink);font:15px/1.6 Geist,Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:#8fb0ff}
+.mono{font-family:"Geist Mono",Consolas,monospace}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(8,9,12,.92);backdrop-filter:blur(10px);z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--ink);text-decoration:none}.brand img{height:22px}
+.who{display:flex;align-items:center;gap:14px;font:12px "Geist Mono",monospace;color:var(--ink3)}
+.who button{all:unset;cursor:pointer;color:var(--ink2);font:500 13px Geist,Inter,sans-serif;padding:7px 12px;border:1px solid var(--line);border-radius:8px}.who button:hover{border-color:var(--line2);color:var(--ink)}
+.eye{font:600 11px "Geist Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:12px}
+h1{font-size:40px;line-height:1.05;letter-spacing:-.035em;font-weight:700}
+.lead{color:var(--ink3);margin-top:12px;max-width:560px}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:14px;padding:11px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);text-decoration:none;white-space:nowrap}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}.btn:hover{filter:brightness(1.12)}.btn:disabled,.btn[aria-disabled=true]{opacity:.5;cursor:default}
+.btn.s{padding:8px 12px;font-size:13px}
+input{width:100%;background:#090b10;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:13px 14px;font:15px Geist,Inter,sans-serif;outline:none}
+input:focus{border-color:var(--acc)}
+.msg{font-size:13.5px;margin-top:12px;min-height:20px;color:var(--ink3)}.msg.bad{color:var(--bad)}.msg.ok{color:var(--ok)}
+[hidden]{display:none!important}
+
+/* sign in */
+.gate{min-height:calc(100vh - 57px);display:grid;grid-template-columns:1.1fr 1fr;}
+.gate .l{padding:72px 56px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--line);background:radial-gradient(120% 80% at 0% 0%,rgba(79,125,255,.10),transparent 60%)}
+.gate .r{padding:72px 56px;display:flex;flex-direction:column;justify-content:center}
+.form{max-width:400px;width:100%}
+.form label{display:block;font-size:13px;color:var(--ink2);margin-bottom:8px}
+.form .row{display:flex;flex-direction:column;gap:12px}
+.form .opt{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink2);margin-top:16px;cursor:pointer;line-height:1.5}.form .opt input{width:auto;margin-top:3px;accent-color:var(--acc)}
+.form .fine{font-size:12.5px;color:var(--ink3);margin-top:18px;line-height:1.55}
+.inside{margin-top:36px;display:flex;flex-direction:column;gap:14px;max-width:460px}
+.inside div{display:flex;gap:14px;align-items:flex-start}
+.inside .k{font:600 11px "Geist Mono",monospace;color:var(--acc);border:1px solid #2a3b6b;border-radius:6px;padding:3px 7px;margin-top:2px;min-width:52px;text-align:center}
+.inside p{color:var(--ink2);font-size:14px}.inside p b{color:var(--ink);font-weight:600}
+.sent{max-width:420px}
+.sent .ic{width:44px;height:44px;border-radius:12px;border:1px solid #2a3b6b;display:grid;place-items:center;margin-bottom:20px;background:rgba(79,125,255,.08)}
+.sent h2{font-size:24px;letter-spacing:-.02em;margin-bottom:8px}
+.sent p{color:var(--ink3)}
+.links{display:flex;gap:16px;margin-top:22px;font-size:13.5px}.links button{all:unset;cursor:pointer;color:#8fb0ff}.links button:disabled{color:var(--ink3);cursor:default}
+
+/* dashboard */
+main.dash{max-width:1080px;margin:0 auto;padding:44px 28px 90px}
+.note{margin-top:22px;border:1px solid #1f5a43;background:rgba(61,220,151,.07);color:#bdf3da;border-radius:12px;padding:13px 16px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:34px}
+.card{grid-column:span 6;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 22px 20px;display:flex;flex-direction:column;min-width:0}
+.card.w{grid-column:span 12}
+.card .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.card h2{font-size:17px;letter-spacing:-.01em;font-weight:650}
+.tag{font:600 10.5px "Geist Mono",monospace;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line2);color:var(--ink3)}
+.tag.on{color:var(--ok);border-color:#1f5a43;background:rgba(61,220,151,.06)}
+.tag.free{color:#8fb0ff;border-color:#2a3b6b;background:rgba(79,125,255,.07)}
+.tag.off{color:var(--warn);border-color:#5a4a1f}
+.card p.d{color:var(--ink3);font-size:14px}
+.card .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:18px}
+.list{display:flex;flex-direction:column;gap:6px;margin:4px 0 0}
+.list li{list-style:none;display:flex;gap:10px;font-size:14px;color:var(--ink2)}
+.list li i{font-style:normal;color:var(--ok);font-weight:700;width:14px}
+.list li.lk{color:var(--ink3)}.list li.lk i{color:var(--ink3)}
+.site{border:1px solid var(--line);border-radius:12px;padding:16px;background:#0b0d12;margin-top:10px}
+.site .h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.site .h b{font-size:15.5px}
+.site .code{display:flex;align-items:center;gap:10px;margin:12px 0 4px;flex-wrap:wrap}
+.site .code span{font:600 14px "Geist Mono",monospace;letter-spacing:.06em;background:#05060a;border:1px solid #2a3b6b;border-radius:8px;padding:7px 10px;color:#dbe4ff}
+.site .acts{padding-top:12px}
+.add{display:flex;gap:10px;margin-top:12px}.add input{padding:10px 12px;font-size:14px}
+.upsell{background:linear-gradient(180deg,rgba(79,125,255,.10),rgba(79,125,255,.02));border-color:#2a3b6b}
+.price{font-size:28px;font-weight:700;letter-spacing:-.03em;margin:2px 0 6px}.price small{font-size:14px;color:var(--ink3);font-weight:500;letter-spacing:0}
+.rows{display:flex;flex-direction:column}
+.rows div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:14px;color:var(--ink2)}
+.rows div:first-child{border-top:0}
+.rows span{color:var(--ink3);font-size:13px}
+.loading{min-height:calc(100vh - 57px);display:grid;place-items:center;color:var(--ink3)}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--ok);color:#06210f;font-weight:700;padding:10px 14px;border-radius:10px;opacity:0;transition:.2s;z-index:9}.toast.on{opacity:1}
+@media(max-width:900px){.gate{grid-template-columns:1fr}.gate .l{border-right:0;border-bottom:1px solid var(--line);padding:44px 20px}.gate .r{padding:40px 20px 60px}.card{grid-column:span 12}h1{font-size:32px}main.dash{padding:30px 16px 70px}header{padding:14px 16px}.who .em{display:none}.add{flex-direction:column}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="https://www.gdrock.com/"><img src="/assets/gdrock-mark-light.png" alt="">GDRock</a><div class="who"><span class="em" id="who"></span><button id="out" hidden>Sign out</button></div></header>
+
+<div class="loading" id="v-load">Opening your account…</div>
+
+<section class="gate" id="v-gate" hidden>
+  <div class="l">
+    <p class="eye">GDRock account</p>
+    <h1>Everything you have<br>with GDRock, in one place.</h1>
+    <p class="lead">Your Core Pack, your sites and their access codes, your consent logs and your billing. No password: we email you a link.</p>
+    <div class="inside">
+      <div><span class="k">Free</span><p><b>Start here, in full</b>, and a preview of every guide. Build your privacy policy on the page and download it as Word.</p></div>
+      <div><span class="k">€29</span><p><b>The whole Core Pack.</b> The blocker and banner for your own site, every guide, the retention schedule, the breach forms and the checklist.</p></div>
+      <div><span class="k">Bought</span><p><b>Already a customer?</b> Sign in with the email you bought with and it's all here.</p></div>
+    </div>
+  </div>
+  <div class="r">
+    <form class="form" id="f-start" novalidate>
+      <label for="email">Your email</label>
+      <div class="row"><input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@yourstore.com" required><button class="btn p" id="go" type="submit">Email me a sign-in link</button></div>
+      <div class="msg" id="m-start" role="status"></div>
+      <label class="opt"><input type="checkbox" id="optin"> Also email me GDRock updates, about once a month. Unsubscribe any time.</label>
+      <p class="fine">The link works once, for 15 minutes. You stay signed in on this device for 90 days. Without the tick above we use your email for your account only. <a href="/terms-and-conditions.html#privacy">Privacy</a>.</p>
+    </form>
+    <div class="sent" id="sent" hidden>
+      <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8fb0ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+      <h2>Check your inbox.</h2>
+      <p id="sent-msg"></p>
+      <p style="margin-top:10px">Nothing after two minutes? Look in spam, or send it again.</p>
+      <div class="links"><button id="again" type="button">Send it again</button><button id="other" type="button">Use another email</button></div>
+    </div>
+  </div>
+</section>
+
+<main class="dash" id="v-dash" hidden>
+  <p class="eye">Your account</p>
+  <h1 id="hi">Welcome back.</h1>
+  <p class="lead" id="since"></p>
+  <div class="note" id="bought" hidden></div>
+  <div class="grid" id="cards"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+var API = 'https://cdn.gdrock.com/api/account/';
+var $ = function(s){ return document.querySelector(s); };
+var q = new URLSearchParams(location.search);
+var NEXT = q.get('next') === 'pack' ? 'pack' : '';
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function toast(m){ var t = $('#toast'); t.textContent = m; t.classList.add('on'); setTimeout(function(){ t.classList.remove('on'); }, 1600); }
+function api(path, body){
+  return fetch(API + path, { method: body ? 'POST' : 'GET', credentials: 'include', headers: body ? { 'Content-Type': 'application/json' } : {}, body: body ? JSON.stringify(body) : undefined })
+    .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ j._status = r.status; return j; }); })
+    .catch(function(){ return { _status: 0, error: 'Couldn’t reach GDRock. Check your connection and try again.' }; });
+}
+function show(id){ ['#v-load', '#v-gate', '#v-dash'].forEach(function(v){ $(v).hidden = v !== id; }); }
+
+/* ---------- sign in ---------- */
+var lastEmail = '';
+function gate(){
+  show('#v-gate'); $('#out').hidden = true; $('#who').textContent = '';
+  setTimeout(function(){ $('#email').focus(); }, 50);
+}
+function send(email){
+  var b = $('#go'); b.disabled = true; $('#m-start').className = 'msg'; $('#m-start').textContent = 'Sending…';
+  return api('start', { email: email, next: NEXT || 'account', optin: $('#optin').checked }).then(function(r){
+    b.disabled = false;
+    if (r.ok) { lastEmail = email; $('#f-start').hidden = true; $('#sent').hidden = false; $('#sent-msg').textContent = r.message; $('#m-start').textContent = ''; cool(); }
+    else { $('#m-start').className = 'msg bad'; $('#m-start').textContent = r.error || 'Something went wrong. Try again.'; }
+  });
+}
+function cool(){ var a = $('#again'), n = 45; a.disabled = true; (function tick(){ if (n <= 0) { a.disabled = false; a.textContent = 'Send it again'; return; } a.textContent = 'Send it again in ' + n + 's'; n--; setTimeout(tick, 1000); })(); }
+$('#f-start').addEventListener('submit', function(e){ e.preventDefault(); var v = $('#email').value.trim(); if (!v) { $('#m-start').className = 'msg bad'; $('#m-start').textContent = 'Enter your email address.'; return; } send(v); });
+$('#again').addEventListener('click', function(){ if (lastEmail) api('start', { email: lastEmail, next: NEXT || 'account', optin: $('#optin').checked }).then(function(r){ toast(r.ok ? 'Sent again' : (r.error || 'Try again')); cool(); }); });
+$('#other').addEventListener('click', function(){ $('#sent').hidden = true; $('#f-start').hidden = false; $('#email').value = ''; $('#email').focus(); });
+$('#out').addEventListener('click', function(){ api('signout', {}).then(function(){ location.replace('/account'); }); });
+
+/* ---------- dashboard ---------- */
+var BOUGHT = { core: 'Payment received. Unlocking your Core Pack…', care: 'Payment received. Your Care plan is being set up…', essential: 'Payment received. Your install is booked in: book the kickoff below.' };
+function checkout(plan, btn){
+  if (btn) { btn.setAttribute('aria-disabled', 'true'); btn.textContent = 'Opening checkout…'; }
+  api('checkout', { plan: plan }).then(function(r){ if (r.url) location.href = r.url; else { toast(r.error || 'Try again'); if (btn) btn.removeAttribute('aria-disabled'); } });
+}
+function fmt(d){ try { return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return ''; } }
+
+function render(v){
+  show('#v-dash'); $('#out').hidden = false; $('#who').textContent = v.email;
+  $('#hi').textContent = v.plans.length ? 'Your GDRock.' : 'Welcome to GDRock.';
+  $('#since').textContent = v.since ? 'Signed in as ' + v.email + '. Account opened ' + fmt(v.since) + '.' : 'Signed in as ' + v.email + '.';
+  var h = '';
+
+  // Core Pack
+  if (v.corePack) {
+    h += '<div class="card"><div class="top"><h2>Core Pack</h2><span class="tag on">Unlocked</span></div>' +
+      '<p class="d">The blocker and banner for your own site, five guides, your privacy policy builder, the retention schedule, the breach forms and the 20-step checklist.</p>' +
+      '<div class="acts"><a class="btn p" href="/pack.html">Open your Core Pack</a></div></div>';
+  } else {
+    h += '<div class="card"><div class="top"><h2>Core Pack</h2><span class="tag free">Free plan</span></div>' +
+      '<ul class="list"><li><i>✓</i>Start here, the full install guide</li><li><i>✓</i>Privacy policy builder, download as Word</li><li><i>✓</i>First page of every other guide</li>' +
+      '<li class="lk"><i>–</i>gdrock-consent.js, the blocker and banner</li><li class="lk"><i>–</i>Retention Excel, breach forms, checklist</li></ul>' +
+      '<div class="acts"><a class="btn" href="/pack.html">Open the free Core Pack</a><button class="btn p" data-buy="core">Unlock everything for €29</button></div></div>';
+  }
+
+  // Done-For-You
+  if (v.setups.length) {
+    h += '<div class="card"><div class="top"><h2>Done-For-You</h2><span class="tag on">Booked</span></div>' +
+      v.setups.map(function(s){ return '<p class="d"><b style="color:var(--ink)">' + esc(s.label) + '</b>' + (s.site ? ' for ' + esc(s.site) : '') + ', bought ' + esc(fmt(s.since)) + '.</p>'; }).join('') +
+      '<p class="d" style="margin-top:8px">We do the install, then run the same real-browser check from Germany again and send you the result.</p>' +
+      '<div class="acts"><a class="btn p" href="https://cal.eu/gdrock/15min" target="_blank" rel="noopener">Book the 15-minute kickoff</a><a class="btn" href="mailto:office@gdrock.com">Email us</a></div></div>';
+  } else {
+    h += '<div class="card upsell"><div class="top"><h2>We install it for you</h2><span class="tag">Done-For-You</span></div>' +
+      '<div class="price">from €249 <small>one time</small></div>' +
+      '<p class="d">We install the blocker and banner, set up your privacy policy, and re-run the real-browser check from Germany so you can see nothing fires before a choice. On Shopify you add us as a collaborator; no passwords shared. 14-day money-back guarantee.</p>' +
+      '<div class="acts"><button class="btn p" data-buy="essential">Book the install, €249</button><a class="btn" href="/dfy.html">What’s included</a></div></div>';
+  }
+
+  // Sites (Care / Portfolio)
+  var s = '';
+  v.sites.forEach(function(x){
+    var cz = 'https://cdn.gdrock.com/customize#site=' + encodeURIComponent(x.site) + '&code=' + encodeURIComponent(x.code);
+    s += '<div class="site"><div class="h"><b>' + esc(x.site) + '</b><span class="tag ' + (x.active ? 'on' : 'off') + '">' + esc(x.label) + (x.active ? '' : ' · paused') + '</span></div>' +
+      (x.code ? '<div class="code"><span data-code="' + esc(x.code) + '">GDR-••••-••••</span><button class="btn s" data-reveal>Show code</button><button class="btn s" data-copy="' + esc(x.code) + '">Copy</button></div>' : '<p class="d">Access code on its way by email.</p>') +
+      '<div class="acts"><a class="btn s p" href="' + esc(cz) + '" target="_blank" rel="noopener">Customise the banner</a>' +
+      '<a class="btn s" href="/app.html?site=' + encodeURIComponent(x.site) + '">Open the console</a>' +
+      (x.code ? '<a class="btn s" href="https://cdn.gdrock.com/api/consent-export?site_id=' + encodeURIComponent(x.site) + '&code=' + encodeURIComponent(x.code) + '">Consent log (CSV)</a>' : '') +
+      '</div></div>';
+  });
+  v.waiting.forEach(function(w){
+    s += '<div class="site"><div class="h"><b>' + esc(w.label) + ': ' + w.free + ' site' + (w.free > 1 ? 's' : '') + ' to add</b><span class="tag free">Ready</span></div>' +
+      '<p class="d" style="margin-top:6px">Tell us which website the banner is for. You get its access code here and by email.</p>' +
+      '<form class="add" data-add><input placeholder="yourstore.com" autocomplete="off" spellcheck="false" aria-label="Your website"><button class="btn p" type="submit">Add site</button></form><div class="msg" data-add-msg></div></div>';
+  });
+  if (s) {
+    h += '<div class="card w"><div class="top"><h2>Your sites</h2><span class="tag">Hosted banner</span></div>' +
+      '<p class="d">Install: one line, the first thing inside &lt;head&gt;. Customise the banner, see consent in the console, download the consent log for your records.</p>' + s + '</div>';
+  } else {
+    h += '<div class="card"><div class="top"><h2>Care</h2><span class="tag">€15 a month</span></div>' +
+      '<p class="d">We host the blocker and banner for one site and keep it current: the customizer, consent counts in the console, a consent log you can download, and updates when tracking tools change. Cancel any time.</p>' +
+      '<div class="acts"><button class="btn p" data-buy="care">Start Care, €15/month</button><a class="btn" href="/#pricing">Compare plans</a></div></div>';
+  }
+
+  // Billing
+  var rows = v.plans.map(function(p){ return '<div><b style="font-weight:500">' + esc(p.label) + (p.paidWith ? ' <span>(paid as ' + esc(p.paidWith) + ')</span>' : '') + '</b><span>' + (p.active ? (p.kind === 'banner' ? 'Active' : 'Bought') : 'Ended') + ' · ' + esc(fmt(p.since)) + '</span></div>'; }).join('');
+  h += '<div class="card"><div class="top"><h2>Billing</h2><span class="tag">Whop</span></div>' +
+    (rows ? '<div class="rows">' + rows + '</div>' : '<p class="d">Nothing bought yet. Payments run through Whop, our checkout; receipts and subscriptions live in your Whop account.</p>') +
+    '<div class="acts"><a class="btn" href="' + esc(v.manageUrl) + '" target="_blank" rel="noopener">Receipts and subscriptions</a><a class="btn" href="mailto:office@gdrock.com">Billing question</a></div></div>';
+
+  $('#cards').innerHTML = h;
+}
+
+document.addEventListener('click', function(e){
+  var b = e.target.closest('[data-buy]'); if (b) { checkout(b.dataset.buy, b); return; }
+  var r = e.target.closest('[data-reveal]'); if (r) { var sp = r.parentNode.querySelector('[data-code]'); var on = sp.textContent.indexOf('•') < 0; sp.textContent = on ? 'GDR-••••-••••' : sp.dataset.code; r.textContent = on ? 'Show code' : 'Hide code'; return; }
+  var c = e.target.closest('[data-copy]'); if (c) { navigator.clipboard.writeText(c.dataset.copy).then(function(){ toast('Access code copied'); }); }
+});
+document.addEventListener('submit', function(e){
+  var f = e.target.closest('[data-add]'); if (!f) return; e.preventDefault();
+  var m = f.parentNode.querySelector('[data-add-msg]'), v = f.querySelector('input').value.trim();
+  if (!v) { m.className = 'msg bad'; m.textContent = 'Enter your website address.'; return; }
+  m.className = 'msg'; m.textContent = 'Adding…';
+  api('activate', { website_url: v }).then(function(r){
+    if (r.view) { render(r.view); toast('Done'); var n = $('#bought'); n.hidden = false; n.textContent = r.message; window.scrollTo(0, 0); }
+    else { m.className = 'msg bad'; m.textContent = r.error || 'Try again.'; }
+  });
+});
+
+function boot(){
+  var bought = q.get('bought');
+  api('me').then(function(r){
+    if (!r.signedIn) { gate(); return; }
+    render(r);
+    if (bought && BOUGHT[bought]) {
+      var n = $('#bought'); n.hidden = false; n.textContent = BOUGHT[bought];
+      history.replaceState(null, '', '/account');
+      // The webhook usually lands within seconds of the payment: look again for a minute.
+      var tries = 0, done = function(v){ return bought === 'core' ? v.corePack : bought === 'care' ? (v.sites.length || v.waiting.length) : v.setups.length; };
+      if (!done(r)) (function poll(){ if (++tries > 12) { n.textContent = 'Payment received. It can take a minute to appear here; refresh in a moment, or check your email.'; return; }
+        setTimeout(function(){ api('me').then(function(v){ if (v.signedIn && done(v)) { render(v); n.textContent = 'Done. It’s all below.'; } else poll(); }); }, 5000); })();
+      else n.textContent = 'Done. It’s all below.';
+    }
+  });
+}
+
+var t = q.get('t');
+if (t) {
+  history.replaceState(null, '', '/account');
+  api('verify', { token: t }).then(function(r){
+    if (r.ok) { if (r.next === 'pack') location.replace('/pack.html'); else boot(); }
+    else { gate(); $('#m-start').className = 'msg bad'; $('#m-start').textContent = r.error || 'That link didn’t work. Ask for a new one.'; }
+  });
+} else boot();
+})();
+</script>
+</body>
+</html>

@@ -143,6 +143,18 @@ export default {
     const url  = new URL(request.url);
     const path = url.pathname;
 
+    // -- Customer accounts (credentialed: gdrock.com only) --------
+    if (path.startsWith("/api/account/")) {
+      if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: acctHeaders(request) });
+      if (path === "/api/account/start" && request.method === "POST") return handleAccountStart(request, env);
+      if (path === "/api/account/verify" && request.method === "POST") return handleAccountVerify(request, env, ctx);
+      if (path === "/api/account/me" && request.method === "GET") return handleAccountMe(request, env);
+      if (path === "/api/account/signout" && request.method === "POST") return handleAccountSignOut(request);
+      if (path === "/api/account/checkout" && request.method === "POST") return handleAccountCheckout(request, env);
+      if (path === "/api/account/activate" && request.method === "POST") return handleAccountActivate(request, env);
+      return acctJson(request, { error: "not_found" }, 404);
+    }
+
     // CORS preflight
     if (request.method === "OPTIONS") return cors("", 204);
 
@@ -824,16 +836,22 @@ async function handleWhopWebhook(request, env) {
     paymentId: /^pay_/.test(String(d.id || "")) ? String(d.id) : "",
     product: (d.product && d.product.title) || (plan && plan.label) || "an unknown product",
     amount: d.total != null ? `${d.total} ${String(d.currency || "").toUpperCase()}`.trim() : "",
+    // Bought from a signed-in gdrock.com account: that account sees the purchase even when
+    // the buyer paid on Whop with another address.
+    account: EMAIL_RE.test(String(meta.gdrock_account || "")) ? String(meta.gdrock_account).trim().toLowerCase() : "",
   };
+  if (sale.account && sale.email && sale.account !== sale.email) await acctAlias(env, sale.account, sale.email);
 
   // Access revoked: cancellation, refund, chargeback or failed renewal.
   if (WHOP_REVOKE.has(event)) {
+    const refund = /refund/.test(event);
     if (siteId) {
       await supabasePatch(env, siteId, { active: false });
+      await whopRevokeMembership(env, memberId, refund);
       return json({ ok: true, revoked: siteId });
     }
     // Bought on Whop itself: its sites were attached later through /activate.
-    const p = await whopRevokeMembership(env, memberId);
+    const p = await whopRevokeMembership(env, memberId, refund);
     if (p) {
       for (const s of p.sites) await supabasePatch(env, s, { active: false });
       return json({ ok: true, revoked: p.sites });
@@ -907,13 +925,14 @@ async function whopRemember(env, sale, siteId) {
   if (siteId && !p.sites.includes(siteId)) p.sites.push(siteId);
   await whopSave(env, rec, p.mid);
 }
-async function whopRevokeMembership(env, memberId) {
+async function whopRevokeMembership(env, memberId, refund) {
   if (!env.DEEP_SCAN || !memberId) return null;
   const email = await env.DEEP_SCAN.get("whop:mem:" + memberId);
   const rec = email ? await whopBuyer(env, email) : null;
   const p = rec && rec.purchases.find((x) => x.mid === memberId);
   if (!p) return null;
   p.active = false;
+  if (refund) p.refunded = true;
   await whopSave(env, rec);
   return p;
 }
@@ -960,7 +979,21 @@ async function whopFirstTime(env, kind, sale) {
   return true;
 }
 
+// Purchases that carry no site (Core Pack, setups) are remembered per email too, so the
+// buyer's account can show them and a refund can lock them.
+async function whopRecord(env, sale, extra = {}) {
+  if (!env.DEEP_SCAN || !sale.email) return;
+  const rec = (await whopBuyer(env, sale.email)) || { email: sale.email, purchases: [] };
+  let p = whopFindPurchase(rec, sale);
+  if (!p) { p = { mid: sale.memberId, plan: sale.planKey, limit: 0, sites: [], active: true, at: new Date().toISOString(), ...extra }; rec.purchases.push(p); }
+  p.mid = p.mid || sale.memberId;
+  p.active = true;
+  delete p.refunded;
+  await whopSave(env, rec, p.mid);
+}
+
 async function whopFilesSale(env, sale) {
+  await whopRecord(env, sale);
   if (!(await whopFirstTime(env, "files", sale))) return json({ ok: true, duplicate: true });
   if (sale.email) await sendCorePackEmail(env, sale.email);
   await tellOwner(env, `New Whop sale: ${sale.plan.label}${sale.amount ? " · " + sale.amount : ""}
@@ -970,6 +1003,7 @@ Download link emailed.`);
 }
 
 async function whopSetupSale(env, sale) {
+  await whopRecord(env, sale, sale.siteId ? { site: sale.siteId } : {});
   if (!(await whopFirstTime(env, "setup", sale))) return json({ ok: true, duplicate: true });
   if (sale.email) await sendSetupEmail(env, sale.email, sale.plan.label, sale.siteId);
   await tellOwner(env, `New setup sale: ${sale.plan.label}${sale.amount ? " · " + sale.amount : ""}\n${sale.email || "no email: find the buyer in Whop > Customers"}${sale.siteId ? "\n" + sale.siteId : ""}\nBooking email sent. Book the kickoff within one working day.`);
@@ -995,30 +1029,39 @@ async function handleWhopActivate(request, env) {
 
   // The page always gets the same answer, so it can't be used to learn who bought.
   const done = json({ ok: true, message: `If ${email} has a GDRock purchase waiting, the access code for ${siteId} is on its way to it now. Nothing within 5 minutes? Check spam, then email office@gdrock.com.` });
-  const rec = await whopBuyer(env, email);
-  if (!rec) return done;
+  await whopActivateSite(env, await whopBuyer(env, email), siteId);
+  return done;
+}
+
+// Attaches a website to the buyer's first purchase with room for one, and emails the access code
+// to the address on that purchase. Returns what happened: none, resent, full, taken or activated.
+async function whopActivateSite(env, rec, siteId) {
+  if (!rec) return "none";
+  const email = rec.email;
 
   const owner = rec.purchases.find((x) => x.sites.includes(siteId));
   if (owner) {
     // Already activated by this buyer: send the code again.
     const row = await supabaseGetSite(env, siteId);
     if (row && row.access_code) await sendAccessCodeEmail(env, email, siteId, owner.plan, row.access_code);
-    return done;
+    return "resent";
   }
+  // A Core Pack or a setup on its own has no hosted banner to attach a site to.
+  if (!rec.purchases.some((x) => x.limit > 0)) return "none";
   const p = rec.purchases.find((x) => x.active !== false && x.sites.length < x.limit);
   const label = p ? (WHOP_PLANS[p.plan] || {}).label || p.plan : "";
   if (!p) {
     await tellOwner(env, `Activation refused, no free site left: ${email} asked for ${siteId}.`);
     await sendBuyerNote(env, email, "Your GDRock plan has no free site left",
       `Every site on your GDRock plan is already active, so ${escHtml(siteId)} wasn't added. If you meant to replace a site, or want room for more, just reply to this email and a person will sort it out.`);
-    return done;
+    return "full";
   }
   if (await supabaseGetSite(env, siteId)) {
     // Someone else's site, or one set up by hand: never overwritten from a public form.
     await tellOwner(env, `Activation needs a look: ${email} (${label}) asked for ${siteId}, which already exists in Supabase. Sort it out by hand.`);
     await sendBuyerNote(env, email, `We're checking ${siteId}`,
       `${escHtml(siteId)} is already registered with GDRock, so we didn't activate it automatically. A person will look at it and reply within one working day. Nothing for you to do in the meantime.`);
-    return done;
+    return "taken";
   }
   const code = generateCode();
   await supabaseUpsert(env, siteId, (WHOP_PLANS[p.plan] || {}).db || p.plan, true, code);
@@ -1026,7 +1069,7 @@ async function handleWhopActivate(request, env) {
   await whopSave(env, rec, p.mid);
   await sendAccessCodeEmail(env, email, siteId, p.plan, code);
   await tellOwner(env, `Activated: ${siteId}\n${email} · ${label} (${p.sites.length} of ${p.limit})\nCode: ${code}`);
-  return done;
+  return "activated";
 }
 
 // The Core Pack zip lives in KV (wrangler kv key put --binding DEEP_SCAN --remote
@@ -1074,7 +1117,8 @@ async function tellOwner(env, text) {
 // Whop's dashboard test events and our own tests use reserved domains; never email them.
 const isReservedAddress = (email) => /@([^@]*\.)?(example\.(com|net|org)|[a-z0-9-]+\.(example|test|invalid|localhost))$/i.test(email);
 
-function buyerEmailShell(title, inner) {
+const BUYER_FOOT = `Questions? Just reply to this email; it reaches a person. You're covered by our 14-day money-back guarantee.<br>Everything you bought is also in your account: <a href="https://www.gdrock.com/account" style="color:#8fb0ff;">gdrock.com/account</a>, sign in with this email.`;
+function buyerEmailShell(title, inner, foot = BUYER_FOOT) {
   const font = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#08090c" style="background:#08090c;">
 <tr><td align="center" style="padding:32px 12px;">
@@ -1084,7 +1128,7 @@ function buyerEmailShell(title, inner) {
   <h1 style="font-size:24px;line-height:1.2;letter-spacing:-.02em;font-weight:650;margin:0 0 16px;color:#f4f6fa;">${title}</h1>
   ${inner}
 </td></tr>
-<tr><td style="padding:20px 6px 0;font-family:${font};font-size:12.5px;line-height:1.6;color:#8d95a8;">Questions? Just reply to this email; it reaches a person. You're covered by our 14-day money-back guarantee.<br><span style="color:#5d6476;">GDRock &middot; gdrock.com</span></td></tr>
+<tr><td style="padding:20px 6px 0;font-family:${font};font-size:12.5px;line-height:1.6;color:#8d95a8;">${foot}<br><span style="color:#5d6476;">GDRock &middot; gdrock.com</span></td></tr>
 </table>
 </td></tr></table>`;
 }
@@ -1138,6 +1182,230 @@ async function corePackBlock(env, email) {
     <a href="${dl.replace("https://cdn.gdrock.com/dl/core-pack", "https://www.gdrock.com/pack.html")}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;">Open your Core Pack</a>
     <p style="font-size:13px;line-height:1.6;color:#8d95a8;margin:12px 0 0;">Read every guide, fill in your privacy policy on the page and download it as Word. Prefer the files? <a href="${dl}" style="color:#8fb0ff;">Download the zip</a>.</p>
   </div>`;
+}
+
+/* ===========================================================================
+   CUSTOMER ACCOUNTS  (gdrock.com/account)
+   ===========================================================================
+   Sign in with a link emailed to you: it works once, for 15 minutes. No passwords.
+   Anyone can open an account (the free parts of the Core Pack need one, and the
+   address is a lead); purchases are matched to it by email.
+     acct:otl:<sha256 of the link token>  -> { email, next }      15 minutes
+     acct:user:<email>                    -> { created, last }
+     acct:pack:<email>                    -> "1"  opened a signed Core Pack link
+     whop:alias:<account email>           -> [Whop emails]  paid with another address
+     acct:rl:<ip:… | em:…>:<window>       -> tries in that window
+   The session is a cookie signed with ACCOUNT_SECRET, valid 90 days, set by
+   cdn.gdrock.com and readable by no script. gdrock.com's pages send it with
+   credentialed fetches; any other origin is refused by CORS and SameSite.  */
+const ACCT_ORIGIN_RE = /^https:\/\/(www\.)?gdrock\.com$/;
+const SESSION_COOKIE = "__Host-gdr_s";
+const SESSION_DAYS = 90;
+const ACCT_NEXT = new Set(["pack", "account"]);
+const WHOP_MANAGE_URL = "https://whop.com/@me/settings/memberships/";
+
+function acctHeaders(request) {
+  const o = request.headers.get("Origin") || "";
+  return { "Access-Control-Allow-Origin": ACCT_ORIGIN_RE.test(o) ? o : "https://www.gdrock.com", "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type", "Vary": "Origin", "Cache-Control": "no-store" };
+}
+function acctJson(request, obj, status = 200, extra = {}) {
+  return new Response(JSON.stringify(obj), { status, headers: { ...acctHeaders(request), "Content-Type": "application/json", ...extra } });
+}
+// Writes only from gdrock.com's own pages (a browser always sends Origin on a POST).
+const acctOriginOk = (request) => ACCT_ORIGIN_RE.test(request.headers.get("Origin") || "");
+
+const b64url = (bytes) => { let bin = ""; for (const b of bytes) bin += String.fromCharCode(b); return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const unb64url = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+async function hmacB64(secret, msg) {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return b64url(new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(msg))));
+}
+
+async function sessionCookie(env, email) {
+  const exp = Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400;
+  const value = `v1.${b64url(new TextEncoder().encode(email))}.${exp}.${await hmacB64(env.ACCOUNT_SECRET, `session:${email}.${exp}`)}`;
+  return `${SESSION_COOKIE}=${value}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${SESSION_DAYS * 86400}`;
+}
+// The signed-in email, or "" when there is no valid session.
+async function acctSession(env, request) {
+  if (!env.ACCOUNT_SECRET) return "";
+  const m = (request.headers.get("Cookie") || "").match(/(?:^|;\s*)__Host-gdr_s=([^;\s]+)/);
+  if (!m) return "";
+  const [v, e64, exp, mac] = m[1].split(".");
+  if (v !== "v1" || !e64 || !/^\d+$/.test(exp || "") || !mac || Number(exp) < Date.now() / 1000) return "";
+  let email = "";
+  try { email = new TextDecoder().decode(unb64url(e64)); } catch (e) { return ""; }
+  return timingSafeEqual(mac, await hmacB64(env.ACCOUNT_SECRET, `session:${email}.${exp}`)) ? email : "";
+}
+
+// Counts tries in a fixed window; true once `max` is used up.
+async function acctTooMany(env, key, max, windowSec) {
+  const k = `acct:rl:${key}:${Math.floor(Date.now() / (windowSec * 1000))}`;
+  const n = parseInt((await env.DEEP_SCAN.get(k)) || "0", 10) || 0;
+  if (n >= max) return true;
+  await env.DEEP_SCAN.put(k, String(n + 1), { expirationTtl: Math.max(60, windowSec) });
+  return false;
+}
+
+async function acctAlias(env, account, whopEmail) {
+  if (!env.DEEP_SCAN) return;
+  const k = "whop:alias:" + account;
+  const list = JSON.parse((await env.DEEP_SCAN.get(k)) || "[]");
+  if (!list.includes(whopEmail)) { list.push(whopEmail); await env.DEEP_SCAN.put(k, JSON.stringify(list)); }
+}
+// Every Whop record that belongs to this account: its own address and any it paid with.
+async function acctRecords(env, email) {
+  if (!env.DEEP_SCAN) return [];
+  const emails = [email, ...JSON.parse((await env.DEEP_SCAN.get("whop:alias:" + email)) || "[]")];
+  const recs = [];
+  for (const e of emails) { const r = await whopBuyer(env, e); if (r) recs.push(r); }
+  return recs;
+}
+// Owns the Core Pack: any purchase that wasn't refunded (every plan includes it), or a signed
+// Core Pack link from a purchase email that was opened (buyers from before accounts existed).
+async function corePackOwned(env, email, recs) {
+  const purchases = recs.flatMap((r) => r.purchases);
+  if (purchases.some((p) => !p.refunded)) return true;
+  if (purchases.length) return false;   // bought, then refunded
+  return !!(env.DEEP_SCAN && (await env.DEEP_SCAN.get("acct:pack:" + email)));
+}
+
+async function handleAccountStart(request, env) {
+  if (!acctOriginOk(request)) return acctJson(request, { error: "forbidden" }, 403);
+  const b = await request.json().catch(() => ({}));
+  const email = String(b.email || "").trim().toLowerCase();
+  const next = ACCT_NEXT.has(b.next) ? b.next : "";
+  if (!EMAIL_RE.test(email) || email.length > 200) return acctJson(request, { error: "Enter your email address, like you@yourstore.com." }, 400);
+  if (!env.DEEP_SCAN || !env.ACCOUNT_SECRET) return acctJson(request, { error: "Sign-in is offline for a moment. Email office@gdrock.com and we'll help." }, 503);
+  const ip = request.headers.get("CF-Connecting-IP") || "";
+  if (ip && (await acctTooMany(env, "ip:" + ip, 10, 3600))) return acctJson(request, { error: "Too many sign-in emails from this connection. Try again in an hour." }, 429);
+  // One answer for every address, sent or not, so the form can't be used to learn anything.
+  const answer = acctJson(request, { ok: true, message: `If ${email} can receive email, a sign-in link is on its way. It works once, for 15 minutes.` });
+  if (await acctTooMany(env, "em:" + email, 4, 3600)) return answer;   // no inbox gets flooded
+  const token = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  await env.DEEP_SCAN.put("acct:otl:" + (await sha256Hex(token)), JSON.stringify({ email, next, optin: b.optin === true }), { expirationTtl: 900 });
+  await sendSignInEmail(env, email, token);
+  return answer;
+}
+
+async function handleAccountVerify(request, env, ctx) {
+  if (!acctOriginOk(request)) return acctJson(request, { error: "forbidden" }, 403);
+  const b = await request.json().catch(() => ({}));
+  const token = String(b.token || "");
+  if (!env.DEEP_SCAN || !env.ACCOUNT_SECRET) return acctJson(request, { error: "Sign-in is offline for a moment. Email office@gdrock.com and we'll help." }, 503);
+  const k = /^[A-Za-z0-9_-]{40,60}$/.test(token) ? "acct:otl:" + (await sha256Hex(token)) : "";
+  let rec = null;
+  try { rec = k ? JSON.parse((await env.DEEP_SCAN.get(k)) || "null") : null; } catch (e) { rec = null; }
+  if (!rec || !rec.email) return acctJson(request, { error: "This sign-in link has expired or was already used. Ask for a new one." }, 400);
+  await env.DEEP_SCAN.delete(k);
+  const now = new Date().toISOString();
+  const user = JSON.parse((await env.DEEP_SCAN.get("acct:user:" + rec.email)) || "null");
+  await env.DEEP_SCAN.put("acct:user:" + rec.email, JSON.stringify({ created: (user && user.created) || now, last: now, optin: rec.optin === true || !!(user && user.optin) }));
+  if (!user) later(ctx, acctNewLead(env, rec.email, rec.optin === true));
+  return acctJson(request, { ok: true, email: rec.email, next: rec.next || "" }, 200, { "Set-Cookie": await sessionCookie(env, rec.email) });
+}
+
+async function acctNewLead(env, email, optin) {
+  if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
+    await fetch(`${env.SUPABASE_URL}/rest/v1/leads`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}`, Prefer: "return=minimal" },
+      body: JSON.stringify({ source: "account", email, name: "", website_url: "", service: "", notes: optin ? "Opened a gdrock.com account; opted in to updates" : "Opened a gdrock.com account; no marketing consent", plan: "" }),
+    }).catch(() => {});
+  }
+  await tellOwner(env, `New GDRock account: ${email}${optin ? " (opted in to updates)" : ""}`);
+}
+
+function handleAccountSignOut(request) {
+  if (!acctOriginOk(request)) return acctJson(request, { error: "forbidden" }, 403);
+  return acctJson(request, { ok: true }, 200, { "Set-Cookie": `${SESSION_COOKIE}=; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0` });
+}
+
+// Everything the dashboard shows, from the purchases this account can see.
+async function accountView(env, email) {
+  const recs = await acctRecords(env, email);
+  const purchases = recs.flatMap((r) => r.purchases.map((p) => ({ ...p, email: r.email })));
+  const user = env.DEEP_SCAN ? JSON.parse((await env.DEEP_SCAN.get("acct:user:" + email)) || "null") : null;
+  const sites = [], waiting = [], setups = [], plans = [];
+  for (const p of purchases) {
+    const plan = WHOP_PLANS[p.plan] || { label: p.plan, kind: "" };
+    if (!p.refunded) plans.push({ plan: p.plan, label: plan.label, kind: plan.kind, active: p.active !== false, since: p.at, paidWith: p.email !== email ? p.email : "" });
+    if (plan.kind === "setup" && !p.refunded) setups.push({ label: plan.label, site: p.site || "", since: p.at });
+    if (plan.kind !== "banner") continue;
+    for (const site of p.sites) {
+      const row = await supabaseGetSite(env, site);
+      sites.push({ site, plan: p.plan, label: plan.label, active: p.active !== false && !(row && row.active === false), code: (row && row.access_code) || "" });
+    }
+    if (p.active !== false && p.sites.length < p.limit) waiting.push({ plan: p.plan, label: plan.label, free: p.limit - p.sites.length });
+  }
+  return { email, since: (user && user.created) || "", corePack: await corePackOwned(env, email, recs), plans, sites, waiting, setups, manageUrl: WHOP_MANAGE_URL };
+}
+
+async function handleAccountMe(request, env) {
+  const email = await acctSession(env, request);
+  if (!email) return acctJson(request, { signedIn: false }, 401);
+  return acctJson(request, { signedIn: true, ...(await accountView(env, email)) });
+}
+
+// A purchase started from the account: the account email rides along as metadata, so the
+// webhook files the purchase under it even if the buyer pays on Whop with another address.
+const ACCT_CHECKOUT = new Set(["core", "care", "essential"]);
+async function handleAccountCheckout(request, env) {
+  if (!acctOriginOk(request)) return acctJson(request, { error: "forbidden" }, 403);
+  const email = await acctSession(env, request);
+  if (!email) return acctJson(request, { error: "Sign in first." }, 401);
+  const b = await request.json().catch(() => ({}));
+  const plan = String(b.plan || "");
+  const planId = ACCT_CHECKOUT.has(plan) ? whopPlanId(env, plan) : "";
+  if (!planId) return acctJson(request, { error: "Unknown plan." }, 400);
+  const fallback = `https://whop.com/checkout/${planId}`;
+  if (!env.WHOP_API_KEY) return acctJson(request, { url: fallback });
+  try {
+    const r = await fetch("https://api.whop.com/api/v1/checkout_configurations", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.WHOP_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "payment", plan_id: planId, redirect_url: `https://www.gdrock.com/account?bought=${plan}`,
+        metadata: { gdrock_plan: plan, gdrock_account: email, email } }),
+    });
+    const data = await r.json().catch(() => ({}));
+    const pu = data.purchase_url || "";
+    if (!r.ok || !pu) return acctJson(request, { url: fallback });
+    return acctJson(request, { url: pu.startsWith("http") ? pu : `https://whop.com${pu}` });
+  } catch (e) {
+    return acctJson(request, { url: fallback });
+  }
+}
+
+// Attach a website to a Care or Portfolio plan from the dashboard (same rules as /activate).
+async function handleAccountActivate(request, env) {
+  if (!acctOriginOk(request)) return acctJson(request, { error: "forbidden" }, 403);
+  const email = await acctSession(env, request);
+  if (!email) return acctJson(request, { error: "Sign in first." }, 401);
+  const b = await request.json().catch(() => ({}));
+  const siteId = normDomain(b.website_url);
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/.test(siteId)) return acctJson(request, { error: "Enter your website address, like yourstore.com." }, 400);
+  if (await acctTooMany(env, "act:" + email, 10, 3600)) return acctJson(request, { error: "Too many tries. Wait an hour, or email office@gdrock.com." }, 429);
+  const recs = await acctRecords(env, email);
+  const rec = recs.find((r) => r.purchases.some((x) => x.sites.includes(siteId))) ||
+    recs.find((r) => r.purchases.some((x) => x.active !== false && x.sites.length < x.limit));
+  const said = {
+    none: "There's no Care or Portfolio plan on this account to add a site to.",
+    resent: `${siteId} is already on your plan. We've emailed its access code again.`,
+    full: "Every site on your plan is already in use. Reply to any GDRock email and we'll sort it out.",
+    taken: `${siteId} is already registered with GDRock, so a person will check it and reply within one working day.`,
+    activated: `${siteId} is active. Its access code is below and on its way by email.`,
+  }[await whopActivateSite(env, rec || null, siteId)];
+  return acctJson(request, { ok: true, message: said, view: await accountView(env, email) });
+}
+
+async function sendSignInEmail(env, email, token) {
+  if (isReservedAddress(email)) return null;
+  const link = `https://www.gdrock.com/account?t=${token}`;
+  const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 20px;">Use this button to sign in to your GDRock account. It works once, in the next 15 minutes.</p>
+  <p style="margin:0 0 20px;"><a href="${link}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Sign in to GDRock</a></p>
+  <p style="font-size:13px;line-height:1.6;color:#8d95a8;margin:0;">Didn't ask for this? Ignore it. Nobody can sign in without this email.</p>`;
+  try { return await sendEmail(env, email, "Your GDRock sign-in link", buyerEmailShell("Sign in to GDRock", inner, "Questions? Just reply to this email; it reaches a person.")); } catch (e) { return null; }
 }
 
 // Whop signs webhooks with the Standard Webhooks scheme: HMAC-SHA256 over
@@ -1195,7 +1463,7 @@ async function supabaseGetSite(env, siteId) {
   if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) return null;
   try {
     const r = await fetch(
-      `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(siteId)}&select=site_id,access_code`,
+      `${env.SUPABASE_URL}/rest/v1/sites?site_id=eq.${encodeURIComponent(siteId)}&select=site_id,access_code,plan,active`,
       { headers: { apikey: env.SUPABASE_ANON_KEY, Authorization: `Bearer ${env.SUPABASE_ANON_KEY}` } }
     );
     const rows = await r.json();
