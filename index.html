@@ -146,8 +146,8 @@
 </section>
 
 <!-- ============ BLACK FRIDAY 2026 ============
-     Off. Switch on 1 Nov by deleting `hidden` on the aside below (and mirror to live site/).
-     Switch off on 28 Nov. Copy: marketing/black-friday-2026.md -->
+     Shows itself 1-27 Nov 2026 (UTC) via the script under it; hidden before and after.
+     The "book by 20 November" promise drops on 21 Nov. Copy: marketing/black-friday-2026.md -->
 <style>
 .bf{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(79,125,255,.10),rgba(79,125,255,.02) 70%);}
 .bf-in{display:flex;align-items:center;justify-content:space-between;gap:28px;padding-top:26px;padding-bottom:26px;flex-wrap:wrap;}
@@ -161,11 +161,12 @@
     <div>
       <p class="bf-eye">Before Black Friday &middot; 27 November</p>
       <p class="bf-h">Get your banner right before Black Friday.</p>
-      <p class="bf-sub">Your busiest week is when your ad tags fire most. If they send data before a visitor chooses, that happens on every visit. Check your store now. Book an install by 20 November and we finish it before the day.</p>
+      <p class="bf-sub">Your busiest week is when your ad tags fire most. If they send data before a visitor chooses, that happens on every visit. Check your store now.<span id="bf-book"> Book an install by 20 November and we finish it before the day.</span></p>
     </div>
     <div class="bf-act"><a href="#scan" class="btn btn-1">Check my store free</a><a href="dfy.html" class="btn btn-2">We install it, from &euro;249</a></div>
   </div>
 </aside>
+<script>(function(){var n=Date.now();if(n<Date.UTC(2026,10,1)||n>=Date.UTC(2026,10,28))return;document.getElementById('bf').hidden=false;if(n>=Date.UTC(2026,10,21)){var b=document.getElementById('bf-book');if(b)b.remove();}})();</script>
 
 <!-- ============ 2 · SCAN ============
      The one light surface on a dark page, so the scanner is the thing you

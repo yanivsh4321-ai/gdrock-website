@@ -4,13 +4,17 @@ Black Friday is **Friday 27 November 2026**. The hook runs **1 to 27 November**.
 
 The one real deadline: **installs booked by 20 November are finished before the day.** Only say it while it's true (switch the line off if the install queue is full).
 
-## Where it lives, and how to switch it on (1 Nov) and off (28 Nov)
+## It switches itself (no action needed)
 
-| Place | What shows | On | Off |
-|---|---|---|---|
-| Homepage (`index.html`, band under the hero, `#bf`) | Eyebrow, headline, one paragraph, two buttons | Delete `hidden` on `<aside class="bf" id="bf" …>`, copy to `live site/index.html`, push | Put `hidden` back, mirror, push |
-| Core Pack page (`pack.html`) | The "Stuck?" box and the free-plan bar change | `var BF_ON = true;` in `products/core-pack-v4-src/portal/pack.src.html`, then `python products/core-pack-v4-src/policy.py && python products/core-pack-v4-src/portal/build_portal.py`, push | `false`, rebuild, push |
-| Deep-check email (leaking results only) | One line under the €249 offer | `npx wrangler secret put BF_ON` → `1` (no code deploy needed) | `npx wrangler secret delete BF_ON` |
+All three places turn on by date, **1 to 27 November 2026 (UTC)**, and off again on 28 November. The "book by 20 November" install promise drops by itself on 21 November.
+
+| Place | What shows | Override |
+|---|---|---|
+| Homepage (`index.html`, band `#bf` under the hero) | Eyebrow, headline, one paragraph, two buttons | The dates sit in the small script right under the band |
+| Core Pack page (`pack.html`) | The "Stuck?" box and the free-plan bar change | `BF_ON` / `BF_BOOK` in `products/core-pack-v4-src/portal/pack.src.html` (rebuild with `python products/core-pack-v4-src/policy.py && python products/core-pack-v4-src/portal/build_portal.py`) |
+| Deep-check email (leaking results only) | One line under the €249 offer | Worker var `BF_ON`: `1` forces on, `0` forces off (`npx wrangler secret put BF_ON`), no deploy needed |
+
+If the install queue fills up before 20 November, turn the promise off early: delete the `bf-book` span on the homepage and set `BF_BOOK = false` in pack.src.html.
 
 ## The copy
 
