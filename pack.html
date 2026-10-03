@@ -188,7 +188,7 @@ document.addEventListener('click',function(ev){
   blobOf(k).then(function(bl){saveBlob(bl,NAMES[k])}).catch(function(e){toast(e.message)});
 });
 var LOCK_ICON='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
-function markLocked(){ if(UNLOCKED) return; document.querySelectorAll('.bar [data-dl]').forEach(function(b){ if(!canDownload(b.dataset.dl)){ b.classList.add('locked'); b.innerHTML=LOCK_ICON+esc(b.textContent); b.title='In the full Core Pack: unlock everything for €29'; } }); }
+function markLocked(){ if(UNLOCKED) return; document.querySelectorAll('.bar [data-dl]').forEach(function(b){ if(!canDownload(b.dataset.dl)){ b.classList.add('locked'); b.classList.remove('p'); b.innerHTML=LOCK_ICON+esc(b.textContent); b.title='In the full Core Pack: unlock everything for €29'; } }); }
 function listFiles(){ var h=''; ['01','02','02x','03','03x','04','04x','05','js'].forEach(function(k){ if(UNLOCKED&&!FILES[k]) return; var ok=canDownload(k);
     h+='<div class="file"><div><div>'+esc(NAMES[k])+'</div><div class="d">'+esc(DESC[k])+(ok||UNLOCKED?'':' · in the full Core Pack')+'</div></div>'+(ok?'<button class="btn" data-dl="'+k+'">Download</button>':'<button class="btn locked" data-buy="core">'+LOCK_ICON+'Unlock</button>')+'</div>'; });
   var all = LINK ? API+'/dl/core-pack?e='+encodeURIComponent(E)+'&t='+encodeURIComponent(T) : API+'/api/pack/zip';
