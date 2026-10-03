@@ -695,7 +695,7 @@ async function sendScanReport(env, email, domain, result) {
       <div style="text-align:center;"><a href="https://www.gdrock.com/checkout.html?plan=care" style="display:inline-block;background:#00a896;color:#fff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:10px;">Get Care — €15/mo →</a></div>
     </div>
     <div style="text-align:center;margin-top:14px;">
-      <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#9CA3AF;font-size:13px;text-decoration:underline;">Or just the DIY templates — Core Pack €29 one-time →</a>
+      <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#9CA3AF;font-size:13px;text-decoration:underline;">Or just the DIY templates — Core Pack €29 one-time →</a><br><a href="https://www.gdrock.com/account?next=pack" style="color:#9CA3AF;font-size:13px;text-decoration:underline;">Or start free: the install guide and a privacy policy builder →</a>
     </div>
     <p style="color:#5b6a8a;font-size:12px;text-align:center;margin-top:20px;line-height:1.6;">Both include the 14-day money-back guarantee.<br>Questions? Just reply to this email.</p>
   </div>`;
@@ -2324,7 +2324,7 @@ async function sendDeepScanReport(env, job, r, scored) {
        <p style="color:#9CA3AF;font-size:13px;line-height:1.6;text-align:center;margin:0;">So nothing is claimed about your site from this run. Reply to this email and we'll look at it by hand.</p>`;
   // The offer: a leaking result gets one priced button straight to the Essential Setup checkout;
   // a clean result gets no sales pitch beyond keeping it that way; an unsettled one gets a person.
-  const diy = `<p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather do it yourself? <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#8fb0ff;">Core Pack, &euro;29 once</a> (self-hosted) or <a href="https://www.gdrock.com/checkout.html?plan=care" style="color:#8fb0ff;">Care, &euro;15 a month</a> (hosted, kept up to date).</p>`;
+  const diy = `<p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather do it yourself? <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#8fb0ff;">Core Pack, &euro;29 once</a> (self-hosted) or <a href="https://www.gdrock.com/checkout.html?plan=care" style="color:#8fb0ff;">Care, &euro;15 a month</a> (hosted, kept up to date). Or start free: <a href="https://www.gdrock.com/account?next=pack" style="color:#8fb0ff;">a free account</a> with the install guide and a privacy policy builder.</p>`;
   // Black Friday line: on by itself 1-27 Nov 2026 (UTC); the Worker var BF_ON = "1"/"0" forces it on/off.
   // The "book by 20 November" promise is only made while it can still be kept.
   const now = Date.now();
@@ -2334,6 +2334,7 @@ async function sendDeepScanReport(env, job, r, scored) {
     ? `<div style="background:#111522;border:1px solid #262c3b;border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
       <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Nothing to fix today.</p>
       <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0;">Run this check again whenever you add an app or change your theme: that's when trackers usually slip back in.</p>
+      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:10px 0 0;">Privacy policy next? Build yours on the page, free, in <a href="https://www.gdrock.com/account?next=pack" style="color:#8fb0ff;">a GDRock account</a>.</p>
     </div>`
     : `<div style="background:#0f1630;border:1px solid #2f4fb8;border-radius:14px;padding:22px 20px;margin-top:22px;text-align:center;">
       <p style="color:#8fb0ff;font-family:Consolas,Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;">Fix it for me</p>

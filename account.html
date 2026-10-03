@@ -267,6 +267,7 @@ function boot(){
   var bought = q.get('bought');
   api('me').then(function(r){
     if (!r.signedIn) { gate(); return; }
+    if (NEXT === 'pack' && !bought) { location.replace('/pack.html'); return; }
     render(r);
     if (bought && BOUGHT[bought]) {
       var n = $('#bought'); n.hidden = false; n.textContent = BOUGHT[bought];
