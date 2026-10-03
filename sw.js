@@ -1,7 +1,10 @@
 /* GDRock Compliance Console — service worker.
-   App-shell caching so the installed PWA opens offline. Live consent data
-   (cdn.gdrock.com) is always network-first and never cached. */
-const VERSION = 'gdrock-app-v2'; // bump whenever app.html changes: the shell is served cache-first
+   Caches the console's own shell so the installed app opens offline, and touches
+   nothing else. It used to answer every request on gdrock.com: other pages could be
+   served stale from cache, and cross-origin scripts failed (the site's CSP blocks
+   fetch() to other hosts from here), which broke pack.html for anyone who had opened
+   the console. Live consent data (cdn.gdrock.com) is never cached. */
+const VERSION = 'gdrock-app-v3'; // bump whenever app.html changes
 const SHELL = [
   '/app.html',
   '/manifest.webmanifest',
@@ -25,33 +28,14 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-
-  // Never cache the live compliance API — always go to network.
-  if (url.hostname === 'cdn.gdrock.com') return;
-
-  // App shell (same-origin navigations + assets): cache-first, fall back to network.
-  if (url.origin === self.location.origin) {
-    e.respondWith(
-      caches.match(req).then((hit) =>
-        hit || fetch(req).then((res) => {
-          const copy = res.clone();
-          caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
-          return res;
-        }).catch(() => caches.match('/app.html'))
-      )
-    );
-    return;
-  }
-
-  // Cross-origin (fonts, jsPDF CDN): stale-while-revalidate so the app works offline.
+  // Only the console's own shell. Everything else goes to the network untouched.
+  if (url.origin !== self.location.origin || !SHELL.includes(url.pathname)) return;
+  // Network first, so a deploy shows at once; the cached copy is the offline fallback.
   e.respondWith(
-    caches.match(req).then((hit) => {
-      const net = fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
-        return res;
-      }).catch(() => hit);
-      return hit || net;
-    })
+    fetch(req).then((res) => {
+      const copy = res.clone();
+      caches.open(VERSION).then((c) => c.put(req, copy)).catch(() => {});
+      return res;
+    }).catch(() => caches.match(req))
   );
 });
