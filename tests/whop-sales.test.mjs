@@ -192,7 +192,7 @@ test("Core Pack: files only, one email with a download link that works only for 
   await hook(e, { type: "membership.activated", data: { id: "mem_1", plan: { id: "plan_gWq2g08EUZLAg" }, user: { email: "owner@shopmail.co" } } });
   assert.equal(calls.upserts.length, 0);
   assert.equal(calls.emails.length, 1);
-  assert.match(calls.emails[0].subject, /Core Pack: download inside/);
+  assert.match(calls.emails[0].subject, /Core Pack is ready/);
   assert.match(calls.telegram[0], /New Whop sale: Core Pack · 29 EUR/);
   const link = (calls.emails[0].html.match(/https:\/\/cdn\.gdrock\.com\/dl\/core-pack\?[^"]+/) || [])[0];
   assert.ok(link, "download link in the email");

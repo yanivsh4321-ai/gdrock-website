@@ -1122,11 +1122,11 @@ async function sendSetupEmail(env, email, label, siteId) {
 
 async function sendCorePackEmail(env, email) {
   if (isReservedAddress(email)) return null;
-  const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Thank you for buying the <strong>Core Pack</strong>. Everything is in one download:</p>
+  const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Thank you for buying the <strong>Core Pack</strong>. Everything is in one place:</p>
   ${await corePackBlock(env, email)}
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:20px 0 12px;"><strong>The banner is the real one.</strong> It's the same blocker and banner we run on our own CDN, packaged to run from your site: it holds Meta Pixel, Google Analytics, TikTok, Klaviyo, Hotjar and the rest until the visitor chooses, with Accept and Reject as equal choices, in 7 languages. Guide 01 walks you through the install in about ten minutes, with the exact lines to paste for Shopify, WooCommerce and any other site.</p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">Then check it: run the free deep check at <a href="https://www.gdrock.com/#scan" style="color:#8fb0ff;">gdrock.com</a>. A real browser in Germany opens your store and tells you if anything still fires before a choice.</p>`;
-  try { return await sendEmail(env, email, "Your GDRock Core Pack: download inside", buyerEmailShell("Your Core Pack is ready.", inner)); } catch (e) { return null; }
+  try { return await sendEmail(env, email, "Your GDRock Core Pack is ready", buyerEmailShell("Your Core Pack is ready.", inner)); } catch (e) { return null; }
 }
 
 async function corePackBlock(env, email) {
