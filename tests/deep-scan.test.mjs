@@ -109,6 +109,10 @@ test("queue -> runner -> result -> email, end to end", async () => {
   assert.match(mail.htmlbody, /the cookie banner never clicked/);
   assert.match(mail.htmlbody, /Tracking before consent/);
   assert.match(mail.htmlbody, /Meta Pixel fired &lt;script&gt;/); // escaped
+  // A leaking result offers the fix, priced, straight to the Essential Setup checkout.
+  assert.match(mail.htmlbody, /Fix it for me: &euro;249/);
+  assert.match(mail.htmlbody, /whop\.com\/checkout\/plan_rDl4G6eAcftqC\//);
+  if (process.env.DUMP_DEEP_EMAIL) (await import("node:fs")).writeFileSync(process.env.DUMP_DEEP_EMAIL, mail.htmlbody);
   assert.match(mail.htmlbody, /WHAT SENT DATA BEFORE ANY CLICK/);
   assert.match(mail.htmlbody, /\+0\.41s ?<\/td><td[^>]*>Meta Pixel/);
   assert.match(mail.htmlbody, /Pinterest Tag<span[^>]*> · second page/);

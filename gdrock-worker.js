@@ -1890,18 +1890,28 @@ async function sendDeepScanReport(env, job, r, scored) {
     : `<p style="color:#fff;font-size:18px;font-weight:700;text-align:center;margin:0 0 10px;">We couldn't settle this one</p>
        <p style="color:#cfd8ea;font-size:14px;line-height:1.6;text-align:center;margin:0 0 10px;">${e(String(r.problem || r.error || "The check did not finish.").slice(0, 400))}</p>
        <p style="color:#9CA3AF;font-size:13px;line-height:1.6;text-align:center;margin:0;">So nothing is claimed about your site from this run. Reply to this email and we'll look at it by hand.</p>`;
+  // The offer: a leaking result gets one priced button straight to the Essential Setup checkout;
+  // a clean result gets no sales pitch beyond keeping it that way; an unsettled one gets a person.
+  const diy = `<p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather do it yourself? <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#8fb0ff;">Core Pack, &euro;29 once</a> (self-hosted) or <a href="https://www.gdrock.com/checkout.html?plan=care" style="color:#8fb0ff;">Care, &euro;15 a month</a> (hosted, kept up to date).</p>`;
+  const offer = !scored ? "" : r.score >= 90
+    ? `<div style="background:#111522;border:1px solid #262c3b;border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
+      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Nothing to fix today.</p>
+      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0;">Run this check again whenever you add an app or change your theme: that's when trackers usually slip back in.</p>
+    </div>`
+    : `<div style="background:#0f1630;border:1px solid #2f4fb8;border-radius:14px;padding:22px 20px;margin-top:22px;text-align:center;">
+      <p style="color:#8fb0ff;font-family:Consolas,Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;">Fix it for me</p>
+      <p style="color:#fff;font-size:20px;font-weight:800;margin:0 0 8px;">We fix ${e(job.domain)} for &euro;249.</p>
+      <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 16px;">We install the blocker and banner, run this exact check again from Germany, and send you the new result. You get a booking link straight after payment. 14-day money-back guarantee.</p>
+      <a href="https://whop.com/checkout/plan_rDl4G6eAcftqC/" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 28px;border-radius:10px;">Fix it for me: &euro;249 &rarr;</a>
+      ${diy}
+    </div>`;
   const html = `<div style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;background:#08090c;padding:32px;border-radius:16px;">
     <div style="text-align:center;margin-bottom:22px;"><span style="font-size:22px;font-weight:800;color:#fff;">GDRock</span><div style="color:#5b6a8a;font-size:12px;">Deep check · what loads before anyone chooses</div></div>
     <h1 style="color:#fff;font-size:22px;text-align:center;margin:0 0 6px;">Your deep check</h1>
     <p style="text-align:center;color:#9CA3AF;font-size:14px;margin:0 0 22px;">for ${e(job.domain)}</p>
     ${body}
     <div style="margin-top:20px;padding:14px 16px;border-radius:10px;background:#111522;"><p style="color:#cfd8ea;font-size:13px;font-weight:700;margin:0 0 6px;">How this was checked</p><p style="color:#9CA3AF;font-size:12.5px;line-height:1.55;margin:0;">${method} The full report and the result card are attached. A site can change from day to day, so this is a snapshot.</p></div>
-    <div style="background:#111522;border:1px solid #262c3b;border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
-      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Want it fixed, not just found?</p>
-      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0 0 14px;">We install the blocker and banner, re-run this exact check, and send you the new result. From &euro;249.</p>
-      <a href="https://www.gdrock.com/dfy.html" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 26px;border-radius:10px;">See Done-For-You →</a>
-      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather do it yourself? <a href="https://www.gdrock.com/checkout.html?plan=care" style="color:#8fb0ff;">Care, &euro;15 a month</a>: one line first in your &lt;head&gt;, and we keep it up to date.</p>
-    </div>
+    ${offer}
     <p style="color:#5b6a8a;font-size:11.5px;text-align:center;margin-top:18px;line-height:1.6;">Automated and informational, not legal advice or a compliance guarantee. We keep your email with this job for 14 days, then it is deleted from the queue; a copy of the request also reaches the founder so a person can follow up.<br>Questions? Just reply.</p>
   </div>`;
   const attachments = [];
