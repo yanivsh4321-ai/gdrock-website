@@ -2326,12 +2326,20 @@ async function sendDeepScanReport(env, job, r, scored) {
        <p style="color:#9CA3AF;font-size:13px;line-height:1.6;text-align:center;margin:0;">So nothing is claimed about your site from this run. Reply to this email and we'll look at it by hand.</p>`;
   // The offer: a leaking result gets one priced button straight to the Essential Setup checkout;
   // a clean result gets no sales pitch beyond keeping it that way; an unsettled one gets a person.
-  const diy = `<p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather do it yourself? <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#8fb0ff;">Core Pack, &euro;29 once</a> (self-hosted) or <a href="https://www.gdrock.com/checkout.html?plan=care" style="color:#8fb0ff;">Care, &euro;15 a month</a> (hosted, kept up to date). Or start free: <a href="https://www.gdrock.com/account?next=pack" style="color:#8fb0ff;">a free account</a> with the install guide and a privacy policy builder.</p>`;
+  const firstOn = env.FIRST_OFFER !== "0";
+  const diy = `<p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather do it yourself? <a href="https://www.gdrock.com/checkout.html?plan=core" style="color:#8fb0ff;">Core Pack, &euro;29 once</a> (self-hosted)${firstOn ? "" : ` or <a href="https://www.gdrock.com/checkout.html?plan=care" style="color:#8fb0ff;">Care, &euro;15 a month</a> (hosted, kept up to date)`}. Or start free: <a href="https://www.gdrock.com/account?next=pack" style="color:#8fb0ff;">a free account</a> with the install guide and a privacy policy builder.</p>`;
   // Black Friday line: on by itself 1-27 Nov 2026 (UTC); the Worker var BF_ON = "1"/"0" forces it on/off.
   // The "book by 20 November" promise is only made while it can still be kept.
   const now = Date.now();
   const bf = env.BF_ON === "1" || (env.BF_ON !== "0" && now >= Date.UTC(2026, 10, 1) && now < Date.UTC(2026, 10, 28));
   const bfBook = now < Date.UTC(2026, 10, 21);
+  // First-client offer (Oct 2026): Care at €15/month with the install done by hand, free. On until the
+  // Worker var FIRST_OFFER = "0" (switch it off once there are a few clients).
+  const firstOffer = !firstOn ? "" : `<div style="border-top:1px solid #2a3a6e;margin:20px 0 0;padding-top:16px;">
+      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Or: &euro;15 a month, and we install it for you free.</p>
+      <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 12px;">For our first clients. Start Care, reply to this email, and we install it with you on a 15-minute screen share, then re-run this check. Cancel any time.</p>
+      <a href="https://whop.com/checkout/plan_Hzt8oE2YfKseZ/" style="display:inline-block;background:#111a33;border:1px solid #4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:14.5px;padding:11px 22px;border-radius:10px;">Start Care: &euro;15 a month &rarr;</a>
+    </div>`;
   const offer = !scored ? "" : r.score >= 90
     ? `<div style="background:#111522;border:1px solid #262c3b;border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
       <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Nothing to fix today.</p>
@@ -2344,6 +2352,7 @@ async function sendDeepScanReport(env, job, r, scored) {
       <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 16px;">We install the blocker and banner, run this exact check again from Germany, and send you the new result. You get a booking link straight after payment. 14-day money-back guarantee.</p>
       ${bf ? `<p style="color:#fff;font-size:13.5px;line-height:1.6;margin:0 0 16px;"><strong>Black Friday is 27 November.</strong> Every tag above fires for every visitor that week.${bfBook ? ` Book by 20 November and we fix ${e(job.domain)} before then.` : ""}</p>` : ""}
       <a href="https://whop.com/checkout/plan_rDl4G6eAcftqC/" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 28px;border-radius:10px;">Fix it for me: &euro;249 &rarr;</a>
+      ${firstOffer}
       ${diy}
     </div>`;
   const html = `<div style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;background:#08090c;padding:32px;border-radius:16px;">

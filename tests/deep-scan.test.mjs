@@ -112,6 +112,13 @@ test("queue -> runner -> result -> email, end to end", async () => {
   // A leaking result offers the fix, priced, straight to the Essential Setup checkout.
   assert.match(mail.htmlbody, /Fix it for me: &euro;249/);
   assert.match(mail.htmlbody, /whop\.com\/checkout\/plan_rDl4G6eAcftqC\//);
+  // First-client offer: Care with a free hand install, on unless the Worker var FIRST_OFFER is "0".
+  if (env.FIRST_OFFER === "0") assert.doesNotMatch(mail.htmlbody, /we install it for you free/);
+  else {
+    assert.match(mail.htmlbody, /&euro;15 a month, and we install it for you free/);
+    assert.match(mail.htmlbody, /whop\.com\/checkout\/plan_Hzt8oE2YfKseZ\//);
+    assert.doesNotMatch(mail.htmlbody, /checkout\.html\?plan=care/); // Care isn't offered twice
+  }
   // The Black Friday line only appears when the Worker var BF_ON is "1".
   const bfNow = Date.now() >= Date.UTC(2026, 10, 1) && Date.now() < Date.UTC(2026, 10, 28);
   if (env.BF_ON === "1" || (env.BF_ON !== "0" && bfNow)) assert.match(mail.htmlbody, /Black Friday is 27 November/);
