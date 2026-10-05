@@ -811,6 +811,8 @@ const WHOP_PLANS = {
   essential: { id: "plan_rDl4G6eAcftqC",                          label: "Essential Setup",            kind: "setup" },
   pro:       { id: "plan_MuD4rYDQxu5MD",                          label: "Shopify Pro Setup",          kind: "setup" },
   saas:      { id: "plan_sgmAIlHhbMpuu",                          label: "SaaS Compliance",            kind: "setup" },
+  // One-time fix across an agency's client sites. Hidden plan, sold by link after a call.
+  portfix:   { id: "plan_DXXRR41nHmPyH",                          label: "Agency Portfolio Fix",       kind: "setup", brief: "the list of client sites and the platform each one runs on" },
 };
 const planIdOf = (env, key) => { const p = WHOP_PLANS[key]; return p ? (p.env && env[p.env]) || p.id : ""; };
 function whopPlanId(env, plan) {
@@ -1021,7 +1023,7 @@ Download link emailed.`);
 async function whopSetupSale(env, sale) {
   await whopRecord(env, sale, sale.siteId ? { site: sale.siteId } : {});
   if (!(await whopFirstTime(env, "setup", sale))) return json({ ok: true, duplicate: true });
-  if (sale.email) await sendSetupEmail(env, sale.email, sale.plan.label, sale.siteId);
+  if (sale.email) await sendSetupEmail(env, sale.email, sale.plan.label, sale.siteId, sale.plan.brief);
   await tellOwner(env, `New setup sale: ${sale.plan.label}${sale.amount ? " · " + sale.amount : ""}\n${sale.email || "no email: find the buyer in Whop > Customers"}${sale.siteId ? "\n" + sale.siteId : ""}\nBooking email sent. Book the kickoff within one working day.`);
   return json({ ok: true, setup: sale.plan.label });
 }
@@ -1171,12 +1173,12 @@ async function sendActivationEmail(env, email, planKey) {
   try { return await sendEmail(env, email, `Activate your GDRock ${plan.label}: one step left`, buyerEmailShell("You're in. One step left.", inner)); } catch (e) { return null; }
 }
 
-async function sendSetupEmail(env, email, label, siteId) {
+async function sendSetupEmail(env, email, label, siteId, brief) {
   if (isReservedAddress(email)) return null;
   const inner = `<p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 16px;">Thank you for buying <strong>${escHtml(label)}</strong>. We do the install for you${siteId ? ` on <strong>${escHtml(siteId)}</strong>` : ""}, so the next step is a short kickoff.</p>
   <p style="margin:0 0 20px;"><a href="https://cal.eu/gdrock/15min" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:10px;">Book the 15-minute kickoff</a></p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;">Rather not book? Reply with your store address and two times that suit you.</p>
-  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;">What helps us start: your store address and platform. On Shopify we send a collaborator request, so you never share a password.</p>
+  <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0 0 12px;">What helps us start: ${escHtml(brief || "your store address and platform")}. On Shopify we send a collaborator request, so you never share a password.</p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:0;">When the install is done, we run the same real-browser check from Germany again and send you the result.</p>
   <p style="font-size:15px;line-height:1.65;color:#c5cbd7;margin:20px 0 0;">Your plan includes the Core Pack: the templates and guides, yours to keep.</p>
   ${await corePackBlock(env, email)}`;

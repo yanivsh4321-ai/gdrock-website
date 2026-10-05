@@ -152,6 +152,16 @@ test("a setup purchase gets a booking email and one owner alert, never an access
   assert.match(calls.telegram[0], /New setup sale: Essential Setup · 249 EUR/);
 });
 
+test("the agency portfolio fix is a setup sale that asks for the client list", async () => {
+  const e = env(), calls = record();
+  await hook(e, payment("plan_DXXRR41nHmPyH", { total: 1950, product: { id: "prod_vT594BV2QqYrV", title: "Agency Portfolio Fix" } }));
+  assert.equal(calls.upserts.length, 0);
+  assert.equal(calls.emails.length, 1);
+  assert.match(calls.emails[0].html, /cal\.eu\/gdrock\/15min/);
+  assert.match(calls.emails[0].html, /list of client sites/);
+  assert.match(calls.telegram[0], /New setup sale: Agency Portfolio Fix · 1950 EUR/);
+});
+
 test("a plan the Worker doesn't know is reported, not guessed", async () => {
   const e = env(), calls = record();
   const res = await hook(e, payment("plan_brandnew", { product: { id: "prod_x", title: "Something New" } }));
