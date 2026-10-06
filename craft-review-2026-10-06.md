@@ -73,7 +73,11 @@ The interface needs less motion than it could have, and that is correct for a to
 
 ## The demo
 
-Open `demo-craft.html` from the repo root (it needs the site served, not opened as a file, because asset paths are absolute). Locally:
+Easiest: the Vercel preview of branch `craft/demo-2026-10-06` (same commit as on main, production untouched; log in to Vercel if it asks):
+
+https://gdrock-website-5c722m5if-gd-rock-s-projects.vercel.app/demo-craft.html
+
+Or open `demo-craft.html` from the repo root (it needs the site served, not opened as a file, because asset paths are absolute). Locally:
 
 ```bash
 python -m http.server 8787 --bind 127.0.0.1
