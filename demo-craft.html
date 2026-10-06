@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.gdrock.com/gdrock.js" data-site-id="gdrock.com" data-api="https://cdn.gdrock.com"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08090c">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="GDRock — GDPR compliance for EU stores. A free scan of your homepage source, then a hosted cookie banner, privacy policy and consent log. Live in one line of code, from €15 a month.">
+<link rel="canonical" href="https://www.gdrock.com">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GDRock — Free GDPR scan of your store, in seconds">
+<meta property="og:description" content="See every consent tool, tracking tag, outside font and cookie in your homepage source, with the code each came from. Then fix it from €15 a month.">
+<meta property="og:image" content="https://www.gdrock.com/assets/og-card.png">
+<meta property="og:url" content="https://www.gdrock.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GDRock — Free GDPR scan of your store, in seconds">
+<meta name="twitter:description" content="See every consent tool, tracking tag, outside font and cookie in your homepage source, with the code each came from. Then fix it from €15 a month.">
+<meta name="twitter:image" content="https://www.gdrock.com/assets/og-card.png">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="/assets/gdrock-mark-light.png" type="image/png">
+<title>GDRock — craft demo (6 Oct 2026, not the live page)</title>
+<link rel="preload" href="/assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/geist.css">
+<script type="importmap">{"imports":{"gsap":"https://esm.sh/gsap@3.12.5","gsap/ScrollTrigger":"https://esm.sh/gsap@3.12.5/ScrollTrigger"}}</script>
+
+<link rel="stylesheet" href="/assets/gdrock.css?v=20261001b">
+<!-- Craft pass: every change is in this one file. To ship it, link it from index.html the same way and re-sync live site/index.html. -->
+<link rel="stylesheet" href="/assets/craft/craft.css?v=20261006">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.gdrock.com/#org",
+      "name": "GDRock",
+      "url": "https://www.gdrock.com",
+      "email": "office@gdrock.com",
+      "description": "GDPR compliance infrastructure for EU businesses — cookie consent banner, privacy policy templates, consent logging and done-for-you setup.",
+      "logo": "https://www.gdrock.com/assets/gdrock-mark-dark.png",
+      "areaServed": "EU"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.gdrock.com/#website",
+      "url": "https://www.gdrock.com",
+      "name": "GDRock",
+      "publisher": { "@id": "https://www.gdrock.com/#org" }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "GDRock",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "EUR",
+        "lowPrice": "15",
+        "highPrice": "1500",
+        "offerCount": "6",
+        "offers": [
+          { "@type": "Offer", "name": "Care — hosted banner, monthly", "price": "15", "priceCurrency": "EUR" },
+          { "@type": "Offer", "name": "Core Pack — one-time toolkit", "price": "29", "priceCurrency": "EUR" },
+          { "@type": "Offer", "name": "Done-For-You basic setup", "price": "249", "priceCurrency": "EUR" },
+          { "@type": "Offer", "name": "Agency Portfolio — up to 25 sites", "price": "299", "priceCurrency": "EUR" },
+          { "@type": "Offer", "name": "Done-For-You Shopify full setup", "price": "599", "priceCurrency": "EUR" },
+          { "@type": "Offer", "name": "Done-For-You SaaS compliance", "price": "1500", "priceCurrency": "EUR" }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "What exactly is in Core Pack?", "acceptedAnswer": { "@type": "Answer", "text": "The self-hosted blocker and cookie banner, a step-by-step install guide for Shopify, WooCommerce and any other site, a privacy policy template, a data retention schedule, a breach response pack and a 20-step store checklist, with Word and Excel files you can edit. Yours to keep." } },
+        { "@type": "Question", "name": "Is the cookie banner GDPR-compliant?", "acceptedAnswer": { "@type": "Answer", "text": "Here is what it does. Non-essential cookies stay blocked until a visitor opts in, visitors can accept all, reject all, or choose category by category, and with Care every choice is logged with a timestamp. Whether a particular site is compliant also depends on how it is set up and what else it runs, so we don't certify compliance." } },
+        { "@type": "Question", "name": "How do I install the cookie banner?", "acceptedAnswer": { "@type": "Answer", "text": "Add one script tag to your website head. No plugins, no complex setup. Our guide walks you through exactly where to paste it." } },
+        { "@type": "Question", "name": "Do I need to edit the templates?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. You fill in about 20 gaps: your business details, the tools your store uses and how long you keep data. Each gap is explained, with an example." } },
+        { "@type": "Question", "name": "Core Pack vs Care?", "acceptedAnswer": { "@type": "Answer", "text": "Core Pack is a one-time €29 purchase: you get the documents and the banner script and you install them yourself. Care is €15/month and we host and maintain it for you — when we update the banner, your site gets it without you touching anything. Core Pack does not include hosting or updates." } },
+        { "@type": "Question", "name": "Can I get a refund?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — 14 days, money back, on every product. For Done-For-You, the 14 days run from payment; once the install is delivered and you have accepted it, we settle any refund fairly, case by case. Contact office@gdrock.com with your order reference." } },
+        { "@type": "Question", "name": "Is this suitable for Shopify stores?", "acceptedAnswer": { "@type": "Answer", "text": "Core Pack includes a step-by-step Shopify install guide. The Care hosted banner installs on Shopify with one snippet in theme.liquid." } },
+        { "@type": "Question", "name": "Do you cover non-EU businesses selling to EU customers?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. If you collect personal data from EU residents, GDPR applies to you regardless of where your business is based." } },
+        { "@type": "Question", "name": "What happens if EU law changes?", "acceptedAnswer": { "@type": "Answer", "text": "On Care, we update the hosted script and you never re-install. The Core Pack is a one-time download: email us any time for the latest version." } },
+        { "@type": "Question", "name": "Can I white-label documents for clients?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — the agency programme includes full white-label rights across your whole client portfolio: banners styled per client brand with the GDRock credit switched off, and before-and-after reports you can send under your agency name. Portfolio pricing from €299/mo for up to 25 sites, with a free 14-day pilot on up to 20 client sites." } }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a href="/" class="brand"><img src="/assets/gdrock-mark-light.png" alt="" width="26" height="26">GDRock</a>
+    <ul class="nav-links">
+      <li><a href="#scan">Free scan</a></li>
+      <li><a href="#ledger">Fines</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="agencies.html">Agencies</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#faq" class="btn btn-2">FAQ</a>
+      <a href="#scan" class="btn btn-1">Scan my store</a>
+      <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<nav id="drawer" aria-label="Mobile menu">
+  <ul>
+    <li><a href="#scan">Free scan</a></li>
+    <li><a href="#ledger">Fines</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="agencies.html">Agencies</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="dfy.html">Done-For-You</a></li>
+  </ul>
+  <a href="#scan" class="btn btn-1 btn-wide">Scan my store</a>
+</nav>
+
+<!-- Compact scan bar: desktop only, shown once the scan band is behind you. -->
+<div class="scanbar" id="scanbar" aria-hidden="true" inert>
+  <div class="scanbar-in">
+    <span class="scanbar-lab"><span class="pulse" aria-hidden="true"></span>Free GDPR scan</span>
+    <form class="scanbar-form" id="sb-form" novalidate>
+      <label class="sr" for="sb-url">Your website address</label>
+      <input type="text" id="sb-url" placeholder="yourstore.com" autocomplete="url" inputmode="url" spellcheck="false" autocapitalize="off">
+      <button class="btn btn-scan btn-scan-sm" type="submit">Scan</button>
+    </form>
+  </div>
+</div>
+
+<main>
+
+<!-- ============ 1 · HERO ============ -->
+<section class="hero hero-compact" id="top">
+  <div class="shell">
+    <h1>A cookie banner that holds the trackers.</h1>
+    <p class="lede">A hosted cookie banner, privacy policy and consent log for UK and EU stores, installed with one line of code. Start with a free scan of your own store &mdash; it takes seconds.</p>
+    <a href="#scan" class="hero-down" aria-label="Go to the free scan">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ============ BLACK FRIDAY 2026 ============
+     Shows itself 1-27 Nov 2026 (UTC) via the script under it; hidden before and after.
+     The "book by 20 November" promise drops on 21 Nov. Copy: marketing/black-friday-2026.md -->
+<style>
+.bf{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(79,125,255,.10),rgba(79,125,255,.02) 70%);}
+.bf-in{display:flex;align-items:center;justify-content:space-between;gap:28px;padding-top:26px;padding-bottom:26px;flex-wrap:wrap;}
+.bf-eye{font:600 11px/1 "Geist Mono",ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin:0 0 10px;}
+.bf-h{font-size:clamp(22px,2.6vw,30px);line-height:1.12;letter-spacing:-.025em;font-weight:700;margin:0 0 8px;color:var(--ink);}
+.bf-sub{margin:0;max-width:640px;color:var(--ink-2,#c5cbd7);font-size:15px;line-height:1.6;}
+.bf-act{display:flex;gap:10px;flex-wrap:wrap;}
+</style>
+<aside class="bf" id="bf" aria-label="Before Black Friday" hidden>
+  <div class="shell bf-in">
+    <div>
+      <p class="bf-eye">Before Black Friday &middot; 27 November</p>
+      <p class="bf-h">Get your banner right before Black Friday.</p>
+      <p class="bf-sub">Your busiest week is when your ad tags fire most. If they send data before a visitor chooses, that happens on every visit. Check your store now.<span id="bf-book"> Book an install by 20 November and we finish it before the day.</span></p>
+    </div>
+    <div class="bf-act"><a href="#scan" class="btn btn-1">Check my store free</a><a href="dfy.html" class="btn btn-2">We install it, from &euro;249</a></div>
+  </div>
+</aside>
+<script>(function(){var n=Date.now();if(n<Date.UTC(2026,10,1)||n>=Date.UTC(2026,10,28))return;document.getElementById('bf').hidden=false;if(n>=Date.UTC(2026,10,21)){var b=document.getElementById('bf-book');if(b)b.remove();}})();</script>
+
+<!-- ============ 2 · SCAN ============
+     The one light surface on a dark page, so the scanner is the thing you
+     can't miss. The result card on the right is not a mock-up: it is what
+     the scanner on this page returns for gdrock.com, and a real scan
+     replaces it in place. -->
+<section class="band" id="scan" aria-labelledby="scan-h">
+  <div class="shell band-grid">
+
+    <div class="band-tool">
+      <p class="band-eye"><span class="pulse" aria-hidden="true"></span>Free GDPR scan &middot; 12 checks &middot; under 10 seconds</p>
+      <h2 class="band-h" id="scan-h">What does your store's code give away?</h2>
+      <p class="band-sub">Paste your address. We read your homepage source and show every consent tool, tracking tag, outside font and cookie we find &mdash; each with the line of code it came from.</p>
+
+      <form class="scan-form" id="scan-form" novalidate>
+        <label class="sr" for="scan-url">Your website address</label>
+        <div class="scan-field">
+          <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.6 2.4 15.4 0 18M12 3c-2.4 2.6-2.4 15.4 0 18"/></svg>
+          <input type="text" class="scan-inp" id="scan-url" placeholder="yourstore.com" autocomplete="url" inputmode="url" spellcheck="false" autocapitalize="off" aria-describedby="err-url">
+        </div>
+        <button class="btn btn-scan" id="scan-btn" type="submit">
+          <span class="btn-lab">Scan my store</span>
+          <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span class="spin" aria-hidden="true"></span>
+        </button>
+      </form>
+      <p class="field-err" id="err-url">Enter your website address, e.g. yourstore.com</p>
+
+      <div class="scan-run" id="scan-run" aria-live="polite">
+        <div class="bar"><i id="scan-bar"></i></div>
+        <p class="scan-step" id="scan-step">Starting&hellip;</p>
+      </div>
+
+      <div class="scan-fail" id="scan-fail" role="alert">
+        <h3 id="fail-h">We couldn't read that site</h3>
+        <p id="fail-p">Check the address and try again.</p>
+        <button class="btn btn-ghost-dark" id="scan-retry" type="button">Try again</button>
+      </div>
+
+      <ul class="trust">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>No signup and no email to see your result</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Nothing is installed or changed on your site</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Every finding shows the code it came from</li>
+      </ul>
+
+    </div>
+
+    <aside class="band-side" aria-label="What the scan checks">
+      <div class="checks-wrap">
+        <p class="checks-h">What it checks</p>
+        <div class="checks">
+          <span>Consent tool</span><span>Analytics &amp; ad tags</span><span>Tags held for consent</span><span>Consent Mode defaults</span><span>Outside fonts</span>
+          <span>Cookie-setting embeds</span><span>Server-set cookies</span><span>Privacy policy link</span><span>Terms &amp; imprint link</span><span>Platform</span>
+          <span>Fonts in your stylesheets</span><span>What your privacy policy covers</span>
+        </div>
+        <p class="band-foot">It reads source code, so it can't see what runs in a browser before a visitor chooses. That needs a real browser: after your result you can ask for a free deep check, run from a server in Germany.</p>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- ============ 2b · THE REPORT ============
+     Rendered by the scanner script below from the scanner's own result (scan
+     API -> normalizeScan -> renderReport). The sample is a real gdrock.com
+     result, run through the same path. No text here is written at runtime by
+     a language model: titles and short lines are fixed copy keyed by finding
+     id, everything else is the scanner's rule-written output. -->
+<section class="report-sec" id="report" aria-labelledby="rp-headline">
+  <div class="shell">
+    <article class="rp" id="rc" aria-live="polite" aria-busy="false">
+      <header class="rp-head">
+        <div class="rp-id">
+          <img class="rp-logo" src="/assets/gdrock-mark-light.png" alt="" width="28" height="28">
+          <span class="rp-word">GDRock</span>
+          <span class="rp-rule" aria-hidden="true"></span>
+          <span class="rp-kind" id="rp-kind">Privacy scan &middot; Sample result</span>
+        </div>
+        <div class="rp-meta">
+          <span class="rp-domain" id="rp-domain">gdrock.com</span>
+          <time class="rp-time" id="rp-time"></time>
+        </div>
+      </header>
+      <div class="rp-body">
+        <div class="rp-score">
+          <p class="rp-num" id="rp-num"><b id="rp-score">100</b><span>/100</span></p>
+          <div>
+            <h2 class="rp-headline" id="rp-headline">No issues found in the source.</h2>
+            <p class="rp-explain" id="rp-explain">Everything this scan can check came back clean. What it can&rsquo;t see is listed below.</p>
+            <p class="rp-basis" id="rp-basis">Source score &middot; rules-based</p>
+          </div>
+        </div>
+        <ul class="rp-list" id="rp-list" aria-label="Findings"></ul>
+        <noscript><p class="rp-explain">Turn on JavaScript to see the findings.</p></noscript>
+        <section class="rp-limits" aria-labelledby="rp-limits-h">
+          <h3 class="rp-limits-h" id="rp-limits-h">What this scan can&rsquo;t see</h3>
+          <ul id="rp-limits"></ul>
+        </section>
+      </div>
+    </article>
+    <p class="rp-note" id="rc-sample-note">This is gdrock.com, scanned by the tool above under the same rules your store gets. It used to score 90, for loading its fonts from Google. Now they come from our own server.</p>
+
+    <div class="rc-act" id="rc-act" hidden>
+        <div class="report-box" id="report-box">
+          <h4>Email me this report</h4>
+          <p>The same findings with their evidence, so you can hand them to whoever runs your store.</p>
+          <div class="report-row">
+            <div class="scan-field-d">
+              <input type="email" class="inp" id="report-email" placeholder="you@yourstore.com" autocomplete="email" aria-label="Your email address" aria-describedby="err-email">
+            </div>
+            <button class="btn btn-1" type="button" id="report-btn">Send it</button>
+          </div>
+          <p class="field-err" id="err-email">Enter a valid email address.</p>
+          <label class="consent">
+            <input type="checkbox" id="scan-consent">
+            <span>Also send me compliance alerts and product news. Optional.</span>
+          </label>
+          <div class="report-sent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+            <span>On its way &mdash; check spam and promotions.</span>
+          </div>
+        </div>
+        <div class="report-box deep-box" id="deep-box">
+          <h4 id="deep-h">See what actually fires before consent</h4>
+          <p>This scan read your source. A deep check opens your site in a real browser on a server in Germany, twice, without touching your cookie banner, and emails you what loaded before anyone chose: trackers, cookies, fonts, with a score and a result card. Free.</p>
+          <div class="report-row">
+            <div class="scan-field-d">
+              <input type="email" class="inp" id="deep-email" placeholder="you@yourstore.com" autocomplete="email" aria-label="Email for the deep check" aria-describedby="err-deep">
+            </div>
+            <button class="btn btn-1" type="button" id="deep-btn">Run the deep check</button>
+          </div>
+          <p class="field-err" id="err-deep">Enter a valid email address.</p>
+          <p class="deep-msg" id="deep-msg" role="status" aria-live="polite"></p>
+        </div>
+        <div class="report-box free-box" id="free-box" style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;">
+          <div style="flex:1 1 420px;"><h4>Fix it yourself, free to start</h4>
+          <p style="margin-bottom:0;">Open a free GDRock account: the full install guide, a privacy policy you fill in on the page and download as Word, and a first look at every other guide. No card.</p></div>
+          <a class="btn btn-2" href="/account?next=pack">Get the free Core Pack</a>
+        </div>
+        <div class="rc-act-row">
+          <a class="btn btn-1" href="#fix" id="scan-fix-cta">See the fix
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <button class="btn btn-2" type="button" id="scan-again">Scan another address</button>
+          <p class="disclose" id="rc-disclaimer">This scan is automated and informational: it is not legal advice, a formal audit, or a compliance guarantee. GDRock provides software and templates, not legal services.</p>
+        </div>
+      </div>
+  </div>
+</section>
+
+<!-- ============ 3 · THE FIX (step two, after a scan) ============ -->
+<section id="fix">
+  <div class="shell">
+    <div class="mk-grid">
+      <div>
+        <p class="eyebrow">Step 2 &middot; after your scan</p>
+        <h2 class="t2">Found gaps? Put a banner on it that looks like your store.</h2>
+        <p class="lede" style="margin:16px 0 22px;">Most results above point at the same fix: a consent banner that holds tags back until a visitor chooses, and logs the choice. Care hosts it for &euro;15 a month. One script tag, styled to your brand in the customizer, no code.</p>
+        <ul class="plan-feats" style="margin-bottom:28px;">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Holds known analytics and ad scripts until a visitor opts in</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Logs every choice with a timestamp</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Your colour, corner radius and logo &mdash; six presets to start</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Live preview: what you see is what ships</li>
+        </ul>
+        <div class="fix-cta">
+          <a href="checkout.html?plan=care" class="btn btn-1">Get Care &mdash; &euro;15/mo
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="https://cdn.gdrock.com/customize" target="_blank" rel="noopener" class="btn btn-2">Open the customizer</a>
+        </div>
+        <p class="fix-alt">Rather not touch code at all? <a href="dfy.html">We install it for you, from &euro;249</a>.</p>
+      </div>
+      <div class="card term">
+        <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>cdn.gdrock.com/customize</b></div>
+        <div class="mk-body">
+          <div class="mk-controls">
+            <div class="mk-cap">Presets</div>
+            <div class="mk-presets" id="mk-presets">
+              <button class="mk-pre" data-acc="#4f7dff" style="background:linear-gradient(135deg,#4f7dff,#0a1020);" aria-label="Blue preset"></button>
+              <button class="mk-pre" data-acc="#6366f1" style="background:linear-gradient(135deg,#6366f1,#0b0e24);" aria-label="Indigo preset"></button>
+              <button class="mk-pre" data-acc="#8b5cf6" style="background:linear-gradient(135deg,#8b5cf6,#0f0a1e);" aria-label="Violet preset"></button>
+              <button class="mk-pre" data-acc="#3ddc97" style="background:linear-gradient(135deg,#3ddc97,#03140d);" aria-label="Green preset"></button>
+              <button class="mk-pre" data-acc="#f43f5e" style="background:linear-gradient(135deg,#f43f5e,#1a0408);" aria-label="Rose preset"></button>
+              <button class="mk-pre" data-acc="#f5b84c" style="background:linear-gradient(135deg,#f5b84c,#1a1200);" aria-label="Amber preset"></button>
+            </div>
+            <div class="mk-cap">Accent <span class="mk-val" id="mk-acc-hex">#4F7DFF</span></div>
+            <div class="mk-row"><input type="color" id="mk-acc" value="#4f7dff" class="mk-color" aria-label="Accent color"></div>
+            <div class="mk-cap">Radius <span class="mk-val" id="mk-rad-val">14px</span></div>
+            <input type="range" id="mk-rad" class="mk-range" min="0" max="22" value="14" aria-label="Corner radius">
+            <div class="mk-cap">Logo size <span class="mk-val" id="mk-logo-val">22px</span></div>
+            <input type="range" id="mk-logo" class="mk-range" min="14" max="36" value="22" aria-label="Logo size">
+          </div>
+          <div class="mk-stage">
+            <div id="mk-banner" class="mk-banner">
+              <div class="mk-banner-top">
+                <svg id="mk-logo-svg" width="22" height="24" viewBox="0 0 30 34" fill="none" style="flex:none;"><path d="M15 1L28 6.5V16C28 23.5 22 30 15 33C8 30 2 23.5 2 16V6.5L15 1Z" fill="rgba(79,125,255,.14)" stroke="#4f7dff" stroke-width="2.5"/><path d="M10 16.5L13.5 20L20 13" stroke="#4f7dff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                <span>We use cookies</span>
+              </div>
+              <p>Necessary cookies keep this site running. Analytics and marketing only if you say yes.</p>
+              <div class="mk-banner-btns">
+                <span class="mk-bbtn" id="mk-reject">Reject all</span>
+                <span class="mk-bbtn" id="mk-accept">Accept all</span>
+              </div>
+              <span class="mk-custom">Customize</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ 4 · ENFORCEMENT LEDGER ============ -->
+<section id="ledger">
+  <div class="shell">
+    <div class="ledger-top">
+      <h2 class="t1">What regulators fined, and why.</h2>
+      <p class="lede">Ten published decisions from European and UK regulators, and the gap behind each one. Small stores have the same four gaps.</p>
+    </div>
+
+    <div class="ledger">
+      <ol class="mistakes" id="mistakes">
+        <li data-m="1"><div class="mk"><span class="mn">01</span><div>
+          <h3>No real cookie banner</h3>
+          <p>A notice bar isn't consent. GDPR requires a genuine accept or reject choice before any non-essential cookie loads.</p>
+        </div></div></li>
+        <li data-m="2"><div class="mk"><span class="mn">02</span><div>
+          <h3>Outdated privacy policy</h3>
+          <p>Copy-pasted policies fail. Yours must name your actual processors, retention periods and lawful bases &mdash; and be easy to find.</p>
+        </div></div></li>
+        <li data-m="3"><div class="mk"><span class="mn">03</span><div>
+          <h3>No breach response plan</h3>
+          <p>If a breach puts people at risk, the regulator must hear within 72 hours. A plan written in advance is how you make it.</p>
+        </div></div></li>
+        <li data-m="4"><div class="mk"><span class="mn">04</span><div>
+          <h3>No data retention schedule</h3>
+          <p>You can't keep customer data forever. Every data type needs a defined retention period.</p>
+        </div></div></li>
+      </ol>
+
+      <div class="cases" id="cases">
+        <div class="case-h"><span>Enforcement ledger</span><span>Published penalties</span></div>
+
+        <article class="case" data-m="1">
+          <div class="case-meta"><span>2021</span><span>CNIL &middot; France</span><span class="co">Google</span></div>
+          <p class="case-what">Rejecting cookies took more clicks than accepting them &mdash; no one-click &ldquo;reject all&rdquo;.</p>
+          <div class="case-row"><span class="case-amt">&euro;150,000,000</span><span class="case-tag">Mistake 01 &middot; cookie banner</span></div>
+        </article>
+        <article class="case" data-m="1">
+          <div class="case-meta"><span>2021</span><span>CNIL &middot; France</span><span class="co">Facebook</span></div>
+          <p class="case-what">Same pattern &mdash; refusing cookies was made harder than consenting to them.</p>
+          <div class="case-row"><span class="case-amt">&euro;60,000,000</span><span class="case-tag">Mistake 01 &middot; cookie banner</span></div>
+        </article>
+        <article class="case" data-m="1">
+          <div class="case-meta"><span>2020</span><span>CNIL &middot; France</span><span class="co">Amazon Europe Core</span></div>
+          <p class="case-what">Advertising cookies dropped on visitors before any consent was given.</p>
+          <div class="case-row"><span class="case-amt">&euro;35,000,000</span><span class="case-tag">Mistake 01 &middot; cookie banner</span></div>
+        </article>
+        <article class="case" data-m="2">
+          <div class="case-meta"><span>2019</span><span>CNIL &middot; France</span><span class="co">Google</span></div>
+          <p class="case-what">Essential privacy information scattered across documents and hard to find &mdash; consent ruled invalid.</p>
+          <div class="case-row"><span class="case-amt">&euro;50,000,000</span><span class="case-tag">Mistake 02 &middot; privacy policy</span></div>
+        </article>
+        <article class="case" data-m="1">
+          <div class="case-meta"><span>2019</span><span>AEPD &middot; Spain</span><span class="co">Vueling</span></div>
+          <p class="case-what">Cookie policy offered visitors no real way to refuse.</p>
+          <div class="case-row"><span class="case-amt">&euro;30,000</span><span class="case-tag">Mistake 01 &middot; cookie banner</span></div>
+        </article>
+        <article class="case" data-m="3">
+          <div class="case-meta"><span>2020</span><span>DPC &middot; Ireland</span><span class="co">Twitter</span></div>
+          <p class="case-what">A data breach notified after the 72-hour deadline had passed.</p>
+          <div class="case-row"><span class="case-amt">&euro;450,000</span><span class="case-tag">Mistake 03 &middot; breach response</span></div>
+        </article>
+        <article class="case" data-m="3">
+          <div class="case-meta"><span>2021</span><span>AP &middot; Netherlands</span><span class="co">Booking.com</span></div>
+          <p class="case-what">Customer data breach reported 22 days late.</p>
+          <div class="case-row"><span class="case-amt">&euro;475,000</span><span class="case-tag">Mistake 03 &middot; breach response</span></div>
+        </article>
+        <article class="case" data-m="3">
+          <div class="case-meta"><span>2020</span><span>ICO &middot; UK</span><span class="co">British Airways</span></div>
+          <p class="case-what">Attackers skimmed customer card data &mdash; security measures ruled inadequate.</p>
+          <div class="case-row"><span class="case-amt">&pound;20,000,000</span><span class="case-tag">Mistake 03 &middot; breach response</span></div>
+        </article>
+        <article class="case" data-m="4">
+          <div class="case-meta"><span>2020</span><span>HmbBfDI &middot; Germany</span><span class="co">H&amp;M</span></div>
+          <p class="case-what">Kept detailed records on employees' private lives for years, far beyond any lawful need.</p>
+          <div class="case-row"><span class="case-amt">&euro;35,258,708</span><span class="case-tag">Mistake 04 &middot; data retention</span></div>
+        </article>
+        <article class="case" data-m="4">
+          <div class="case-meta"><span>2020</span><span>CNIL &middot; France</span><span class="co">Spartoo</span></div>
+          <p class="case-what">Customer data kept indefinitely &mdash; no retention limits defined at all.</p>
+          <div class="case-row"><span class="case-amt">&euro;250,000</span><span class="case-tag">Mistake 04 &middot; data retention</span></div>
+        </article>
+
+        <p class="case-foot">Published decisions of EU data-protection authorities (CNIL, DPC, AP, ICO, HmbBfDI, AEPD). Amounts as announced; some later adjusted on appeal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ 5 · INSTALL ============ -->
+<section id="install">
+  <div class="shell">
+    <div class="how-top">
+      <h2 class="t1">Paste one tag. That's the install.</h2>
+      <p class="lede">GDRock hosts the banner, blocks the trackers before consent, logs every choice and keeps all of it current from there.</p>
+    </div>
+
+    <div class="steps" id="steps">
+      <a class="step on" data-s="1" href="#scan"><i>01</i>Run the free scan</a>
+      <div class="step on" data-s="2"><i>02</i>Get your pack</div>
+      <div class="step on" data-s="3"><i>03</i>Paste one tag</div>
+      <div class="step on" data-s="4"><i>04</i>Stay covered</div>
+    </div>
+
+    <div class="card term">
+      <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><b>index.html &mdash; your store</b></div>
+      <div class="term-code">&lt;head&gt;
+  &lt;title&gt;Your store&lt;/title&gt;
+  <span class="tag" id="term-tag">&lt;script src="https://cdn.gdrock.com/gdrock.js" data-site-id="yourstore.com"&gt;&lt;/script&gt;</span><span class="caret" id="term-caret"></span>
+&lt;/head&gt;</div>
+      <div class="term-out" id="term-out">
+        <div class="out-line on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Cookie banner live &mdash; accept, reject and granular choices</div>
+        <div class="out-line on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Non-essential trackers blocked until visitors opt in</div>
+        <div class="out-line on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Every choice logged with a timestamp</div>
+        <div class="out-line watch on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.4"/><path d="M2 12s3.6-6.4 10-6.4S22 12 22 12s-3.6 6.4-10 6.4S2 12 2 12z"/></svg>Kept up to date for you on Care</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ 6 · PROOF ============ -->
+<section id="proof">
+  <div class="shell">
+    <div class="proof">
+      <div>
+        <div class="ring">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+            <circle id="ring-arc" cx="60" cy="60" r="54" fill="none" stroke="#3ddc97" stroke-width="7" stroke-linecap="round" stroke-dasharray="339.29" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ring-lab"><b class="num" id="ring-n">100</b><span>/100</span></div>
+        </div>
+        <p class="ring-cap">gdrock.com<br>scanned by its own scanner</p>
+      </div>
+
+      <div class="proof-body">
+        <h2 class="t2">We run GDRock on GDRock.</h2>
+        <p class="lede">This site runs the exact hosted banner, consent logging and scanner we sell. Point the scanner at gdrock.com and it scores 100/100. It was 90 until we moved our fonts off Google's servers, and the scanner said so, with the stylesheet link as evidence. Then point it at your own store and compare.</p>
+
+        <div class="proof-stats">
+          <div class="proof-stat"><b class="num">12</b><span>checks per scan, each with its evidence</span></div>
+          <div class="proof-stat"><b class="num">&lt;10s</b><span>real result, no signup</span></div>
+          <div class="proof-stat"><b class="num">48h</b><span>done-for-you install</span></div>
+        </div>
+
+        <blockquote class="founder">
+          <span class="ava" aria-hidden="true">Y</span>
+          <p>&ldquo;I built GDRock and I personally install it. No ticket queue &mdash; when the scan finds a problem on your store, I'm the one who fixes it.&rdquo;
+          <cite>Yaniv, founder, GDRock</cite></p>
+        </blockquote>
+
+        <div class="proof-cta">
+          <a href="#scan" class="btn btn-1">Run it on your site
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="agencies.html" class="btn btn-2">Agency programme</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pilot">
+      <span aria-hidden="true"></span>
+      <p>Case study #1 is next. We are looking for the first five agencies; the first before-and-after goes here. <a href="agencies.html">See the pilot programme</a></p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ 7 · PRICING ============ -->
+<section id="pricing">
+  <div class="shell">
+    <div class="price-top">
+      <h2 class="t1">Pick your level.</h2>
+      <p class="lede">One-time pack, hosted subscription, or we install the whole thing for you. Cancel monthly plans anytime.</p>
+    </div>
+
+    <div class="plans">
+      <div class="card plan">
+        <p class="plan-term">One-time</p>
+        <h3 class="plan-name">Core Pack</h3>
+        <div class="plan-cost"><b class="num">&euro;29</b><span>once</span></div>
+        <p class="plan-desc">Templates, blocker and banner. You fill them in and install them yourself.</p>
+        <ul class="plan-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Privacy policy template, Word and PDF</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Blocker and cookie banner</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Retention schedule, Excel and PDF</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Breach response pack</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Install guide for Shopify and any site</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Yours to keep, no renewal</li>
+        </ul>
+        <div style="display:flex;flex-direction:column;gap:8px;margin:0 0 18px;" aria-label="The five guides in the Core Pack"><div style="display:flex;"><img src="/assets/core-pack/cover-01.webp" alt="" width="40" height="56" style="flex:none;width:40px;height:56px;border-radius:3px;border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 14px rgba(0,0,0,.45);margin-left:0px;position:relative;z-index:5;"><img src="/assets/core-pack/cover-02.webp" alt="" width="40" height="56" style="flex:none;width:40px;height:56px;border-radius:3px;border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 14px rgba(0,0,0,.45);margin-left:-16px;position:relative;z-index:4;"><img src="/assets/core-pack/cover-03.webp" alt="" width="40" height="56" style="flex:none;width:40px;height:56px;border-radius:3px;border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 14px rgba(0,0,0,.45);margin-left:-16px;position:relative;z-index:3;"><img src="/assets/core-pack/cover-04.webp" alt="" width="40" height="56" style="flex:none;width:40px;height:56px;border-radius:3px;border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 14px rgba(0,0,0,.45);margin-left:-16px;position:relative;z-index:2;"><img src="/assets/core-pack/cover-05.webp" alt="" width="40" height="56" style="flex:none;width:40px;height:56px;border-radius:3px;border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 14px rgba(0,0,0,.45);margin-left:-16px;position:relative;z-index:1;"></div><span style="font-size:12px;color:var(--mute,#9aa2b2);">5 PDFs, plus Word, Excel and the script</span></div>
+        <a class="btn btn-2 btn-wide" href="checkout.html?plan=core">Get Core Pack</a>
+      </div>
+
+      <div class="card plan pick">
+        <span class="plan-flag">Most popular</span>
+        <p class="plan-term">Monthly</p>
+        <h3 class="plan-name">Care</h3>
+        <div class="plan-cost"><b class="num">&euro;15</b><span>/ month</span></div>
+        <p class="plan-desc">We host and maintain it. One script tag, and it stays current on its own.</p>
+        <ul class="plan-feats">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Everything in Core Pack</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Hosted banner, one script tag</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Hosted script kept up to date</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>Consent logs, timestamped</li>
+        </ul>
+        <p class="plan-guar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9.5 12l2 2 3.5-3.5"/></svg>14-day money-back guarantee</p>
+        <a class="btn btn-1 btn-wide" href="checkout.html?plan=care">Get Care</a>
+      </div>
+
+      <div class="card plan">
+        <p class="plan-term">Done for you</p>
+        <h3 class="plan-name">We install it</h3>
+        <div class="plan-cost"><b class="num">&euro;249</b><span>from</span></div>
+        <p class="plan-desc">You don't open a single file. Live in 48 hours, installed by the founder.</p>
+        <ul class="dfy-rows">
+          <li>Basic setup <b>&euro;249</b></li>
+          <li>Shopify full setup <b>&euro;599</b></li>
+          <li>SaaS compliance <b>&euro;1,500</b></li>
+        </ul>
+        <p class="plan-guar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9.5 12l2 2 3.5-3.5"/></svg>14-day money-back guarantee</p>
+        <a class="btn btn-2 btn-wide" href="dfy.html">See Done-For-You</a>
+      </div>
+
+      <div class="card plan">
+        <p class="plan-term">Agencies</p>
+        <h3 class="plan-name">Portfolio</h3>
+        <div class="plan-cost"><b class="num">&euro;299</b><span>/ month</span></div>
+        <p class="plan-desc">Every client site on one plan, billed as a portfolio &mdash; not per domain.</p>
+        <ul class="dfy-rows">
+          <li>Up to 25 sites <b>&euro;299/mo</b></li>
+          <li>Up to 50 sites <b>&euro;499/mo</b></li>
+          <li>Up to 100 sites <b>&euro;799/mo</b></li>
+        </ul>
+        <p class="plan-guar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9.5 12l2 2 3.5-3.5"/></svg>Free 14-day pilot, up to 20 sites</p>
+        <a class="btn btn-2 btn-wide" href="agencies.html">See agency pricing</a>
+      </div>
+    </div>
+
+    <p class="scan-note" style="margin-top:22px;">All prices in euro. No VAT is added at checkout &mdash; GDRock is not currently VAT-registered, so the listed price is the price you pay.</p>
+    <p class="agency-note">At 25 client sites that's <strong>&euro;12 per site</strong>. Agencies bill compliance on at around <strong>&euro;45 per site</strong> &mdash; so a 25-site portfolio costing you &euro;299 supports roughly <strong>&euro;1,125/mo</strong> in billing. Most consent tools charge per domain, which is exactly what punishes you at scale. <a href="agencies.html">See the agency programme</a></p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ 8 · FAQ ============ -->
+<section id="faq">
+  <div class="shell">
+    <div class="faq-top"><h2 class="t1">Questions, answered.</h2></div>
+    <div class="faq">
+      <details class="qa"><summary>What exactly is in Core Pack?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">The self-hosted blocker and cookie banner, a step-by-step install guide for Shopify, WooCommerce and any other site, a privacy policy template, a data retention schedule, a breach response pack and a 20-step store checklist, with Word and Excel files you can edit. Yours to keep.</p></details>
+      <details class="qa"><summary>Is the cookie banner GDPR-compliant?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Here is what it does. Non-essential cookies stay blocked until a visitor opts in, visitors can accept all, reject all, or choose category by category, and with Care every choice is logged with a timestamp. Whether a particular site is compliant also depends on how it is set up and what else it runs, so we don't certify compliance.</p></details>
+      <details class="qa"><summary>How do I install the cookie banner?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Add one script tag to your website head. No plugins, no complex setup. Our guide walks you through exactly where to paste it.</p></details>
+      <details class="qa"><summary>Do I need to edit the templates?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Yes. You fill in about 20 gaps: your business details, the tools your store uses and how long you keep data. Each gap is explained, with an example.</p></details>
+      <details class="qa"><summary>Core Pack vs Care?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Core Pack is a one-time &euro;29 purchase: you get the documents and the banner script and you install them yourself. Care is &euro;15/month and we host and maintain it for you &mdash; when we update the banner, your site gets it without you touching anything. Core Pack does not include hosting or updates.</p></details>
+      <details class="qa"><summary>Can I get a refund?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Yes &mdash; 14 days, money back, on every product. For Done-For-You, the 14 days run from payment; once the install is delivered and you have accepted it, we settle any refund fairly, case by case. Contact office@gdrock.com with your order reference.</p></details>
+      <details class="qa"><summary>Is this suitable for Shopify stores?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Core Pack includes a step-by-step Shopify install guide, and the Care hosted banner installs on Shopify with one snippet in theme.liquid.</p></details>
+      <details class="qa"><summary>Do you cover non-EU businesses selling to EU customers?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Yes. If you collect personal data from EU residents, GDPR applies to you regardless of where your business is based.</p></details>
+      <details class="qa"><summary>What happens if EU law changes?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">On Care, we update the hosted script and you never re-install. The Core Pack is a one-time download: email us any time for the latest version.</p></details>
+      <details class="qa"><summary>Can I white-label documents for clients?<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary><p class="qa-a">Yes &mdash; the agency programme includes full white-label rights across your whole client portfolio (25&ndash;100+ sites): banners styled per client brand with the GDRock credit switched off, and before-and-after reports you can send under your agency name. Portfolio pricing from &euro;299/mo for up to 25 sites, with a free 14-day pilot on up to 20 client sites.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="shell">
+    <div class="foot-top">
+      <div>
+        <a href="/" class="brand" style="margin-bottom:12px;"><img src="/assets/gdrock-mark-light.png" alt="" width="24" height="24">GDRock</a>
+        <p class="foot-ask">Questions? <a href="mailto:office@gdrock.com">office@gdrock.com</a> &mdash; Yaniv replies within 24 hours.</p>
+      </div>
+      <div class="foot-links">
+        <a href="/account">Sign in</a>
+        <a href="terms-and-conditions.html">Terms</a>
+        <a href="terms-and-conditions.html#privacy">Privacy</a>
+        <a href="dpa.html">DPA</a>
+        <a href="terms-and-conditions.html#refund">Refund</a>
+        <a href="cookie-policy.html">Cookie policy</a>
+        <a href="dfy.html">Done-For-You</a>
+        <a href="agencies.html">Agencies</a>
+        <a href="app.html">Client console</a>
+        <a href="vs-cookiebot.html">vs Cookiebot</a>
+        <a href="vs-iubenda.html">vs iubenda</a>
+        <a href="vs-termly.html">vs Termly</a>
+        <a href="#" id="manage-cookies">Manage cookies</a>
+      </div>
+    </div>
+    <p class="foot-legal">GDRock &middot; operated by Yaniv Shashua, Israel &middot; Secure payments processed by Whop.<br>&copy; 2026 GDRock. All rights reserved.</p>
+  </div>
+</footer>
+
+<span class="craft-tag" aria-hidden="true">Craft demo · 6 Oct</span>
+<div id="sticky"><a href="#scan" class="btn btn-1">Scan my store</a><a href="#pricing" class="btn btn-2">View plans</a></div>
+
+<script async src="/gdrock-chat.js"></script>
+
+<script>
+/* ===================== NAV / DRAWER / STICKY ===================== */
+(function(){
+  var nav=document.getElementById('nav'),burger=document.getElementById('burger'),drawer=document.getElementById('drawer'),
+      sticky=document.getElementById('sticky'),hero=document.querySelector('.hero'),ticking=false;
+
+  /* The phone sticky bar is a shortcut to the scan band, so it steps aside
+     while the band itself is on screen. */
+  var band=document.getElementById('scan');
+  function bandOnScreen(){if(!band)return false;var r=band.getBoundingClientRect();return r.top<window.innerHeight&&r.bottom>0;}
+  function onScroll(){
+    var y=window.scrollY;
+    nav.classList.toggle('stuck',y>10);
+    var past=(hero?y>hero.offsetHeight*0.65:y>500)&&!bandOnScreen();
+    sticky.classList.toggle('on',past);
+    document.body.classList.toggle('stickied',past);
+    ticking=false;
+  }
+  window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(onScroll);ticking=true;}},{passive:true});
+  onScroll();
+
+  function setDrawer(open){
+    drawer.classList.toggle('open',open);
+    burger.setAttribute('aria-expanded',open?'true':'false');
+    burger.setAttribute('aria-label',open?'Close menu':'Open menu');
+  }
+  burger.addEventListener('click',function(){setDrawer(!drawer.classList.contains('open'));});
+  drawer.addEventListener('click',function(e){if(e.target.tagName==='A')setDrawer(false);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')setDrawer(false);});
+
+  var mc=document.getElementById('manage-cookies');
+  if(mc)mc.addEventListener('click',function(e){e.preventDefault();var G=window.GDRock;if(G)(G.manage||G.show)();});
+})();
+
+/* ===================== SCANNER =====================
+   Scan API -> normalizeScan() -> renderReport(). The API reads one homepage's
+   source and returns rule-based findings (each with a stable id, a severity,
+   the rule's own wording and the evidence it came from) plus the scan's own
+   limits. The page adds fixed copy keyed by finding id and nothing else: no
+   text on this report is generated at runtime, and a response from before
+   ids existed (or from the 10-minute cache) is mapped by the rule's wording.
+
+   Failure is never dressed as success, and the email is only asked for after
+   a real result is on screen. Everything site-derived goes in via textContent. */
+(function(){
+  var API='https://cdn.gdrock.com/api/scan';
+  /* The ad or link that brought this visitor (utm_source/utm_campaign/utm_content), read from
+     this page's own address and sent with the scan, so each campaign can be counted. Not stored. */
+  var SRC=(function(){try{var q=new URLSearchParams(location.search);return ['utm_source','utm_campaign','utm_content'].map(function(k){return (q.get(k)||'').replace(/[^a-z0-9_.-]/gi,'').slice(0,40);}).filter(Boolean).join('/');}catch(e){return '';}})();
+  var EMAIL=/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+  var DOMAIN=/[a-z0-9][a-z0-9-]*\.[a-z]{2,}/i;
+  var $=function(id){return document.getElementById(id);};
+
+  var form=$('scan-form'),urlEl=$('scan-url'),btn=$('scan-btn'),run=$('scan-run'),bar=$('scan-bar'),step=$('scan-step'),
+      fail=$('scan-fail'),retry=$('scan-retry'),errU=$('err-url'),
+      rc=$('rc'),rpKind=$('rp-kind'),rpDomain=$('rp-domain'),rpTime=$('rp-time'),rpNum=$('rp-num'),rpScore=$('rp-score'),
+      rpHead=$('rp-headline'),rpExplain=$('rp-explain'),rpBasis=$('rp-basis'),rpList=$('rp-list'),rpLimits=$('rp-limits'),
+      rcNote=$('rc-sample-note'),rcAct=$('rc-act'),
+      reportBox=$('report-box'),reportEmail=$('report-email'),reportBtn=$('report-btn'),consentEl=$('scan-consent'),errE=$('err-email'),
+      again=$('scan-again'),deepBox=$('deep-box'),deepH=$('deep-h'),
+      deepEmail=$('deep-email'),deepBtn=$('deep-btn'),deepMsg=$('deep-msg'),errD=$('err-deep');
+  if(!form||!rc)return;
+  var current=null;
+  var lastUrl='',lastScore=null,busy=false;
+
+  /* A real gdrock.com result from the scan API, shown through the same path as any scan. */
+  var SAMPLE={"score":100,"needs_browser_check":false,"open_question":null,"platform":null,"consent_tools":[{"name":"GDRock","evidence":"https://cdn.gdrock.com/gdrock.js"}],"tags_found":[],"privacy_policy":{"url":"https://www.gdrock.com/terms-and-conditions.html","status":"read","checks":[{"key":"controller","label":"who the controller is, with contact details","found":true,"evidence":"… of Israel. Privacy Policy 1. Data Controller Yaniv Shashua, trading as GDRock (Israel), operates as the data controller for personal data c…"},{"key":"legalBasis","label":"the legal basis for each use of data","found":true,"evidence":"…al data to third parties. 3a. Lawful Basis for Processing (GDPR Art. 13(1)(c)) Email addresses: Contract performance and legitimate interest…"},{"key":"rights","label":"the visitor's rights (access, erasure, objection…)","found":true,"evidence":"…ata retention policy. 7. Your GDPR Rights Under the GDPR, you have the right to access, rectify, erase, restrict, or port your personal data…"},{"key":"retention","label":"how long data is kept","found":true,"evidence":"…roved sub-processors. 6. Data Retention Personal data is retained only for as long as necessary to deliver the Services or as required by ap…"},{"key":"processors","label":"who the data is shared with (processors, recipients)","found":true,"evidence":"… do not sell personal data to third parties. 3a. Lawful Basis for Processing (GDPR Art. 13(1)(c)) Email addresses: Contract performance and …"},{"key":"complaint","label":"the right to complain to a supervisory authority","found":true,"evidence":"…R. You also have the right to lodge a complaint with your national data protection supervisory authority at any time. A list of EU data prot…"}]},"document_cookies":[],"deductions":[],"limits":["The homepage at https://www.gdrock.com/ was read, plus 2 of the site's own stylesheets (for the fonts they import) and the privacy policy page it links to. No other page was.","No JavaScript was executed, so nothing here describes what runs in a real browser — not whether a banner appears, not the order tags fire in, and not the cookies JavaScript writes.","A consent tool, banner or tag added by a tag manager, a store app or a server-side country rule is invisible to a source scan.","This request left a Cloudflare location in IL, outside the EU/EEA/UK, so markup this site serves only to European visitors may not be in what we read."],"issues":[{"severity":"good","text":"No third-party analytics or advertising tag was found in the homepage source. Tags injected later by a tag manager, by an app, or on another page would not appear here.","confidence":"observed","evidence":null},{"severity":"good","text":"Consent tool found in the source: GDRock.","confidence":"observed","evidence":"https://cdn.gdrock.com/gdrock.js"},{"severity":"good","text":"A privacy policy link is present in the homepage markup.","confidence":"observed","evidence":null},{"severity":"good","text":"The privacy policy we read covers who the controller is, with contact details; the legal basis for each use of data; the visitor's rights (access, erasure, objection…); how long data is kept; who the data is shared with (processors, recipients); the right to complain to a supervisory authority.","confidence":"observed","evidence":"https://www.gdrock.com/terms-and-conditions.html … of Israel. Privacy Policy 1. Data Controller Yaniv Shashua, trading as GDRock (Israel), operates as the data controller for personal data c…"}],"checked_at":"2026-10-01T18:37:15.995Z","domain":"gdrock.com"};
+
+  /* ---- Normalisation: the scanner's schema in, the report's schema out ---- */
+
+  /* Fixed copy per finding id: a title and one short line. The rule's own
+     sentence and its evidence appear when the row is opened. */
+  var COPY={
+    tags_no_consent_tool:{t:'Tracking tags with no consent tool',s:'Analytics or advertising tags are in the source, and no consent tool appears alongside them.'},
+    tags_not_marked_for_consent:{t:'Tags not marked to wait for consent',s:'A consent tool is installed, but no tag carries the markup it uses to hold one back.'},
+    tags_marked_for_consent:{t:'Tags marked to wait for consent',s:'Tags in the source carry the markup a consent tool uses to hold them back.'},
+    no_tags_in_source:{t:'No tracking tags in the source',s:'No analytics or advertising tag was found in the homepage source.'},
+    consent_tool_found:{t:'Consent tool detected',s:'A consent management tool is present in the homepage source.'},
+    no_consent_tool:{t:'No consent tool in the source',s:'Nothing in the homepage source declares a consent tool.'},
+    consent_mode_granted:{t:'Consent Mode grants storage by default',s:'Google Consent Mode lets tags store and send data before anyone agrees.'},
+    consent_mode_denied:{t:'Consent Mode denies storage by default',s:'Ad and analytics storage stay off until a visitor agrees.'},
+    third_party_fonts:{t:'Fonts load from an outside server',s:'Visitors’ browsers request fonts from a third party as the page loads.'},
+    cookie_setting_embed:{t:'Embeds that set cookies on load',s:'An embedded video or map can set cookies before any choice.'},
+    tracking_cookie_on_document:{t:'Tracking cookie set by the page itself',s:'The homepage response set a tracking cookie before any consent.'},
+    no_privacy_link:{t:'No privacy policy link',s:'No link to a privacy policy was found on the homepage.'},
+    privacy_link_found:{t:'Privacy policy link found',s:'A privacy policy link is present on the homepage.'},
+    no_terms_link:{t:'No terms or imprint link',s:'No terms, legal or imprint link was found on the homepage.'},
+    policy_covers:{t:'What the privacy policy covers',s:null},
+    policy_gaps:{t:'Gaps in the privacy policy',s:'Some points Art. 13 GDPR asks a policy to cover weren’t found in its text.'},
+    policy_unreadable:{t:'Privacy policy couldn’t be checked',s:'A policy link exists, but its text couldn’t be read.'},
+    gtm_container:{t:'Google Tag Manager container',s:'A tag manager can load more tags than a source scan can list.'}
+  };
+  var LEGACY=[
+    [/^The homepage source loads .*no consent tool/,'tags_no_consent_tool'],
+    [/is installed alongside .*no tag in the source carries/,'tags_not_marked_for_consent'],
+    [/is installed, and \d+ tags? (is|are) marked/,'tags_marked_for_consent'],
+    [/^No third-party analytics or advertising tag/,'no_tags_in_source'],
+    [/^Consent tool found in the source/,'consent_tool_found'],
+    [/^No consent tool was found/,'no_consent_tool'],
+    [/^Google Consent Mode is configured .*granted by default/,'consent_mode_granted'],
+    [/^Google Consent Mode is configured .*denied by default/,'consent_mode_denied'],
+    [/(is|are) (linked directly in the homepage source|linked in the homepage source|imported by the site's own stylesheet)/,'third_party_fonts'],
+    [/embedded in the homepage source/,'cookie_setting_embed'],
+    [/^The homepage response set/,'tracking_cookie_on_document'],
+    [/^No link to a privacy policy/,'no_privacy_link'],
+    [/^A privacy policy link is present/,'privacy_link_found'],
+    [/^No terms, legal or imprint link/,'no_terms_link'],
+    [/^The privacy policy we read covers/,'policy_covers'],
+    [/^Not found in the policy text we read/,'policy_gaps'],
+    [/^A privacy policy link was found, but/,'policy_unreadable'],
+    [/^Google Tag Manager container detected/,'gtm_container']
+  ];
+  var SEV={good:'pass',warning:'attention',critical:'critical'};
+  var BADGE={pass:'OK',attention:'Needs attention',critical:'Critical'};
+
+  function idOf(it){
+    if(it.id)return it.id;
+    for(var i=0;i<LEGACY.length;i++)if(LEGACY[i][0].test(it.text||''))return LEGACY[i][1];
+    return null;
+  }
+  function plural(n,one,many){return n+' '+(n===1?one:(many||one+'s'));}
+  function firstSentence(t){var m=/^(.+?[.!?])(\s|$)/.exec(t||'');return m?m[1]:(t||'');}
+
+  /* Only what the scanner returned: structured lists where it gives them,
+     otherwise the rule's own evidence string (several are joined by " | "). */
+  function evidenceFor(id,it,d){
+    var g=[],pol=d.privacy_policy;
+    var tags=(d.tags_found||[]).map(function(t){return {k:t.name,v:t.evidence};});
+    if(/^tags_/.test(id)&&tags.length)g.push({h:'Tags in the source',items:tags});
+    if(id==='consent_tool_found'&&(d.consent_tools||[]).length)
+      g.push({h:'Consent tool loader',items:d.consent_tools.map(function(c){return {k:c.name,v:c.evidence};})});
+    if((id==='policy_covers'||id==='policy_gaps')&&pol&&pol.checks){
+      if(pol.url)g.push({h:'Policy page read',items:[{v:pol.url}]});
+      g.push({h:'Art. 13 points',items:pol.checks.map(function(c){return {k:c.label,ok:!!c.found,v:c.found?c.evidence:null};})});
+    }
+    if(id==='tracking_cookie_on_document'&&(d.document_cookies||[]).length)
+      g.push({h:'Cookies set by the page response',items:d.document_cookies.map(function(n){return {v:n};})});
+    var shown={consent_tool_found:1,policy_covers:1,policy_gaps:1,tags_no_consent_tool:1,tracking_cookie_on_document:1};
+    if(it.evidence&&!shown[id])
+      g.push({h:id==='tags_not_marked_for_consent'?'Consent tool loader':'Evidence',
+        items:String(it.evidence).split(' | ').map(function(v){return {v:v};})});
+    return g;
+  }
+
+  function normalizeScan(d,o){
+    o=o||{};
+    var pol=d.privacy_policy;
+    var findings=(d.issues||[]).map(function(it,i){
+      var id=idOf(it),copy=COPY[id]||null,sev=SEV[it.severity]||'attention';
+      var sum=copy&&copy.s?copy.s:firstSentence(it.text);
+      if(id==='policy_covers'&&pol&&pol.checks){
+        var hit=pol.checks.filter(function(c){return c.found;}).length;
+        sum='The policy covers '+hit+' of the '+pol.checks.length+' points Art. 13 GDPR asks for.';
+      }
+      return {key:'f'+i,id:id,severity:sev,title:copy?copy.t:firstSentence(it.text),summary:sum,
+        text:it.text||'',confidence:it.confidence||null,evidence:evidenceFor(id,it,d)};
+    });
+    var counts={pass:0,attention:0,critical:0};
+    findings.forEach(function(f){counts[f.severity]++;});
+    var open=d.needs_browser_check===true&&!!d.open_question;
+    var at=d.checked_at?new Date(d.checked_at):null;
+    return {domain:o.domain||'',sample:!!o.sample,score:typeof d.score==='number'?d.score:null,
+      open:open,openText:open?d.open_question.text:null,deductions:(d.deductions||[]).length,counts:counts,
+      findings:findings,limits:(d.limits||[]).slice(),platform:d.platform&&d.platform.name?d.platform.name:null,
+      scannedAt:at&&!isNaN(at.getTime())?at:null};
+  }
+
+  /* Headline and line under it: templates over the counts, nothing guessed. */
+  function verdictFor(n){
+    var c=n.counts.critical,w=n.counts.attention,dd=n.deductions;
+    if(n.open)return {h:'Needs a real-browser check.',p:n.openText+(dd?' Already '+plural(dd,'thing')+' to fix in the source.':''),link:true};
+    if(c)return {h:'Critical issues detected.',p:plural(c,'critical finding')+' in the source'+(w?', and '+plural(w,'more item')+' to review':'')+'.'};
+    if(!w)return {h:'No issues found in the source.',p:'Everything this scan can check came back clean. What it can’t see is listed below.'};
+    if(!dd)return {h:'Strong baseline.',p:'No critical issues found. '+plural(w,'item')+' still '+(w===1?'needs':'need')+' attention.'};
+    return {h:'Some items need attention.',p:plural(dd,'thing')+' to fix in the source'+(w>dd?', and '+plural(w-dd,'more item')+' to review':'')+'.'};
+  }
+  /* Same thresholds the score has always used: 90+ pass, 70+ attention, below that red. */
+  function tone(s){return s>=90?'var(--r-pass)':s>=70?'var(--r-warn)':'var(--r-fail)';}
+
+  /* ---- Rendering ---- */
+  var FMT=null;
+  try{FMT=new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){}
+  var SVGNS='http://www.w3.org/2000/svg';
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+  function chevron(){
+    var s=document.createElementNS(SVGNS,'svg'),p=document.createElementNS(SVGNS,'path');
+    s.setAttribute('viewBox','0 0 24 24');s.setAttribute('class','rp-chev');s.setAttribute('aria-hidden','true');s.setAttribute('fill','none');
+    s.setAttribute('stroke','currentColor');s.setAttribute('stroke-width','2');s.setAttribute('stroke-linecap','round');s.setAttribute('stroke-linejoin','round');
+    p.setAttribute('d','M9 6l6 6-6 6');s.appendChild(p);return s;
+  }
+  function rowFor(f,i){
+    var li=el('li','rp-row');li.setAttribute('data-sev',f.severity);li.style.setProperty('--i',i);
+    var more=(f.text&&f.text!==f.summary)||f.evidence.length>0;
+    var trig=el(more?'button':'div','rp-trig'+(more?'':' static'));
+    var main=el('span','rp-main');
+    main.appendChild(el('span','rp-title',f.title));
+    main.appendChild(el('span','rp-sum',f.summary));
+    trig.appendChild(main);
+    trig.appendChild(el('span','rp-badge',BADGE[f.severity]));
+    li.appendChild(trig);
+    if(!more)return li;
+    var did='rp-d-'+f.key;
+    trig.type='button';trig.id='rp-t-'+f.key;
+    trig.setAttribute('aria-expanded','false');trig.setAttribute('aria-controls',did);
+    trig.appendChild(chevron());
+    var det=el('div','rp-detail'),inner=el('div','rp-detail-in'),pad=el('div','rp-detail-pad');
+    det.id=did;det.setAttribute('role','region');det.setAttribute('aria-labelledby',trig.id);
+    if(f.text)pad.appendChild(el('p','rp-text',f.text));
+    f.evidence.forEach(function(g){
+      var box=el('div','rp-ev'),ul=el('ul','rp-ev-list');
+      box.appendChild(el('p','rp-ev-h',g.h));
+      g.items.forEach(function(x){
+        var row=el('li');
+        if(x.k!=null){
+          var k=el('span','rp-ev-k');
+          if(x.ok!=null){var m=el('span','rp-mark '+(x.ok?'ok':'miss'),x.ok?'✓':'−');m.setAttribute('aria-hidden','true');k.appendChild(m);}
+          k.appendChild(document.createTextNode(x.k));
+          if(x.ok===false)k.appendChild(document.createTextNode(' (not found)'));
+          if(x.ok===true)k.appendChild(el('span','sr',' (found)'));
+          row.appendChild(k);
+        }
+        if(x.v)row.appendChild(el('code','rp-code',x.v));
+        ul.appendChild(row);
+      });
+      box.appendChild(ul);pad.appendChild(box);
+    });
+    if(f.confidence)pad.appendChild(el('p','rp-conf',f.confidence==='observed'?'Observed in the page source':'Inferred from what is and isn’t in the source'));
+    inner.appendChild(pad);det.appendChild(inner);li.appendChild(det);
+    return li;
+  }
+  function countUp(node,to){
+    if(reduced()){node.textContent=String(to);return;}
+    var t0=0,dur=420;
+    function f(t){if(!t0)t0=t;var k=Math.min(1,(t-t0)/dur);node.textContent=String(Math.round(to*(1-Math.pow(1-k,3))));if(k<1)requestAnimationFrame(f);}
+    node.textContent='0';requestAnimationFrame(f);
+    /* Frames pause in a hidden tab: the real number lands regardless. */
+    setTimeout(function(){node.textContent=String(to);},dur+120);
+  }
+  function renderReport(n,o){
+    o=o||{};current=n;
+    rpKind.textContent='Privacy scan · '+(n.sample?'Sample result':'Result');
+    rpDomain.textContent=n.domain;
+    if(n.scannedAt&&FMT){rpTime.textContent='Scanned '+FMT.format(n.scannedAt);rpTime.setAttribute('datetime',n.scannedAt.toISOString());}
+    else{rpTime.textContent='';rpTime.removeAttribute('datetime');}
+    rpNum.classList.toggle('is-open',n.open);
+    if(n.open||n.score==null){rpScore.textContent='?';rpScore.style.color='var(--r-ink-2)';}
+    else{rpScore.style.color=tone(n.score);if(o.animate)countUp(rpScore,n.score);else rpScore.textContent=String(n.score);}
+    var v=verdictFor(n);
+    rpHead.textContent=v.h;rpExplain.textContent=v.p;
+    if(v.link){var a=el('a',null,'Run the free deep check');a.href='#deep-box';rpExplain.appendChild(document.createTextNode(' '));rpExplain.appendChild(a);rpExplain.appendChild(document.createTextNode('.'));}
+    rpBasis.textContent=(n.open?'No source score':'Source score')+' · '+(n.platform||'rules-based');
+    rpList.textContent='';
+    n.findings.forEach(function(f,i){rpList.appendChild(rowFor(f,i));});
+    rpLimits.textContent='';
+    n.limits.forEach(function(t){rpLimits.appendChild(el('li',null,t));});
+    if(o.animate){rc.classList.remove('show');void rc.offsetWidth;rc.classList.add('show');}
+  }
+  rpList.addEventListener('click',function(e){
+    var t=e.target&&e.target.closest?e.target.closest('button.rp-trig'):null;if(!t)return;
+    var open=t.getAttribute('aria-expanded')!=='true';
+    t.setAttribute('aria-expanded',open?'true':'false');t.parentNode.classList.toggle('open',open);
+  });
+
+  /* ---- The scan itself (unchanged request, states and copy) ---- */
+  function hostOf(u){return u.replace(/^https?:\/\//i,'').replace(/^www\./i,'').replace(/[\/?#].*$/,'').toLowerCase();}
+  function setBar(f){bar.style.transform='scaleX('+f+')';}
+  function mark(el,err,on){el.setAttribute('aria-invalid',on?'true':'false');err.classList.toggle('show',on);}
+
+  /* Progress copy describes the work the API actually does, in order. */
+  function steps(host){return [
+    'Fetching '+host+'…',
+    'Reading the homepage source…',
+    'Matching 25 consent tools and 22 tracking tags…',
+    'Checking fonts, embeds and cookies…',
+    'Reading your stylesheets and privacy policy…',
+    'Writing your report…'
+  ];}
+
+  function setBusy(on,host){
+    busy=on;btn.disabled=on;btn.classList.toggle('busy',on);
+    btn.querySelector('.btn-lab').textContent=on?'Scanning…':'Scan my store';
+    urlEl.readOnly=on;
+    rc.classList.toggle('busy',on);rc.setAttribute('aria-busy',on?'true':'false');
+    if(on){rpKind.textContent='Privacy scan · Scanning';rpDomain.textContent=host;rpTime.textContent='';}
+  }
+
+  function showActions(n){
+    rcNote.hidden=true;rcAct.hidden=false;
+    reportBox.classList.remove('sent');
+    deepMsg.textContent='';deepBtn.disabled=false;deepBtn.textContent='Run the deep check';
+    /* An open result leads with the deep check: it is the only way to answer it. */
+    if(n.open){rcAct.insertBefore(deepBox,reportBox);deepBox.classList.add('lead');deepH.textContent='This one needs the real check';}
+    else{rcAct.insertBefore(reportBox,deepBox);deepBox.classList.remove('lead');deepH.textContent='See what actually fires before consent';}
+  }
+
+  function showFail(title,body){
+    /* Put back whatever the report showed before (the sample, or the last real result). */
+    if(current)renderReport(current);
+    fail.querySelector('#fail-h').textContent=title;
+    fail.querySelector('#fail-p').innerHTML=body;
+    fail.classList.add('on');
+  }
+
+  function scan(){
+    if(busy)return;
+    var u=urlEl.value.trim();
+    if(!u||!DOMAIN.test(u)){mark(urlEl,errU,true);urlEl.focus();return;}
+    mark(urlEl,errU,false);
+    var url=/^https?:\/\//i.test(u)?u:'https://'+u,host=hostOf(url);
+    lastUrl=url;fail.classList.remove('on');
+
+    var S=steps(host),i=0,settled=false,timedOut=false;
+    setBusy(true,host);run.classList.add('on');setBar(.06);step.textContent=S[0];
+    var tick=setInterval(function(){i++;if(i<S.length)step.textContent=S[i];setBar(Math.min(.12+i*.17,.9));},1100);
+    var ctrl=('AbortController' in window)?new AbortController():null;
+    var kill=setTimeout(function(){if(!settled){timedOut=true;if(ctrl)ctrl.abort();}},30000);
+    function stop(){settled=true;clearInterval(tick);clearTimeout(kill);}
+
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url,src:SRC}),signal:ctrl?ctrl.signal:undefined})
+      .then(function(r){
+        if(r.status===429)return r.json().catch(function(){return {};}).then(function(d){var e=new Error('rate');e.rate=d;throw e;});
+        if(!r.ok)throw new Error('http '+r.status);return r.json();})
+      .then(function(d){
+        stop();
+        if(!d||d.is_real_site===false||typeof d.score!=='number'){
+          setBar(1);run.classList.remove('on');setBusy(false);
+          showFail('We couldn’t read that site',
+            'The homepage didn’t return readable content'+(d&&d.issues&&d.issues[0]?': '+escapeHtml(d.issues[0].text):'.')+
+            ' Nothing has been scored. If the site works in your browser, email <a href="mailto:office@gdrock.com">office@gdrock.com</a> and we’ll check it by hand.');
+          return;
+        }
+        setBar(1);step.textContent='Done.';
+        setTimeout(function(){
+          run.classList.remove('on');setBusy(false);lastScore=d.score;
+          var n=normalizeScan(d,{domain:host});
+          renderReport(n,{animate:true});showActions(n);
+          rc.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});
+        },260);
+      })
+      .catch(function(err){
+        stop();setBar(1);run.classList.remove('on');setBusy(false);
+        if(err&&err.rate)showFail('Too many scans from your connection','Wait a few minutes and try again. Nothing has been scored. Results are kept for ten minutes, so scanning the same address again shows the same result.');
+        else if(timedOut)showFail('That took too long','The site didn’t answer within 30 seconds, which usually means it’s slow or refuses automated requests. Nothing has been scored. Try again, or email <a href="mailto:office@gdrock.com">office@gdrock.com</a> and we’ll check it by hand.');
+        else showFail('We couldn’t reach that site','Check the address and try again. Nothing has been scored. If the site is live and this keeps happening, email <a href="mailto:office@gdrock.com">office@gdrock.com</a> and we’ll check it by hand.');
+      });
+  }
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function reduced(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}
+
+  form.addEventListener('submit',function(e){e.preventDefault();scan();});
+  retry.addEventListener('click',function(){fail.classList.remove('on');urlEl.focus();urlEl.select();});
+  again.addEventListener('click',function(){urlEl.value='';urlEl.focus();document.getElementById('scan').scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});});
+
+  /* Step two: the score is already on screen, so the email only buys a copy.
+     One /api/scan call with the email both sends the report and alerts the
+     owner; the lead call files it in the CRM. */
+  reportBtn.addEventListener('click',function(){
+    var em=reportEmail.value.trim();
+    if(!EMAIL.test(em)){mark(reportEmail,errE,true);reportEmail.focus();return;}
+    mark(reportEmail,errE,false);
+    var optin=!!(consentEl&&consentEl.checked);
+    reportBtn.disabled=true;reportBtn.textContent='Sending…';
+    fetch('https://cdn.gdrock.com/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({source:'scanner',email:em,website_url:lastUrl,plan:'scan',
+        notes:optin?'opted-in: alerts+news':'no marketing opt-in',score:lastScore})}).catch(function(){});
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:lastUrl,email:em,optin:optin,src:SRC})})
+      .catch(function(){});
+    reportBox.classList.add('sent');reportBtn.disabled=false;reportBtn.textContent='Send it';
+  });
+
+  /* Step three: the deep check. A real browser on a server in Germany runs the
+     before-consent check and the result is emailed; what the page says next is
+     whatever the API says, so it can never promise more than is running. */
+  reportEmail.addEventListener('input',function(){if(!deepEmail.value)deepEmail.placeholder=reportEmail.value||'you@yourstore.com';});
+  deepBtn.addEventListener('click',function(){
+    var em=deepEmail.value.trim()||reportEmail.value.trim();
+    if(!EMAIL.test(em)){mark(deepEmail,errD,true);deepEmail.focus();return;}
+    mark(deepEmail,errD,false);deepEmail.value=em;
+    deepBtn.disabled=true;deepBtn.textContent='Sending…';deepMsg.textContent='';
+    fetch('https://cdn.gdrock.com/api/deep-scan',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({url:lastUrl,email:em,optin:!!(consentEl&&consentEl.checked),src:SRC})})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(x){
+        deepMsg.textContent=x.ok?(x.d.message||'Got it. The result will be emailed to you.'):(x.d.message||x.d.error||'That didn’t go through. Try again, or email office@gdrock.com.');
+        deepBtn.textContent=x.ok?'Requested':'Run the deep check';deepBtn.disabled=!!x.ok;
+      })
+      .catch(function(){deepMsg.textContent='That didn’t go through. Try again, or email office@gdrock.com.';deepBtn.disabled=false;deepBtn.textContent='Run the deep check';});
+  });
+
+  /* The sample, through the same normalisation and renderer as a live scan. */
+  renderReport(normalizeScan(SAMPLE,{domain:SAMPLE.domain||'gdrock.com',sample:true}));
+
+  /* ---- Compact scan bar (desktop): appears once the scan band is behind you ---- */
+  var sb=$('scanbar'),sbForm=$('sb-form'),sbUrl=$('sb-url'),band=$('scan'),foot=document.querySelector('footer');
+  if(sb&&'IntersectionObserver' in window){
+    var bandGone=false,footIn=false;
+    function sync(){var on=bandGone&&!footIn&&window.innerWidth>860;sb.classList.toggle('on',on);
+      if(on)sb.removeAttribute('inert');else sb.setAttribute('inert','');sb.setAttribute('aria-hidden',on?'false':'true');}
+    new IntersectionObserver(function(es){es.forEach(function(e){bandGone=!e.isIntersecting&&e.boundingClientRect.top<0;});sync();},{threshold:0}).observe(band);
+    if(foot)new IntersectionObserver(function(es){es.forEach(function(e){footIn=e.isIntersecting;});sync();}).observe(foot);
+    window.addEventListener('resize',sync,{passive:true});
+    sbForm.addEventListener('submit',function(e){
+      e.preventDefault();
+      urlEl.value=sbUrl.value;
+      band.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});
+      setTimeout(scan,reduced()?0:450);
+    });
+  }
+})();
+
+/* ===================== CUSTOMIZE preview (mirrors cdn.gdrock.com/customize) ===================== */
+(function(){
+  var banner=document.getElementById('mk-banner'); if(!banner)return;
+  var accInput=document.getElementById('mk-acc'),accHex=document.getElementById('mk-acc-hex'),
+      rad=document.getElementById('mk-rad'),radVal=document.getElementById('mk-rad-val'),
+      logo=document.getElementById('mk-logo'),logoVal=document.getElementById('mk-logo-val'),
+      logoSvg=document.getElementById('mk-logo-svg'),accept=document.getElementById('mk-accept'),reject=document.getElementById('mk-reject'),
+      btns=banner.querySelectorAll('.mk-bbtn'),pres=document.querySelectorAll('#mk-presets .mk-pre'),
+      body=banner.closest('.mk-body');
+  function rgba(hex,a){hex=(hex||'').replace('#','');if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');}
+    var n=parseInt(hex,16);return 'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+  /* Button text picks whichever of white / near-black contrasts more with the
+     chosen accent, so no preset or picked colour can make "Accept all" unreadable. */
+  function lum(hex){hex=(hex||'').replace('#','');if(hex.length===3){hex=hex.split('').map(function(c){return c+c;}).join('');}
+    var n=parseInt(hex,16);return [(n>>16)&255,(n>>8)&255,n&255].map(function(v){v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);})
+      .reduce(function(a,v,i){return a+v*[.2126,.7152,.0722][i];},0);}
+  function onAccent(hex){var L=lum(hex);return (1.05/(L+.05))>=((L+.05)/(0.0033+.05))?'#fff':'#0a0b0f';}
+  /* Reject all and Accept all are the same button, as on the live banner. */
+  function applyAccent(hex){if(!hex)return;[accept,reject].forEach(function(b){b.style.background=hex;b.style.color=onAccent(hex);});
+    logoSvg.querySelectorAll('path').forEach(function(p){p.setAttribute('stroke',hex);});
+    logoSvg.querySelector('path').setAttribute('fill',rgba(hex,.14));
+    accHex.textContent=hex.toUpperCase();if(body)body.style.setProperty('--mk-acc',hex);
+    if(accInput.value.toLowerCase()!==hex.toLowerCase())accInput.value=hex;
+    pres.forEach(function(p){p.classList.toggle('on',(p.getAttribute('data-acc')||'').toLowerCase()===hex.toLowerCase());});}
+  function applyRadius(v){var r=+v;banner.style.borderRadius=r+'px';var b=Math.max(3,Math.round(r*0.55));
+    btns.forEach(function(x){x.style.borderRadius=b+'px';});radVal.textContent=r+'px';}
+  function applyLogo(v){var s=+v;logoSvg.setAttribute('width',s);logoSvg.setAttribute('height',Math.round(s*34/30));logoVal.textContent=s+'px';}
+  accInput.addEventListener('input',function(){applyAccent(accInput.value);});
+  rad.addEventListener('input',function(){applyRadius(rad.value);});
+  logo.addEventListener('input',function(){applyLogo(logo.value);});
+  pres.forEach(function(p){p.addEventListener('click',function(){applyAccent(p.getAttribute('data-acc'));});});
+  applyAccent('#4f7dff');applyRadius(rad.value);applyLogo(logo.value);
+})();
+</script>
+
+<script type="module">
+/* ===================== THE TWO AUTHORED MOMENTS =====================
+   Both carry information rather than decoration: the ledger cross-lights the
+   mistake against the fine it caused, and the install types the one tag that
+   is the whole product. Everything renders finished in static HTML first and
+   only downgrades to an animated start state once GSAP has actually loaded,
+   so a CDN failure can never leave the page blank. */
+try{
+  const {gsap}=await import('gsap');
+  const {ScrollTrigger}=await import('gsap/ScrollTrigger');
+  gsap.registerPlugin(ScrollTrigger);
+
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wide=window.matchMedia('(min-width: 1001px)').matches;
+
+  /* --- Ledger cross-light --- */
+  if(!reduce&&wide){
+    const mistakes=document.getElementById('mistakes'),cases=document.getElementById('cases');
+    if(mistakes&&cases){
+      const items=[...mistakes.querySelectorAll('li')],arts=[...cases.querySelectorAll('.case')];
+      mistakes.classList.add('live');cases.classList.add('live');
+      const light=m=>{
+        items.forEach(li=>li.classList.toggle('on',li.dataset.m===m));
+        arts.forEach(a=>a.classList.toggle('lit',a.dataset.m===m));
+      };
+      arts.forEach(a=>ScrollTrigger.create({
+        trigger:a,start:'top 72%',end:'bottom 28%',
+        onEnter:()=>light(a.dataset.m),onEnterBack:()=>light(a.dataset.m)
+      }));
+      light('1');
+    }
+  }
+
+  /* --- Install: type the tag, then un-dim what it bought --- */
+  if(!reduce){
+    const tag=document.getElementById('term-tag'),caret=document.getElementById('term-caret'),
+          out=document.getElementById('term-out'),steps=document.getElementById('steps');
+    if(tag&&out){
+      const full=tag.textContent;
+      const lines=[...out.querySelectorAll('.out-line')];
+      const stepEls=steps?[...steps.querySelectorAll('.step')]:[];
+      tag.textContent='';
+      out.classList.add('live');lines.forEach(l=>l.classList.remove('on'));
+      if(steps){steps.classList.add('live');stepEls.forEach(s=>s.classList.remove('on'));}
+
+      const typed={n:0};
+      ScrollTrigger.create({
+        trigger:'.term',start:'top 78%',once:true,
+        onEnter(){
+          gsap.to(typed,{
+            n:full.length,duration:1.5,ease:'none',
+            onUpdate(){tag.textContent=full.slice(0,Math.round(typed.n));},
+            onComplete(){
+              tag.textContent=full;
+              if(caret)caret.style.display='none';
+              lines.forEach((l,i)=>gsap.delayedCall(.16*i,()=>l.classList.add('on')));
+              stepEls.forEach((s,i)=>gsap.delayedCall(.16*i,()=>s.classList.add('on')));
+            }
+          });
+        }
+      });
+    }
+  }
+
+  /* --- Proof ring counts to its measured value --- */
+  const arc=document.getElementById('ring-arc'),rn=document.getElementById('ring-n');
+  if(!reduce&&arc&&rn){
+    const C=2*Math.PI*54,o={v:0};
+    ScrollTrigger.create({
+      trigger:'#proof',start:'top 76%',once:true,
+      onEnter(){
+        gsap.fromTo(arc,{strokeDashoffset:C},{strokeDashoffset:0,duration:1.3,ease:'power2.out'});
+        gsap.to(o,{v:100,duration:1.3,ease:'power2.out',
+          onUpdate:()=>rn.textContent=Math.round(o.v),onComplete:()=>rn.textContent='100'});
+      }
+    });
+  }
+}catch(e){/* static HTML already shows the finished state */}
+</script>
+
+</body>
+</html>

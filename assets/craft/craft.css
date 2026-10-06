@@ -1,0 +1,158 @@
+/* ============================================================================
+   GDRock craft pass · 6 Oct 2026
+   Loads AFTER /assets/gdrock.css. Every rule here is an override, so the live
+   homepage is untouched until this file is linked from index.html.
+   Standard: Emil Kowalski's design-engineering rules (emil-design-eng,
+   review-animations, mobile-native, apple-design). Each block says why.
+   ========================================================================== */
+
+/* ---- 1. Curves. The built-in and the old .22,1,.36,1 are too soft for a
+   deliberate UI. --ease-out is reused by every existing hover/focus/reveal. */
+:root{
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --ease-in-out:cubic-bezier(.77,0,.175,1);
+  --ease-drawer:cubic-bezier(.32,.72,0,1);
+  interpolate-size:allow-keywords;          /* lets <details> animate to height:auto */
+}
+
+/* ---- 2. Mobile baseline. One line each; the reasons are in mobile-native. */
+html{-webkit-tap-highlight-color:transparent;}                 /* no grey flash on tap */
+.btn,.burger,a.step,.rp-trig,.qa summary,.mk-pre,#drawer a,.nav-links a,.foot-links a,.hero-down{
+  touch-action:manipulation;                                     /* no 300ms double-tap wait */
+}
+.btn,.burger,.rp-trig,.qa summary,.mk-pre,.hero-down{
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;  /* long-press never selects a control's label */
+}
+@media(pointer:coarse){
+  .inp,.scanbar-form input,#gdc-in{font-size:16px!important;}  /* under 16px iOS zooms the page on focus and never zooms back */
+  .foot-links a{padding:8px 0;}                                 /* 22px tall links become a thumb-sized target */
+  a.step{padding:8px 0;}
+}
+#sticky{padding-bottom:calc(11px + env(safe-area-inset-bottom,0px));}   /* clears the home indicator */
+
+/* ---- 3. Press feedback. Native buttons respond on touch-down; these did
+   nothing until release. 160ms, strong ease-out, 3% scale. */
+.btn{transition:background .18s var(--ease),color .18s var(--ease),border-color .18s var(--ease),transform .16s var(--ease-out);}
+.btn:active,.btn-1:active,.btn-2:active,.btn-3:active,.btn-scan:active,.btn-ghost-dark:active{transform:scale(.97);}
+.btn:disabled:active,.btn-scan:disabled:active{transform:none;}
+.burger{transition:transform .16s var(--ease-out),border-color .18s var(--ease-out);}
+.burger:active{transform:scale(.94);}
+.mk-pre:active{transform:scale(.94);}
+.hero-down:active{transform:scale(.94);}
+button.rp-trig:active{background:var(--r-s3);}                 /* a full-width row shouldn't shrink; a tone change is the right feedback */
+.qa summary:active{color:#fff;}
+#drawer a:active{color:var(--ink);}
+
+/* ---- 4. Hover motion gated to real pointers. On a phone the first tap
+   applies :hover and leaves it there, so a lifted button stays lifted. */
+.btn-1:hover,.btn-3:hover,.btn-scan:hover,.mk-pre:hover,.hero-down:hover{transform:none;}
+.btn-scan:hover .btn-arrow,.link-q:hover svg{transform:none;}
+@media(hover:hover) and (pointer:fine){
+  .btn-1:hover,.btn-3:hover,.btn-scan:hover{transform:translateY(-1px);}
+  .btn-1:active,.btn-3:active,.btn-scan:active{transform:translateY(0) scale(.97);}
+  .mk-pre:hover{transform:scale(1.08);}
+  .hero-down:hover{transform:translateY(2px);}
+  .btn-scan:hover .btn-arrow,.link-q:hover svg{transform:translateX(3px);}
+}
+
+/* ---- 5. Mobile drawer. display:none to block teleports in. It now scales
+   from the top edge (its trigger lives there), 200ms in, 150ms out, and it is
+   a transition, so a fast double-tap on the burger retargets instead of
+   restarting. Links follow with a 25ms stagger; the whole group lands in 350ms. */
+#drawer{
+  display:block;visibility:hidden;opacity:0;transform:translateY(-6px) scale(.98);transform-origin:50% 0;
+  pointer-events:none;
+  transition:opacity .15s var(--ease-out),transform .15s var(--ease-out),visibility 0s .15s;
+}
+#drawer.open{
+  visibility:visible;opacity:1;transform:none;pointer-events:auto;
+  transition:opacity .2s var(--ease-out),transform .2s var(--ease-out),visibility 0s;
+}
+#drawer li,#drawer .btn{opacity:0;transform:translateY(-4px);transition:opacity .12s var(--ease-out),transform .12s var(--ease-out);}
+#drawer.open li,#drawer.open .btn{opacity:1;transform:none;transition:opacity .22s var(--ease-out),transform .22s var(--ease-out);}
+#drawer.open li:nth-child(2){transition-delay:25ms}#drawer.open li:nth-child(3){transition-delay:50ms}
+#drawer.open li:nth-child(4){transition-delay:75ms}#drawer.open li:nth-child(5){transition-delay:100ms}
+#drawer.open li:nth-child(6){transition-delay:125ms}#drawer.open li:nth-child(7){transition-delay:150ms}
+#drawer.open .btn{transition-delay:175ms}
+
+/* ---- 6. FAQ. The answer snapped open; the chevron was the only thing that
+   moved. Height is the one layout property tolerated for an accordion, kept
+   at 200ms. Browsers without ::details-content keep today's instant open. */
+.qa::details-content{
+  height:0;overflow:clip;
+  transition:height .2s var(--ease-out),content-visibility .2s allow-discrete;
+}
+.qa[open]::details-content{height:auto;}
+.qa .chev{transition:transform .2s var(--ease-out);}
+
+/* ---- 7. Phone sticky bar. It appeared and vanished with display:flex. It
+   now slides in from the edge it lives on and leaves the same way. */
+@media(max-width:860px){
+  #sticky{
+    display:flex;visibility:hidden;transform:translateY(100%);
+    transition:transform .2s var(--ease-out),visibility 0s .2s;
+  }
+  #sticky.on{visibility:visible;transform:none;transition:transform .25s var(--ease-out),visibility 0s;}
+}
+
+/* ---- 8. Nav bar: same change, a real curve. */
+header.nav{transition:border-color .25s var(--ease-out),background .25s var(--ease-out);}
+
+/* ---- 9. The "live" dot. It animated box-shadow forever (a paint every
+   frame). Same idea on the compositor: a ring that scales and fades. */
+.pulse{animation:none;box-shadow:none;position:relative;}
+.pulse::after{
+  content:'';position:absolute;inset:-1px;border-radius:50%;border:1.5px solid var(--p-acc);
+  opacity:0;animation:craft-ring 2.4s var(--ease-out) infinite;
+}
+@keyframes craft-ring{0%{transform:scale(1);opacity:.55}70%,100%{transform:scale(2.4);opacity:0}}
+
+/* ---- 10. Checkbox tick came from scale(0). Nothing appears from nothing. */
+.consent input::before{transform:scale(.6);opacity:0;transition:transform .14s var(--ease-out),opacity .14s var(--ease-out);}
+.consent input:checked::before{transform:scale(1);opacity:1;}
+
+/* ---- 11. Customizer sliders must track the thumb 1:1. A 150ms lag between
+   the slider and the preview reads as a laggy tool. Preset clicks (a discrete
+   choice, not a drag) keep a short colour transition. */
+.mk-banner,#mk-logo-svg{transition:none;}
+.mk-bbtn{transition:background .15s var(--ease-out),color .15s var(--ease-out);}
+
+/* ---- 12. Scan progress. Progress is a measurement; it shouldn't ease. The
+   steps tick every 1.1s, so a 1s linear move keeps the bar always moving. */
+.bar i{transition:transform 1s linear;}
+
+/* ---- 13. First-visit hero. Rare, so it earns a beat: 10px rise, 70ms apart,
+   CSS animation so it stays smooth while the page is still loading. */
+@media(prefers-reduced-motion:no-preference){
+  .hero h1,.hero .lede,.hero-down{animation:craft-hero-in .5s var(--ease-out) both;}
+  .hero .lede{animation-delay:70ms}
+  .hero-down{animation-delay:140ms}
+}
+@keyframes craft-hero-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---- 14. Chat launcher (styles come from gdrock-chat.js): press feedback
+   and a real curve. */
+#gdc-launch{transition:transform .16s var(--ease-out),box-shadow .2s var(--ease-out)!important;}
+#gdc-launch:active{transform:scale(.96)!important;}
+
+/* ---- 15. Reduced motion: gentler, not zero. The site collapsed every
+   transition to .01ms. Opacity and colour changes still bridge state; only
+   movement goes. */
+@media(prefers-reduced-motion:reduce){
+  .btn,.nav-links a,.link-q,.qa summary,.rp-row,.mistakes li,.case,.step,.out-line,.rp,.scanbar,#drawer,#drawer li,#drawer .btn,#sticky,header.nav,.consent input::before{
+    transition-property:opacity,color,background-color,border-color,visibility!important;
+    transition-duration:.15s!important;
+  }
+  #drawer,#drawer li,#drawer .btn,#sticky,.scanbar{transform:none!important;}
+  .pulse::after{animation:none;}
+  .qa::details-content{transition:none;}
+}
+
+/* ---- Demo label, so a screenshot can't be mistaken for the live page. ---- */
+.craft-tag{
+  position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:149;
+  font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);
+  background:rgba(8,9,12,.85);border:1px solid var(--line-2);border-radius:99px;padding:8px 11px;pointer-events:none;
+}
+body.stickied .craft-tag{bottom:calc(78px + env(safe-area-inset-bottom,0px));}
+@media(max-width:860px){.craft-tag{display:none;}}
