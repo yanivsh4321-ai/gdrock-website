@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="/assets/fonts/geist.css">
 <script type="importmap">{"imports":{"gsap":"https://esm.sh/gsap@3.12.5","gsap/ScrollTrigger":"https://esm.sh/gsap@3.12.5/ScrollTrigger"}}</script>
 
-<link rel="stylesheet" href="/assets/gdrock.css?v=20261001b">
+<link rel="stylesheet" href="/assets/gdrock.css?v=20261008a">
 
 <script type="application/ld+json">
 {
@@ -1069,7 +1069,7 @@
   function hit(e){try{if(!AD)return;var b=JSON.stringify({e:e,src:SRC||'check-de'});if(navigator.sendBeacon)navigator.sendBeacon('https://cdn.gdrock.com/api/hit',b);else fetch('https://cdn.gdrock.com/api/hit',{method:'POST',body:b,keepalive:true});}catch(x){}}
   var adFocused=false;
   function adSetup(){
-    var band=$('scan');band.classList.add('ad');
+    var band=$('scan');band.classList.add('ad');document.body.classList.add('ad');
     var eye=band.querySelector('.band-eye');if(eye)eye.innerHTML='<span class="pulse" aria-hidden="true"></span>Free check &middot; real browser in Germany &middot; result by email';
     $('scan-h').textContent='Does your cookie banner hold the trackers back?';
     var sub=band.querySelector('.band-sub');if(sub)sub.textContent='Paste your store. A browser on a server in Germany visits it twice without touching the banner and emails you every tag that fired, with the second it did. Usually within 15 minutes.';

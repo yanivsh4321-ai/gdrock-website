@@ -236,6 +236,9 @@ header.nav.stuck{border-bottom-color:var(--line);background:rgba(8,9,12,.9);}
 .ad-note{font-size:13px;line-height:1.55;color:var(--p-ink-3);margin-top:12px;}
 .ad-link{background:none;border:0;padding:0;font:inherit;color:var(--p-acc);text-decoration:underline;cursor:pointer;}
 @media(max-width:620px){.ad-step{padding:18px 16px 14px;}}
+/* Ad arrival: the check is the first screen. The hero is hidden and the band takes the header offset. */
+body.ad .hero{display:none;}
+body.ad .band#scan{padding-top:calc(62px + clamp(28px,5vw,64px));}
 
 .trust{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:22px;}
 .trust li{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--p-ink-2);}
