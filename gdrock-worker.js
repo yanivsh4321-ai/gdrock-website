@@ -2335,10 +2335,29 @@ async function sendDeepScanReport(env, job, r, scored) {
   const bfBook = now < Date.UTC(2026, 10, 21);
   // First-client offer (Oct 2026): Care at €15/month with the install done by hand, free. On until the
   // Worker var FIRST_OFFER = "0" (switch it off once there are a few clients).
-  const firstOffer = !firstOn ? "" : `<div style="border-top:1px solid #2a3a6e;margin:20px 0 0;padding-top:16px;">
-      <p style="color:#fff;font-size:15px;font-weight:700;margin:0 0 6px;">Or: &euro;15 a month, and we install it for you free.</p>
-      <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 12px;">For our first clients. Start Care, reply to this email, and we install it with you on a 15-minute screen share, then re-run this check. Cancel any time.</p>
-      <a href="https://whop.com/checkout/plan_Hzt8oE2YfKseZ/" style="display:inline-block;background:#111a33;border:1px solid #4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:14.5px;padding:11px 22px;border-radius:10px;">Start Care: &euro;15 a month &rarr;</a>
+  // The €15 link carries the store and the email, so the checkout asks for nothing else (one tap, then card).
+  const careLink = `https://www.gdrock.com/checkout.html?plan=care&site=${encodeURIComponent(job.domain)}&email=${encodeURIComponent(job.email)}&from=deep`;
+  const bfLine = bf ? `<p style="color:#fff;font-size:13.5px;line-height:1.6;margin:0 0 16px;"><strong>Black Friday is 27 November.</strong> Every tag above fires for every visitor that week.${bfBook ? ` Book by 20 November and we fix ${e(job.domain)} before then.` : ""}</p>` : "";
+  // The leaking result's offer. First clients (7 Oct 2026): the free install + €15 leads, a call-first
+  // button second, €249 as the done-for-you line. FIRST_OFFER=0 restores the €249-first version.
+  const leakOffer = firstOn
+    ? `<div style="background:#0f1630;border:1px solid #2f4fb8;border-radius:14px;padding:22px 20px;margin-top:22px;text-align:center;">
+      <p style="color:#8fb0ff;font-family:Consolas,Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;">Fix it &middot; for our first clients</p>
+      <p style="color:#fff;font-size:20px;font-weight:800;margin:0 0 8px;">We install it with you, free. Then &euro;15 a month.</p>
+      <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 16px;">A 15-minute screen share: Yaniv installs the blocker and banner on ${e(job.domain)} with you, then runs this exact check again from Germany so you see it clean. Cancel any time. 14-day money back.</p>
+      ${bfLine}
+      <a href="${careLink}" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 28px;border-radius:10px;">Start Care: &euro;15 a month &rarr;</a>
+      <p style="margin:12px 0 0;"><a href="https://cal.eu/gdrock/15min" style="display:inline-block;background:#111a33;border:1px solid #4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:11px 22px;border-radius:10px;">Or book the 15-minute call first</a></p>
+      <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:16px 0 0;">Rather have everything done for you, privacy policy included? <a href="https://whop.com/checkout/plan_rDl4G6eAcftqC/" style="color:#8fb0ff;">Essential Setup, &euro;249 once</a>.</p>
+      ${diy}
+    </div>`
+    : `<div style="background:#0f1630;border:1px solid #2f4fb8;border-radius:14px;padding:22px 20px;margin-top:22px;text-align:center;">
+      <p style="color:#8fb0ff;font-family:Consolas,Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;">Fix it for me</p>
+      <p style="color:#fff;font-size:20px;font-weight:800;margin:0 0 8px;">We fix ${e(job.domain)} for &euro;249.</p>
+      <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 16px;">We install the blocker and banner, run this exact check again from Germany, and send you the new result. You get a booking link straight after payment. 14-day money-back guarantee.</p>
+      ${bfLine}
+      <a href="https://whop.com/checkout/plan_rDl4G6eAcftqC/" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 28px;border-radius:10px;">Fix it for me: &euro;249 &rarr;</a>
+      ${diy}
     </div>`;
   const offer = !scored ? "" : r.score >= 90
     ? `<div style="background:#111522;border:1px solid #262c3b;border-radius:12px;padding:18px;margin-top:22px;text-align:center;">
@@ -2346,15 +2365,7 @@ async function sendDeepScanReport(env, job, r, scored) {
       <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:0;">Run this check again whenever you add an app or change your theme: that's when trackers usually slip back in.</p>
       <p style="color:#9CA3AF;font-size:13px;line-height:1.6;margin:10px 0 0;">Privacy policy next? Build yours on the page, free, in <a href="https://www.gdrock.com/account?next=pack" style="color:#8fb0ff;">a GDRock account</a>.</p>
     </div>`
-    : `<div style="background:#0f1630;border:1px solid #2f4fb8;border-radius:14px;padding:22px 20px;margin-top:22px;text-align:center;">
-      <p style="color:#8fb0ff;font-family:Consolas,Menlo,monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;">Fix it for me</p>
-      <p style="color:#fff;font-size:20px;font-weight:800;margin:0 0 8px;">We fix ${e(job.domain)} for &euro;249.</p>
-      <p style="color:#cfd8ea;font-size:13.5px;line-height:1.6;margin:0 0 16px;">We install the blocker and banner, run this exact check again from Germany, and send you the new result. You get a booking link straight after payment. 14-day money-back guarantee.</p>
-      ${bf ? `<p style="color:#fff;font-size:13.5px;line-height:1.6;margin:0 0 16px;"><strong>Black Friday is 27 November.</strong> Every tag above fires for every visitor that week.${bfBook ? ` Book by 20 November and we fix ${e(job.domain)} before then.` : ""}</p>` : ""}
-      <a href="https://whop.com/checkout/plan_rDl4G6eAcftqC/" style="display:inline-block;background:#4f7dff;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 28px;border-radius:10px;">Fix it for me: &euro;249 &rarr;</a>
-      ${firstOffer}
-      ${diy}
-    </div>`;
+    : leakOffer;
   const html = `<div style="font-family:Arial,sans-serif;max-width:580px;margin:0 auto;background:#08090c;padding:32px;border-radius:16px;">
     <div style="text-align:center;margin-bottom:22px;"><span style="font-size:22px;font-weight:800;color:#fff;">GDRock</span><div style="color:#5b6a8a;font-size:12px;">Deep check · what loads before anyone chooses</div></div>
     <h1 style="color:#fff;font-size:22px;text-align:center;margin:0 0 6px;">Your deep check</h1>

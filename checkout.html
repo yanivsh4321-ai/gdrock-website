@@ -253,7 +253,19 @@ function hostedLinkFor(plan){
 }
 </script>
 <script>
-(function(){var p=new URLSearchParams(window.location.search).get('plan');if(p){var c=document.querySelector('.plan-card[data-plan="'+p+'"]');if(c){document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('selected');});c.classList.add('selected');}}})();
+(function(){var q=new URLSearchParams(window.location.search),p=q.get('plan');if(p){var c=document.querySelector('.plan-card[data-plan="'+p+'"]');if(c){document.querySelectorAll('.plan-card').forEach(function(x){x.classList.remove('selected');});c.classList.add('selected');}}
+  /* Arriving from a deep-check email: the store and the email are known, so prefill them and ask for
+     nothing else (name, country and VAT number only matter once a VAT registration exists; Whop
+     collects the billing name and country itself). */
+  var site=(q.get('site')||'').replace(/[^a-z0-9.\-]/gi,'').slice(0,120),email=(q.get('email')||'').trim().slice(0,200);
+  if(site)document.getElementById('f-url').value=site;
+  if(email&&/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email))document.getElementById('f-email').value=email;
+  if(q.get('from')==='deep'||(site&&p==='care')){
+    document.body.classList.add('lite');
+    ['f-first','f-last','f-country','f-vat'].forEach(function(id){var el=document.getElementById(id);var f=el&&el.closest('.field');if(f)f.style.display='none';});
+    var sub=document.querySelector('.checkout-head p');
+    if(sub)sub.textContent=(site?'Care for '+site+': ':'Care: ')+'hosted banner and blocker, installed with you on a 15-minute call, free. €15 a month, cancel any time, 14-day money back.';
+  }})();
 var selectedPlan=document.querySelector('.plan-card.selected');
 function selectPlan(card){document.querySelectorAll('.plan-card').forEach(function(c){c.classList.remove('selected');});card.classList.add('selected');selectedPlan=card;updateSummary();}
 /* ================== EU VAT ==================================================
@@ -398,11 +410,13 @@ document.getElementById('f-vat').addEventListener('input',updateSummary);
 function handleCheckout(){
   var email=document.getElementById('f-email').value.trim(),first=document.getElementById('f-first').value.trim(),last=document.getElementById('f-last').value.trim(),url=document.getElementById('f-url').value.trim();
   var country=document.getElementById('f-country').value,vatId=document.getElementById('f-vat').value.trim();
-  if(!first){alert('Please enter your first name.');return;}
+  var lite=document.body.classList.contains('lite');
+  if(!lite&&!first){alert('Please enter your first name.');return;}
   if(!email||!email.includes('@')){alert('Please enter a valid email address.');return;}
   /* Country is required for the invoice record, and it decides the VAT rate the
-     moment a VAT registration exists. */
-  if(!country){
+     moment a VAT registration exists. The lite path (from a deep-check email) skips it
+     while no registration exists; Whop collects the billing country itself. */
+  if(!country&&!lite){
     alert(vatRegistered()
       ? 'Please select your country so we can apply the correct VAT.'
       : 'Please select your country — we need it for your invoice.');

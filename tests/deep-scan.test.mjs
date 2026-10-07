@@ -109,15 +109,20 @@ test("queue -> runner -> result -> email, end to end", async () => {
   assert.match(mail.htmlbody, /the cookie banner never clicked/);
   assert.match(mail.htmlbody, /Tracking before consent/);
   assert.match(mail.htmlbody, /Meta Pixel fired &lt;script&gt;/); // escaped
-  // A leaking result offers the fix, priced, straight to the Essential Setup checkout.
-  assert.match(mail.htmlbody, /Fix it for me: &euro;249/);
+  // A leaking result offers the fix. Since 7 Oct 2026 the first-client offer leads (free install, then
+  // €15 a month, one-tap link carrying the store and the email), a call-first button second, €249 as a
+  // line. FIRST_OFFER=0 restores the €249-first version.
   assert.match(mail.htmlbody, /whop\.com\/checkout\/plan_rDl4G6eAcftqC\//);
-  // First-client offer: Care with a free hand install, on unless the Worker var FIRST_OFFER is "0".
-  if (env.FIRST_OFFER === "0") assert.doesNotMatch(mail.htmlbody, /we install it for you free/);
-  else {
-    assert.match(mail.htmlbody, /&euro;15 a month, and we install it for you free/);
-    assert.match(mail.htmlbody, /whop\.com\/checkout\/plan_Hzt8oE2YfKseZ\//);
-    assert.doesNotMatch(mail.htmlbody, /checkout\.html\?plan=care/); // Care isn't offered twice
+  if (env.FIRST_OFFER === "0") {
+    assert.match(mail.htmlbody, /Fix it for me: &euro;249/);
+    assert.doesNotMatch(mail.htmlbody, /install it with you, free/);
+  } else {
+    assert.match(mail.htmlbody, /We install it with you, free\. Then &euro;15 a month\./);
+    assert.match(mail.htmlbody, /checkout\.html\?plan=care&site=shop\.example&email=owner%40shop\.example&from=deep/);
+    assert.match(mail.htmlbody, /cal\.eu\/gdrock\/15min/);
+    assert.match(mail.htmlbody, /Essential Setup, &euro;249 once/);
+    assert.ok(mail.htmlbody.indexOf("Then &euro;15 a month") < mail.htmlbody.indexOf("&euro;249"), "the €15 offer comes before €249");
+    assert.doesNotMatch(mail.htmlbody, /Care, &euro;15 a month<\/a> \(hosted/); // not offered a second time in the DIY line
   }
   // The Black Friday line only appears when the Worker var BF_ON is "1".
   const bfNow = Date.now() >= Date.UTC(2026, 10, 1) && Date.now() < Date.UTC(2026, 10, 28);

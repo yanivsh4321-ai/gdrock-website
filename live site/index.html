@@ -195,6 +195,28 @@
       </form>
       <p class="field-err" id="err-url">Enter your website address, e.g. yourstore.com</p>
 
+      <!-- Ad arrival (utm_source=meta|google, or ?check=de): the band opens on the German check,
+           one field first, the email on this second step once the store is in. -->
+      <div class="ad-step" id="ad-step" hidden>
+        <p class="ad-step-h">Checking <b id="ad-host">yourstore.com</b> from Germany</p>
+        <p class="ad-step-p">A real browser visits it twice without touching the banner. Where should the result go? Usually within 15 minutes.</p>
+        <form class="scan-form" id="ad-form" novalidate>
+          <label class="sr" for="ad-email">Your email</label>
+          <div class="scan-field">
+            <svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            <input type="email" class="scan-inp" id="ad-email" placeholder="you@yourstore.com" autocomplete="email" inputmode="email" spellcheck="false" autocapitalize="off" aria-describedby="err-ad">
+          </div>
+          <button class="btn btn-scan" id="ad-btn" type="submit">
+            <span class="btn-lab">Send me the result</span>
+            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <span class="spin" aria-hidden="true"></span>
+          </button>
+        </form>
+        <p class="field-err" id="err-ad">Enter a valid email address.</p>
+        <p class="ad-msg" id="ad-msg" role="status" aria-live="polite"></p>
+        <p class="ad-note">No marketing, just the result. Nothing is installed or changed on your site. <button type="button" class="ad-link" id="ad-change">Different store?</button></p>
+      </div>
+
       <div class="scan-run" id="scan-run" aria-live="polite">
         <div class="bar"><i id="scan-bar"></i></div>
         <p class="scan-step" id="scan-step">Starting&hellip;</p>
@@ -732,6 +754,9 @@
   /* The ad or link that brought this visitor (utm_source/utm_campaign/utm_content), read from
      this page's own address and sent with the scan, so each campaign can be counted. Not stored. */
   var SRC=(function(){try{var q=new URLSearchParams(location.search);return ['utm_source','utm_campaign','utm_content'].map(function(k){return (q.get(k)||'').replace(/[^a-z0-9_.-]/gi,'').slice(0,40);}).filter(Boolean).join('/');}catch(e){return '';}})();
+  /* An ad click (Meta or Google) opens the band on the German check, which is what the ad promised.
+     ?check=de does the same for testing. Organic visitors keep the instant source scan first. */
+  var AD=(function(){try{var q=new URLSearchParams(location.search);var s=(q.get('utm_source')||'').toLowerCase();return /^(meta|facebook|instagram|google)$/.test(s)||q.get('check')==='de';}catch(e){return false;}})();
   var EMAIL=/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
   var DOMAIN=/[a-z0-9][a-z0-9-]*\.[a-z]{2,}/i;
   var $=function(id){return document.getElementById(id);};
@@ -1019,7 +1044,7 @@
           run.classList.remove('on');setBusy(false);lastScore=d.score;
           var n=normalizeScan(d,{domain:host});
           renderReport(n,{animate:true});showActions(n);
-          rc.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});
+          if(!adHold)rc.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});
         },260);
       })
       .catch(function(err){
@@ -1032,9 +1057,61 @@
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function reduced(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}
 
-  form.addEventListener('submit',function(e){e.preventDefault();scan();});
+  form.addEventListener('submit',function(e){e.preventDefault();if(AD&&!adDone){adStart();return;}scan();});
   retry.addEventListener('click',function(){fail.classList.remove('on');urlEl.focus();urlEl.select();});
-  again.addEventListener('click',function(){urlEl.value='';urlEl.focus();document.getElementById('scan').scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});});
+  again.addEventListener('click',function(){urlEl.value='';adStep.hidden=true;form.hidden=false;adHold=false;adDone=false;urlEl.focus();document.getElementById('scan').scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});});
+
+  /* ---- Ad arrival: one field (the store), then the email once the store is in. The instant
+     source scan runs underneath while they type, so the wait has something to show. ---- */
+  var adStep=$('ad-step'),adHost=$('ad-host'),adForm=$('ad-form'),adEmail=$('ad-email'),adBtn=$('ad-btn'),adMsg=$('ad-msg'),errA=$('err-ad'),adChange=$('ad-change');
+  var adHold=false,adDone=false;
+  function adSetup(){
+    var band=$('scan');band.classList.add('ad');
+    var eye=band.querySelector('.band-eye');if(eye)eye.innerHTML='<span class="pulse" aria-hidden="true"></span>Free check &middot; real browser in Germany &middot; result by email';
+    $('scan-h').textContent='Does your cookie banner hold the trackers back?';
+    var sub=band.querySelector('.band-sub');if(sub)sub.textContent='Paste your store. A browser on a server in Germany visits it twice without touching the banner and emails you every tag that fired, with the second it did. Usually within 15 minutes.';
+    btn.querySelector('.btn-lab').textContent='Check it from Germany';
+    var tr=band.querySelectorAll('.trust li'),T=['Result by email, usually within 15 minutes','Nothing is installed or changed on your site','Every tag listed with the second it fired'];
+    for(var i=0;i<tr.length&&i<T.length;i++){var last=tr[i].lastChild;if(last&&last.nodeType===3)last.nodeValue=T[i];}
+    var side=band.querySelector('.band-side .checks-wrap');
+    if(side){side.querySelector('.checks-h').textContent='What the German check records';
+      side.querySelector('.checks').innerHTML=['Trackers that fired before any click','Tracking cookies set early','Consent tool and reject option','Outside fonts and embeds','Two visits, banner never touched','Score and result card'].map(function(t){return '<span>'+t+'</span>';}).join('');
+      side.querySelector('.band-foot').textContent='Runs on a server in Germany as a first-time visitor. While it runs, the instant source scan reads your homepage code and shows what it finds below.';}
+  }
+  function adStart(){
+    var u=urlEl.value.trim();
+    if(!u||!DOMAIN.test(u)){mark(urlEl,errU,true);urlEl.focus();return;}
+    mark(urlEl,errU,false);
+    adHost.textContent=hostOf(/^https?:\/\//i.test(u)?u:'https://'+u);
+    form.hidden=true;adStep.hidden=false;adHold=true;
+    adMsg.classList.remove('on');adMsg.textContent='';adBtn.disabled=false;adBtn.querySelector('.btn-lab').textContent='Send me the result';
+    setTimeout(function(){adEmail.focus();},50);
+    scan();
+  }
+  function adLabel(t){adBtn.querySelector('.btn-lab').textContent=t;}
+  adForm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var em=adEmail.value.trim();
+    if(!EMAIL.test(em)){mark(adEmail,errA,true);adEmail.focus();return;}
+    mark(adEmail,errA,false);
+    adBtn.disabled=true;adBtn.classList.add('busy');adLabel('Sending…');
+    fetch('https://cdn.gdrock.com/api/deep-scan',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({url:lastUrl,email:em,optin:false,src:SRC})})
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(x){
+        adBtn.classList.remove('busy');
+        var msg=x.ok?(x.d.message||'Queued. The result will be emailed to you.'):(x.d.message||x.d.error||'That didn’t go through. Try again, or email office@gdrock.com.');
+        adMsg.textContent=msg;adMsg.classList.add('on');
+        if(x.ok){
+          adDone=true;adHold=false;adLabel('Requested');
+          deepEmail.value=em;deepBtn.disabled=true;deepBtn.textContent='Requested';deepMsg.textContent=msg;
+          var a=document.createElement('a');a.href='#report';a.textContent='Meanwhile, the instant source result is below.';adMsg.appendChild(a);
+        }else{adBtn.disabled=false;adLabel('Send me the result');}
+      })
+      .catch(function(){adBtn.classList.remove('busy');adBtn.disabled=false;adLabel('Send me the result');adMsg.textContent='That didn’t go through. Try again, or email office@gdrock.com.';adMsg.classList.add('on');});
+  });
+  adChange.addEventListener('click',function(){adStep.hidden=true;form.hidden=false;adHold=false;adDone=false;urlEl.focus();urlEl.select();});
+  if(AD&&adStep)adSetup();
 
   /* Step two: the score is already on screen, so the email only buys a copy.
      One /api/scan call with the email both sends the report and alerts the

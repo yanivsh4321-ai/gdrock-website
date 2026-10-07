@@ -223,6 +223,20 @@ header.nav.stuck{border-bottom-color:var(--line);background:rgba(8,9,12,.9);}
 
 .band .field-err{color:var(--p-bad);font-weight:500;margin-top:8px;}
 
+/* Ad arrival: the second step (email) after the store is in. */
+.scan-form[hidden],.ad-step[hidden]{display:none;}
+.ad-step{margin-top:26px;padding:22px 22px 18px;border-radius:14px;background:#fff;border:1.5px solid var(--p-line);box-shadow:0 8px 24px -12px rgba(11,13,18,.18);animation:rise .24s var(--ease-out) both;}
+.ad-step-h{font-size:clamp(19px,2vw,22px);font-weight:650;letter-spacing:-.025em;line-height:1.2;color:var(--p-ink);}
+.ad-step-h b{color:var(--p-acc);font-weight:650;overflow-wrap:anywhere;}
+.ad-step-p{font-size:15px;line-height:1.55;color:var(--p-ink-2);margin-top:8px;}
+.ad-step .scan-form{margin-top:16px;}
+.ad-msg{display:none;margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(44,88,224,.07);border:1px solid rgba(44,88,224,.25);font-size:14.5px;line-height:1.55;color:var(--p-ink);}
+.ad-msg.on{display:block;}
+.ad-msg a{display:block;margin-top:6px;color:var(--p-acc);}
+.ad-note{font-size:13px;line-height:1.55;color:var(--p-ink-3);margin-top:12px;}
+.ad-link{background:none;border:0;padding:0;font:inherit;color:var(--p-acc);text-decoration:underline;cursor:pointer;}
+@media(max-width:620px){.ad-step{padding:18px 16px 14px;}}
+
 .trust{list-style:none;display:flex;flex-direction:column;gap:9px;margin-top:22px;}
 .trust li{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--p-ink-2);}
 .trust svg{width:17px;height:17px;flex:none;color:var(--p-good);}
