@@ -445,6 +445,12 @@ export default {
     if (path === "/api/deep-scan/result" && request.method === "POST") return handleDeepScanResult(request, env, ctx);
     if (path === "/api/deep-scan/status" && request.method === "GET") return handleDeepScanStatus(url, env);
 
+    // -- POST /api/hit — funnel counter for the ad landing. One KV key per event;
+    // no IP, no user agent, no cookie, nothing that identifies the visitor. The
+    // owner reads the counts with the runner token at GET /api/hit/count?day=.
+    if (path === "/api/hit" && request.method === "POST") return handleHit(request, env, ctx);
+    if (path === "/api/hit/count" && request.method === "GET") return handleHitCount(request, env, url);
+
     // -- POST /api/paddle-webhook --------------------------------
     if (path === "/api/paddle-webhook" && request.method === "POST") {
       const body = await request.json().catch(() => ({}));
@@ -2243,6 +2249,39 @@ async function handleDeepScanRequest(request, env, ctx) {
     message: online
       ? "Queued" + (position > 1 ? " (" + position + " ahead of you, including yours)" : "") + ". A browser on a server in Germany is checking " + domain + " twice, without touching the banner. The result goes to " + email + ", usually within 15 minutes."
       : "Got it. Our checking server is offline right now, so this one is run by hand, from a connection in Germany, without touching your banner. The result goes to " + email + " within one working day." });
+}
+
+// -- Funnel counter --------------------------------------------------
+// The ad landing sends one beacon per step (load, scan, focus, submit) with the
+// utm source it arrived on. Each beacon becomes a KV key that expires in 60
+// days; counting is a prefix list. Nothing about the visitor is stored.
+const HIT_EVENTS = /^(load|scan|focus|submit)$/;
+async function handleHit(request, env, ctx) {
+  if (!env.DEEP_SCAN) return json({ ok: false }, 503);
+  const body = await request.text().then((t) => { try { return JSON.parse(t); } catch { return {}; } });
+  const e = String(body.e || "");
+  const src = String(body.src || "").replace(/[^a-z0-9_.\/-]/gi, "").slice(0, 60) || "direct";
+  if (!HIT_EVENTS.test(e)) return json({ ok: false }, 400);
+  const day = new Date().toISOString().slice(0, 10);
+  ctx.waitUntil(env.DEEP_SCAN.put(`hit:${day}:${e}:${src}:${crypto.randomUUID()}`, "1", { expirationTtl: 60 * 86400 }));
+  return json({ ok: true });
+}
+async function handleHitCount(request, env, url) {
+  if (!runnerAuthorized(env, request)) return json({ error: "unauthorized" }, 401);
+  if (!env.DEEP_SCAN) return json({ error: "deep_scan_not_configured" }, 503);
+  const day = (url.searchParams.get("day") || new Date().toISOString().slice(0, 10)).replace(/[^0-9-]/g, "");
+  const counts = {};
+  let cursor;
+  do {
+    const page = await env.DEEP_SCAN.list({ prefix: `hit:${day}:`, limit: 1000, cursor });
+    for (const { name } of page.keys) {
+      const [, , e, src] = name.split(":");
+      counts[src] = counts[src] || {};
+      counts[src][e] = (counts[src][e] || 0) + 1;
+    }
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  return json({ day, counts });
 }
 
 async function handleDeepScanNext(request, env, url) {

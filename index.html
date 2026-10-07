@@ -1065,6 +1065,9 @@
      source scan runs underneath while they type, so the wait has something to show. ---- */
   var adStep=$('ad-step'),adHost=$('ad-host'),adForm=$('ad-form'),adEmail=$('ad-email'),adBtn=$('ad-btn'),adMsg=$('ad-msg'),errA=$('err-ad'),adChange=$('ad-change');
   var adHold=false,adDone=false;
+  /* One beacon per step, so the ad landing can be read: load, scan, focus, submit. No identifier is sent. */
+  function hit(e){try{if(!AD)return;var b=JSON.stringify({e:e,src:SRC||'check-de'});if(navigator.sendBeacon)navigator.sendBeacon('https://cdn.gdrock.com/api/hit',b);else fetch('https://cdn.gdrock.com/api/hit',{method:'POST',body:b,keepalive:true});}catch(x){}}
+  var adFocused=false;
   function adSetup(){
     var band=$('scan');band.classList.add('ad');
     var eye=band.querySelector('.band-eye');if(eye)eye.innerHTML='<span class="pulse" aria-hidden="true"></span>Free check &middot; real browser in Germany &middot; result by email';
@@ -1085,6 +1088,7 @@
     adHost.textContent=hostOf(/^https?:\/\//i.test(u)?u:'https://'+u);
     form.hidden=true;adStep.hidden=false;adHold=true;
     adMsg.classList.remove('on');adMsg.textContent='';adBtn.disabled=false;adBtn.querySelector('.btn-lab').textContent='Send me the result';
+    hit('scan');
     setTimeout(function(){adEmail.focus();},50);
     scan();
   }
@@ -1103,6 +1107,7 @@
         var msg=x.ok?(x.d.message||'Queued. The result will be emailed to you.'):(x.d.message||x.d.error||'That didn’t go through. Try again, or email office@gdrock.com.');
         adMsg.textContent=msg;adMsg.classList.add('on');
         if(x.ok){
+          hit('submit');
           adDone=true;adHold=false;adLabel('Requested');
           deepEmail.value=em;deepBtn.disabled=true;deepBtn.textContent='Requested';deepMsg.textContent=msg;
           var a=document.createElement('a');a.href='#report';a.textContent='Meanwhile, the instant source result is below.';adMsg.appendChild(a);
@@ -1111,7 +1116,8 @@
       .catch(function(){adBtn.classList.remove('busy');adBtn.disabled=false;adLabel('Send me the result');adMsg.textContent='That didn’t go through. Try again, or email office@gdrock.com.';adMsg.classList.add('on');});
   });
   adChange.addEventListener('click',function(){adStep.hidden=true;form.hidden=false;adHold=false;adDone=false;urlEl.focus();urlEl.select();});
-  if(AD&&adStep)adSetup();
+  adEmail.addEventListener('focus',function(){if(!adFocused){adFocused=true;hit('focus');}});
+  if(AD&&adStep){adSetup();hit('load');}
 
   /* Step two: the score is already on screen, so the email only buys a copy.
      One /api/scan call with the email both sends the report and alerts the
