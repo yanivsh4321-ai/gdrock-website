@@ -1171,7 +1171,7 @@
       e.preventDefault();
       urlEl.value=sbUrl.value;
       band.scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});
-      setTimeout(scan,reduced()?0:450);
+      setTimeout(AD&&!adDone?adStart:scan,reduced()?0:450);
     });
   }
 })();
