@@ -34,8 +34,9 @@ test("a beacon becomes one anonymous key that expires, and bad events are refuse
   assert.equal(kv.m.get(keys[0]).ttl, 60 * 86400);
   assert.equal(kv.m.get(keys[0]).v, "1");
   assert.equal((await call(env, "/api/hit", { method: "POST", body: JSON.stringify({ e: "click", src: "meta" }) })).status, 400);
+  for (const e of ["stay", "scroll", "scan", "focus", "submit"]) assert.equal((await call(env, "/api/hit", { method: "POST", body: JSON.stringify({ e, src: "meta" }) })).status, 200);
   assert.equal((await call(env, "/api/hit", { method: "POST", body: "not json" })).status, 400);
-  assert.equal(kv.m.size, 1);
+  assert.equal(kv.m.size, 6);
 });
 
 test("the source is sanitised and defaults to direct", async () => {

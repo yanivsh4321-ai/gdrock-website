@@ -2252,10 +2252,11 @@ async function handleDeepScanRequest(request, env, ctx) {
 }
 
 // -- Funnel counter --------------------------------------------------
-// The ad landing sends one beacon per step (load, scan, focus, submit) with the
+// The ad landing sends one beacon per step (load, stay = 8s on the page, scroll =
+// past the first screen, scan, focus, submit) with the
 // utm source it arrived on. Each beacon becomes a KV key that expires in 60
 // days; counting is a prefix list. Nothing about the visitor is stored.
-const HIT_EVENTS = /^(load|scan|focus|submit)$/;
+const HIT_EVENTS = /^(load|stay|scroll|scan|focus|submit)$/;
 async function handleHit(request, env, ctx) {
   if (!env.DEEP_SCAN) return json({ ok: false }, 503);
   const body = await request.text().then((t) => { try { return JSON.parse(t); } catch { return {}; } });

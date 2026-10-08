@@ -1117,7 +1117,10 @@
   });
   adChange.addEventListener('click',function(){adStep.hidden=true;form.hidden=false;adHold=false;adDone=false;urlEl.focus();urlEl.select();});
   adEmail.addEventListener('focus',function(){if(!adFocused){adFocused=true;hit('focus');}});
-  if(AD&&adStep){adSetup();hit('load');}
+  if(AD&&adStep){adSetup();hit('load');
+    setTimeout(function(){hit('stay');},8000);
+    var adScrolled=false;window.addEventListener('scroll',function(){if(!adScrolled&&window.scrollY>400){adScrolled=true;hit('scroll');}},{passive:true});
+  }
 
   /* Step two: the score is already on screen, so the email only buys a copy.
      One /api/scan call with the email both sends the report and alerts the
