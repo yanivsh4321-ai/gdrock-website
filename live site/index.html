@@ -757,6 +757,10 @@
   /* An ad click (Meta or Google) opens the band on the German check, which is what the ad promised.
      ?check=de does the same for testing. Organic visitors keep the instant source scan first. */
   var AD=(function(){try{var q=new URLSearchParams(location.search);var s=(q.get('utm_source')||'').toLowerCase();return /^(meta|facebook|instagram|google)$/.test(s)||q.get('check')==='de';}catch(e){return false;}})();
+  /* Email-first variant of the ad landing: half the ad visitors give the email first and the store is read from
+     its domain. ?ef=1 / ?ef=0 force it for testing. Counted as /ef or /sf in the funnel. */
+  var EF=(function(){try{var q=new URLSearchParams(location.search);if(q.get('ef')==='1')return true;if(q.get('ef')==='0')return false;}catch(e){}return AD&&Math.random()<0.5;})();
+  var FREEMAIL={};'gmail.com googlemail.com outlook.com outlook.co.uk hotmail.com hotmail.co.uk live.com live.co.uk msn.com yahoo.com yahoo.co.uk yahoo.ie ymail.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me gmx.com gmx.de gmx.net web.de mail.com yandex.com zoho.com fastmail.com hey.com tutanota.com t-online.de btinternet.com sky.com virginmedia.com talktalk.net eircom.net libero.it tiscali.it walla.co.il walla.com'.split(' ').forEach(function(d){FREEMAIL[d]=1;});
   var EMAIL=/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
   var DOMAIN=/[a-z0-9][a-z0-9-]*\.[a-z]{2,}/i;
   var $=function(id){return document.getElementById(id);};
@@ -1011,11 +1015,11 @@
     fail.classList.add('on');
   }
 
-  function scan(){
+  function scan(forced){
     if(busy)return;
-    var u=urlEl.value.trim();
-    if(!u||!DOMAIN.test(u)){mark(urlEl,errU,true);urlEl.focus();return;}
-    mark(urlEl,errU,false);
+    var u=(forced||urlEl.value).trim();
+    if(!u||!DOMAIN.test(u)){if(!forced){mark(urlEl,errU,true);urlEl.focus();}return;}
+    if(!forced)mark(urlEl,errU,false);
     var url=/^https?:\/\//i.test(u)?u:'https://'+u,host=hostOf(url);
     lastUrl=url;fail.classList.remove('on');
 
@@ -1057,7 +1061,7 @@
   function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function reduced(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}
 
-  form.addEventListener('submit',function(e){e.preventDefault();if(AD&&!adDone){adStart();return;}scan();});
+  form.addEventListener('submit',function(e){e.preventDefault();if(AD&&!adDone){if(EF)efStart();else adStart();return;}scan();});
   retry.addEventListener('click',function(){fail.classList.remove('on');urlEl.focus();urlEl.select();});
   again.addEventListener('click',function(){urlEl.value='';adStep.hidden=true;form.hidden=false;adHold=false;adDone=false;urlEl.focus();document.getElementById('scan').scrollIntoView({block:'start',behavior:reduced()?'auto':'smooth'});});
 
@@ -1066,7 +1070,7 @@
   var adStep=$('ad-step'),adHost=$('ad-host'),adForm=$('ad-form'),adEmail=$('ad-email'),adBtn=$('ad-btn'),adMsg=$('ad-msg'),errA=$('err-ad'),adChange=$('ad-change');
   var adHold=false,adDone=false;
   /* One beacon per step, so the ad landing can be read: load, scan, focus, submit. No identifier is sent. */
-  function hit(e){try{if(!AD)return;var b=JSON.stringify({e:e,src:SRC||'check-de'});if(navigator.sendBeacon)navigator.sendBeacon('https://cdn.gdrock.com/api/hit',b);else fetch('https://cdn.gdrock.com/api/hit',{method:'POST',body:b,keepalive:true});}catch(x){}}
+  function hit(e){try{if(!AD)return;var b=JSON.stringify({e:e,src:(SRC||'check-de')+(EF?'/ef':'/sf')});if(navigator.sendBeacon)navigator.sendBeacon('https://cdn.gdrock.com/api/hit',b);else fetch('https://cdn.gdrock.com/api/hit',{method:'POST',body:b,keepalive:true});}catch(x){}}
   var adFocused=false;
   function adSetup(){
     var band=$('scan');band.classList.add('ad');document.body.classList.add('ad');
@@ -1080,6 +1084,18 @@
     if(side){side.querySelector('.checks-h').textContent='What the German check records';
       side.querySelector('.checks').innerHTML=['Trackers that fired before any click','Tracking cookies set early','Consent tool and reject option','Outside fonts and embeds','Two visits, banner never touched','Score and result card'].map(function(t){return '<span>'+t+'</span>';}).join('');
       side.querySelector('.band-foot').textContent='Runs on a server in Germany as a first-time visitor. While it runs, the instant source scan reads your homepage code and shows what it finds below.';}
+    if(EF){
+      urlEl.type='email';urlEl.placeholder='you@yourstore.com';urlEl.setAttribute('autocomplete','email');urlEl.setAttribute('inputmode','email');
+      var lab=form.querySelector('label');if(lab)lab.textContent='Your email';
+      errU.textContent='Enter a valid email address.';
+      btn.querySelector('.btn-lab').textContent='Check my store from Germany';
+      if(sub)sub.textContent='Leave your email. A browser on a server in Germany visits your store twice without touching the banner and emails you every tag that fired, with the second it did. Usually within 15 minutes.';
+      adEmail.type='text';adEmail.placeholder='yourstore.com';adEmail.setAttribute('autocomplete','url');adEmail.setAttribute('inputmode','url');
+      var lab2=adForm.querySelector('label');if(lab2)lab2.textContent='Your store';
+      errA.textContent='Enter your store address, e.g. yourstore.com';
+      adChange.hidden=true;
+      var g=form.querySelector('.globe'),m=adForm.querySelector('.globe');if(g&&m){var t=g.innerHTML;g.innerHTML=m.innerHTML;m.innerHTML=t;}
+    }
   }
   function adStart(){
     var u=urlEl.value.trim();
@@ -1092,12 +1108,39 @@
     setTimeout(function(){adEmail.focus();},50);
     scan();
   }
+  /* Email first: the store is read from the email's domain and confirmed on the second step. */
+  var efEmail='';
+  function efStart(){
+    var em=urlEl.value.trim();
+    if(!EMAIL.test(em)){mark(urlEl,errU,true);urlEl.focus();return;}
+    mark(urlEl,errU,false);efEmail=em;
+    var dom=em.split('@')[1].toLowerCase(),known=!FREEMAIL[dom];
+    var p=adStep.querySelector('.ad-step-p');
+    adHost.textContent=known?dom:'your store';
+    p.textContent=known?'Is that the store? Edit it if not, then send. The result goes to '+em+', usually within 15 minutes.':'Paste your store address. The result goes to '+em+', usually within 15 minutes.';
+    adEmail.value=known?dom:'';
+    form.hidden=true;adStep.hidden=false;adHold=true;
+    adMsg.classList.remove('on');adMsg.textContent='';adBtn.disabled=false;adLabel('Send me the result');
+    setTimeout(function(){adEmail.focus();if(known)adEmail.select();},50);
+    hit('scan');
+    if(known)scan(dom);
+  }
   function adLabel(t){adBtn.querySelector('.btn-lab').textContent=t;}
   adForm.addEventListener('submit',function(e){
     e.preventDefault();
-    var em=adEmail.value.trim();
-    if(!EMAIL.test(em)){mark(adEmail,errA,true);adEmail.focus();return;}
-    mark(adEmail,errA,false);
+    var em;
+    if(EF){
+      var u=adEmail.value.trim();
+      if(!u||!DOMAIN.test(u)){mark(adEmail,errA,true);adEmail.focus();return;}
+      mark(adEmail,errA,false);
+      var url=/^https?:\/\//i.test(u)?u:'https://'+u;
+      if(hostOf(url)!==hostOf(lastUrl||''))scan(u);
+      lastUrl=url;em=efEmail;
+    }else{
+      em=adEmail.value.trim();
+      if(!EMAIL.test(em)){mark(adEmail,errA,true);adEmail.focus();return;}
+      mark(adEmail,errA,false);
+    }
     adBtn.disabled=true;adBtn.classList.add('busy');adLabel('Sending…');
     fetch('https://cdn.gdrock.com/api/deep-scan',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({url:lastUrl,email:em,optin:false,src:SRC})})
@@ -1117,6 +1160,7 @@
   });
   adChange.addEventListener('click',function(){adStep.hidden=true;form.hidden=false;adHold=false;adDone=false;urlEl.focus();urlEl.select();});
   adEmail.addEventListener('focus',function(){if(!adFocused){adFocused=true;hit('focus');}});
+  urlEl.addEventListener('focus',function(){if(EF&&!adFocused){adFocused=true;hit('focus');}});
   if(AD&&adStep){adSetup();hit('load');
     setTimeout(function(){hit('stay');},8000);
     var adScrolled=false;window.addEventListener('scroll',function(){if(!adScrolled&&window.scrollY>400){adScrolled=true;hit('scroll');}},{passive:true});
@@ -1165,7 +1209,7 @@
   var sb=$('scanbar'),sbForm=$('sb-form'),sbUrl=$('sb-url'),band=$('scan'),foot=document.querySelector('footer');
   if(sb&&'IntersectionObserver' in window){
     var bandGone=false,footIn=false;
-    function sync(){var on=bandGone&&!footIn&&window.innerWidth>860;sb.classList.toggle('on',on);
+    function sync(){var on=bandGone&&!footIn&&window.innerWidth>860&&!EF;sb.classList.toggle('on',on);
       if(on)sb.removeAttribute('inert');else sb.setAttribute('inert','');sb.setAttribute('aria-hidden',on?'false':'true');}
     new IntersectionObserver(function(es){es.forEach(function(e){bandGone=!e.isIntersecting&&e.boundingClientRect.top<0;});sync();},{threshold:0}).observe(band);
     if(foot)new IntersectionObserver(function(es){es.forEach(function(e){footIn=e.isIntersecting;});sync();}).observe(foot);
