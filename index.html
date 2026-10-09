@@ -760,6 +760,10 @@
   /* Email-first variant of the ad landing: half the ad visitors give the email first and the store is read from
      its domain. ?ef=1 / ?ef=0 force it for testing. Counted as /ef or /sf in the funnel. */
   var EF=(function(){try{var q=new URLSearchParams(location.search);if(q.get('ef')==='1')return true;if(q.get('ef')==='0')return false;}catch(e){}return AD&&Math.random()<0.5;})();
+  /* Plain-words variant of the ad landing for the c1 ad (utm_content=c1...): same check, the owner's words
+     (what the store sends to Meta and Google before anyone taps Accept) instead of tags and trackers. */
+  var CONTENT=(function(){try{return (new URLSearchParams(location.search).get('utm_content')||'').toLowerCase();}catch(e){return '';}})();
+  var OWN=AD&&/^c1/.test(CONTENT);
   var FREEMAIL={};'gmail.com googlemail.com outlook.com outlook.co.uk hotmail.com hotmail.co.uk live.com live.co.uk msn.com yahoo.com yahoo.co.uk yahoo.ie ymail.com icloud.com me.com mac.com aol.com proton.me protonmail.com pm.me gmx.com gmx.de gmx.net web.de mail.com yandex.com zoho.com fastmail.com hey.com tutanota.com t-online.de btinternet.com sky.com virginmedia.com talktalk.net eircom.net libero.it tiscali.it walla.co.il walla.com'.split(' ').forEach(function(d){FREEMAIL[d]=1;});
   var EMAIL=/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
   var DOMAIN=/[a-z0-9][a-z0-9-]*\.[a-z]{2,}/i;
@@ -1095,6 +1099,13 @@
       errA.textContent='Enter your store address, e.g. yourstore.com';
       adChange.hidden=true;
       var g=form.querySelector('.globe'),m=adForm.querySelector('.globe');if(g&&m){var t=g.innerHTML;g.innerHTML=m.innerHTML;m.innerHTML=t;}
+    }
+    if(OWN){
+      $('scan-h').textContent='What does your store send before anyone taps Accept?';
+      if(sub)sub.textContent=(EF?'Leave your email. A browser on a server in Germany opens your store twice':'Paste your store. A browser on a server in Germany opens it twice')+
+        ', never touches the cookie banner, and emails you everything it sent to Meta, Google and others before a choice, with the second it happened. Usually within 15 minutes.';
+      var tr2=band.querySelectorAll('.trust li');if(tr2[2]){var l2=tr2[2].lastChild;if(l2&&l2.nodeType===3)l2.nodeValue='Everything sent, with the second it happened';}
+      if(side){side.querySelector('.checks').innerHTML=['What was sent before any choice','Cookies set early','Cookie banner and its Reject button','Outside fonts and embeds','Two visits, banner never touched','Score and result card'].map(function(t){return '<span>'+t+'</span>';}).join('');}
     }
   }
   function adStart(){
